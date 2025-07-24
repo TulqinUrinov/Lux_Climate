@@ -1,0 +1,47 @@
+x-shared-volumes: &shared_volumes
+  - ./:/usr/src/app
+#  - ./data:/usr/src/app/data
+
+services:
+  db:
+    image: postgres:alpine
+    container_name: postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - db:/var/lib/postgresql/data/
+    ports:
+      - "5432:5432"
+
+
+
+  django:
+    build: .
+    container_name: django
+    env_file:
+      - .env
+    volumes: *shared_volumes
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+
+    command: python manage.py runserver 0.0.0.0:8000
+
+  bot:
+    build: .
+    container_name: bot
+    env_file:
+      - .env
+    volumes: *shared_volumes
+    depends_on:
+     - db
+     - django
+
+    restart: unless-stopped
+    command: python manage.py bot
+
+volumes:
+  db:
