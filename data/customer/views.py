@@ -1,3 +1,10 @@
-from django.shortcuts import render
+from rest_framework import viewsets
+from rest_framework.permissions import IsAuthenticated
+from data.customer.models import Customer
+from data.customer.serializers import CustomerSerializer
 
-# Create your views here.
+
+class CustomerViewSet(viewsets.ModelViewSet):
+    queryset = Customer.objects.all()
+    serializer_class = CustomerSerializer
+    pagination_class = IsAuthenticated
