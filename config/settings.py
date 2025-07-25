@@ -17,7 +17,6 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
@@ -27,8 +26,7 @@ SECRET_KEY = 'django-insecure-)b^lp@!8yez0no6f_le9puwe(1)v#wi6)k3$8)mojy)qrbyzb=
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["*"]
-
+ALLOWED_HOSTS = ["localhost", "192.168.0.103", "1d2d4944a547.ngrok-free.app"]
 
 # Application definition
 
@@ -45,12 +43,14 @@ INSTALLED_APPS = [
     'data.common',
     'data.customer',
 
+    'corsheaders',
     'drf_yasg',
     'rest_framework',
     'rest_framework_simplejwt',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -78,7 +78,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'config.wsgi.application'
-
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
@@ -123,7 +122,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
@@ -135,7 +133,6 @@ USE_I18N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
@@ -145,15 +142,6 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-
-
-# SIMPLE_JWT = {
-#     "ACCESS_TOKEN_LIFETIME": timedelta(hours=2),
-#     "REFRESH_TOKEN_LIFETIME": timedelta(days=2),
-#     "USER_ID_FIELD": "id",
-#     "USER_ID_CLAIM": "user_id",
-# }
 
 REST_FRAMEWORK = {
 
@@ -174,53 +162,56 @@ REST_FRAMEWORK = {
 #     "AUTH_TOKEN_CLASSES": ("rest_framework_simplejwt.tokens.AccessToken",),
 #     "TOKEN_BLACKLIST_ENABLED": True,
 # }
-#
-# AUTH_USER_MODEL = "user.User"
-#
-#
-# CORS_ALLOW_METHODS = (
-#     "DELETE",
-#     "GET",
-#     "OPTIONS",
-#     "PATCH",
-#     "POST",
-#     "PUT",
-#     "OPTIONS",
-# )
-#
-# CORS_ALLOW_HEADERS = (
-#     "accept",
-#     "authorization",
-#     "content-type",
-#     "user-agent",
-#     "x-csrftoken",
-#     "x-requested-with",
-# )
-#
-# CORS_ALLOW_CREDENTIALS = True
-#
-#
-# CORS_ALLOWED_ORIGINS = [
-#     "http://localhost:3000",
-#     "http://localhost:3001",
-#     "http://127.0.0.1:3000",
-#     "http://127.0.0.1:3001",
-#     "http://127.0.0.1:3002",
-#     "http://127.0.0.1:3003",
-#     "http://localhost:8000",
-#     "http://localhost:3000",
-#     "http://localhost:3001",
-#     "http://localhost:3002",
-#     "http://127.0.0.1:8000",
-#     "https://system.tgfu.sector-soft.ru",
-#     "http://system.tgfu.sector-soft.ru",
-# ]
-#
-#
-# CSRF_TRUSTED_ORIGINS = [
-#     "http://127.0.0.1:8000",
-#     "http://localhost:3000",
-#     "http://localhost:3001",
-#     "https://system.tgfu.sector-soft.ru",
-#     "http://system.tgfu.sector-soft.ru",
-# ]
+
+
+CORS_ALLOW_METHODS = (
+    "DELETE",
+    "GET",
+    "OPTIONS",
+    "PATCH",
+    "POST",
+    "PUT",
+    "OPTIONS",
+)
+
+CORS_ALLOW_HEADERS = (
+    "accept",
+    "authorization",
+    "content-type",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",
+    "ngrok-skip-browser-warning"
+)
+
+CORS_ALLOW_CREDENTIALS = True
+
+CORS_ALLOWED_ORIGINS = [
+    "https://1d2d4944a547.ngrok-free.app",
+    "http://192.168.0.103:8000",
+    "http://192.168.0.103:3000",
+    "http://localhost:3000",
+    "http://localhost:3001",
+    "http://127.0.0.1:3000",
+    "http://127.0.0.1:3001",
+    "http://127.0.0.1:3002",
+    "http://127.0.0.1:3003",
+    "http://localhost:8000",
+    "http://localhost:3000",
+    "http://localhost:3001",
+    "http://localhost:3002",
+    "http://127.0.0.1:8000",
+    "https://system.tgfu.sector-soft.ru",
+    "http://system.tgfu.sector-soft.ru",
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    "http://127.0.0.1:8000",
+    "http://localhost:3000",
+    "http://localhost:3001",
+    "http://192.168.0.103:8000",
+    "http://192.168.0.103:3000",
+    "https://system.tgfu.sector-soft.ru",
+    "http://system.tgfu.sector-soft.ru",
+    "https://1d2d4944a547.ngrok-free.app"
+]

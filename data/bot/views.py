@@ -1,11 +1,9 @@
 from decouple import config
-from icecream import ic
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
+from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.exceptions import ValidationError
-import os
 
 from .models import BotUser
 from .utils import BotUserJWTAuthentication
