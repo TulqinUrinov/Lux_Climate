@@ -26,7 +26,8 @@ SECRET_KEY = 'django-insecure-)b^lp@!8yez0no6f_le9puwe(1)v#wi6)k3$8)mojy)qrbyzb=
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["127.0.0.1","localhost", "192.168.0.103", "1d2d4944a547.ngrok-free.app"]
+ALLOWED_HOSTS = ["127.0.0.1", "localhost", "192.168.0.103",
+                 "b4762443033a.ngrok-free.app", "luxe-climate.vercel.app"]
 
 # Application definition
 
@@ -53,7 +54,10 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+
     'corsheaders.middleware.CorsMiddleware',
+    'data.bot.middleware.BotUserJWTMiddleware',
+
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -166,7 +170,6 @@ SIMPLE_JWT = {
     "TOKEN_BLACKLIST_ENABLED": True,
 }
 
-
 CORS_ALLOW_METHODS = (
     "DELETE",
     "GET",
@@ -190,7 +193,8 @@ CORS_ALLOW_HEADERS = (
 CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOWED_ORIGINS = [
-    "https://1d2d4944a547.ngrok-free.app",
+    "https://luxe-climate.vercel.app",
+    "https://b4762443033a.ngrok-free.app",
     "http://192.168.0.103:8000",
     "http://192.168.0.103:3000",
     "http://localhost:3000",
@@ -216,5 +220,6 @@ CSRF_TRUSTED_ORIGINS = [
     "http://192.168.0.103:3000",
     "https://system.tgfu.sector-soft.ru",
     "http://system.tgfu.sector-soft.ru",
-    "https://1d2d4944a547.ngrok-free.app"
+    "https://b4762443033a.ngrok-free.app",
+    "https://luxe-climate.vercel.app",
 ]

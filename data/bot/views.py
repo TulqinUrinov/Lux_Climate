@@ -44,12 +44,20 @@ class JWTtokenGenerator(APIView):
         # refresh = RefreshToken()
         #
         # refresh.payload['user'] = bot_user.id
-        refresh = RefreshToken.for_user(bot_user.user)
+        if bot_user.user:
+            refresh = RefreshToken.for_user(bot_user.user)
 
-        return Response({
-            "access": str(refresh.access_token),
-            "refresh": str(refresh)
-        }, status=status.HTTP_200_OK)
+            return Response({
+                "access": str(refresh.access_token),
+                "refresh": str(refresh)
+            }, status=status.HTTP_200_OK)
+
+        elif bot_user.customer:
+            refresh = RefreshToken.for_user(bot_user.customer)
+            return Response({
+                "access": str(refresh.access_token),
+                "refresh": str(refresh)
+            }, status=status.HTTP_200_OK)
 
 
 class JWTtokenRefresh(APIView):
@@ -74,7 +82,6 @@ class JWTtokenRefresh(APIView):
             )
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
 
 # class Me(APIView):
 #     authentication_classes = [BotUserJWTAuthentication]
