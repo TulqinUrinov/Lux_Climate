@@ -2,8 +2,8 @@ from rest_framework import serializers
 from data.customer.models import Customer
 from data.file.models import File
 from data.order.models import Order
-from data.payment.models import InstallmentPayment
-from data.payment.serializers import PaymentSerializer
+from data.installmentpayment.models import InstallmentPayment
+from data.installmentpayment.serializers import PaymentSerializer
 
 
 class OrderSerializer(serializers.ModelSerializer):
@@ -14,7 +14,7 @@ class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = ('id', 'customer', 'order_type', 'get_or_take', 'comment', 'files',
-                  'price', 'is_installment', 'installment_count', 'payment')
+                  'price', 'is_installment', 'installment_count', 'installmentpayment')
 
     def create(self, validated_data):
         payments_data = validated_data.pop('payments', [])

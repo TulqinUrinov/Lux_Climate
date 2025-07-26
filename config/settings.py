@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     'data.common',
     'data.customer',
     'data.order',
-    'data.payment',
+    'data.installmentpayment',
     'data.file',
 
     'corsheaders',

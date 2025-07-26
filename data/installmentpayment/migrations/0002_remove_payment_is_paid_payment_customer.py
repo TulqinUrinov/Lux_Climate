@@ -8,18 +8,18 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('customer', '0002_customer_get_order'),
-        ('payment', '0001_initial'),
+        ('installmentpayment', '0001_initial'),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='payment',
+            model_name='installmentpayment',
             name='is_paid',
         ),
         migrations.AddField(
-            model_name='payment',
+            model_name='installmentpayment',
             name='customer',
-            field=models.ForeignKey(default=1, on_delete=django.db.models.deletion.CASCADE, related_name='payment', to='customer.customer'),
+            field=models.ForeignKey(default=1, on_delete=django.db.models.deletion.CASCADE, related_name='installmentpayment', to='customer.customer'),
             preserve_default=False,
         ),
     ]

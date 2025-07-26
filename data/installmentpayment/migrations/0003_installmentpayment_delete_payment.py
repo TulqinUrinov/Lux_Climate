@@ -8,7 +8,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('order', '0005_order_files_delete_orderfile'),
-        ('payment', '0002_remove_payment_is_paid_payment_customer'),
+        ('installmentpayment', '0002_remove_payment_is_paid_payment_customer'),
     ]
 
     operations = [
@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
                 ('updated_at', models.DateTimeField(auto_now=True)),
                 ('amount', models.DecimalField(decimal_places=2, max_digits=10)),
                 ('payment_date', models.DateField()),
-                ('order', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='payment', to='order.order')),
+                ('order', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='installmentpayment', to='order.order')),
             ],
             options={
                 'abstract': False,
