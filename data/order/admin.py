@@ -5,15 +5,14 @@ from data.order.models import Order, OrderFile
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ('customer','order_type','get_or_take','comment','price')
+    list_display = ('customer', 'order_type', 'get_or_take', 'comment',
+                    'price', "is_installment", "installment_count")
+
     search_fields = ('customer',)
-    list_filter = ('order_type','get_or_take', 'created_at')
+    list_filter = ('order_type', 'get_or_take', 'created_at')
 
 
 @admin.register(OrderFile)
 class OrderFileAdmin(admin.ModelAdmin):
     list_display = ('order', 'file')
     search_fields = ('order',)
-
-
-

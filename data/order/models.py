@@ -19,8 +19,10 @@ class Order(BaseModel):
     get_or_take = models.CharField(choices=GET_OR_TAKE, max_length=20, default=' get_order')
     comment = models.TextField(blank=True, null=True)
     price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    is_installment = models.BooleanField(default=False)
+    installment_count = models.PositiveIntegerField(null=True, blank=True)
 
 
 class OrderFile(BaseModel):
-    order: "Order" = models.ForeignKey("order.Order", on_delete=models.CASCADE)
+    order: "Order" = models.ForeignKey("order.Order", on_delete=models.CASCADE, related_name='order_files')
     file = models.FileField(upload_to='orders/', null=True, blank=True)

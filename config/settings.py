@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'data.common',
     'data.customer',
     'data.order',
+    'data.payment',
 
     'corsheaders',
     'drf_yasg',
