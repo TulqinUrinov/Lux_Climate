@@ -1,6 +1,7 @@
 from django.db import models
 from data.common.models import BaseModel
 from data.customer.models import Customer
+from data.file.models import File
 
 
 class Order(BaseModel):
@@ -21,8 +22,4 @@ class Order(BaseModel):
     price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     is_installment = models.BooleanField(default=False)
     installment_count = models.PositiveIntegerField(null=True, blank=True)
-
-
-class OrderFile(BaseModel):
-    order: "Order" = models.ForeignKey("order.Order", on_delete=models.CASCADE, related_name='order_files')
-    file = models.FileField(upload_to='orders/', null=True, blank=True)
+    files: "File" = models.ManyToManyField("file.File", blank=True)

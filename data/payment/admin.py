@@ -1,8 +1,8 @@
 from django.contrib import admin
-from data.payment.models import Payment
+from data.payment.models import InstallmentPayment
 
-@admin.register(Payment)
+@admin.register(InstallmentPayment)
 class PaymentAdmin(admin.ModelAdmin):
-    list_display = ('customer', 'order', 'pay_date', 'amount')
-    search_fields = ('customer','order')
-    list_filter = ('pay_date', )
+    list_display = ('order', 'payment_date', 'amount')
+    search_fields = ('order',)
+    list_filter = ('payment_date', )

@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from data.order.models import Order, OrderFile
+from data.order.models import Order
 
 
 @admin.register(Order)
@@ -11,8 +11,3 @@ class OrderAdmin(admin.ModelAdmin):
     search_fields = ('customer',)
     list_filter = ('order_type', 'get_or_take', 'created_at')
 
-
-@admin.register(OrderFile)
-class OrderFileAdmin(admin.ModelAdmin):
-    list_display = ('order', 'file')
-    search_fields = ('order',)

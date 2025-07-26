@@ -1,8 +1,8 @@
 from rest_framework import serializers
-from data.payment.models import Payment
+from data.payment.models import InstallmentPayment
 
 
 class PaymentSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Payment
-        fields = ('id', 'amount', 'pay_date')
+        model = InstallmentPayment
+        fields = ('id', 'amount', 'payment_date')
