@@ -37,6 +37,7 @@ urlpatterns = [
     path('api/bot/', include('data.bot.urls')),
     path('api/user/', include('data.user.urls')),
     path('api/customer/', include('data.customer.urls')),
+    path('api/order/', include('data.order.urls')),
 
     # Swagger
     re_path(

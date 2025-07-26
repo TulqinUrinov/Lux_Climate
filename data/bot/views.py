@@ -38,14 +38,13 @@ class JWTtokenGenerator(APIView):
         user_id = auth_data.user.id
         bot_user = BotUser.objects.filter(chat_id=user_id).first()
 
-        print(auth_data)
-
         if not bot_user:
             return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 
-        refresh = RefreshToken()
-
-        refresh.payload['user'] = bot_user.id
+        # refresh = RefreshToken()
+        #
+        # refresh.payload['user'] = bot_user.id
+        refresh = RefreshToken.for_user(bot_user.user)
 
         return Response({
             "access": str(refresh.access_token),
@@ -77,23 +76,23 @@ class JWTtokenRefresh(APIView):
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class Me(APIView):
-    authentication_classes = [BotUserJWTAuthentication]
-    """
-    Get user information.
-    """
-
-    def get(self, request):
-        user = request.user
-        if not user:
-            return Response(
-                {"error": "User not found"}, status=status.HTTP_404_NOT_FOUND
-            )
-
-        user_data = {
-            "id": user.id,
-            "name": user.full_name,
-            "number": user.phone_number,
-            "chat_id": user.chat_id,
-        }
-        return Response(user_data, status=status.HTTP_200_OK)
+# class Me(APIView):
+#     authentication_classes = [BotUserJWTAuthentication]
+#     """
+#     Get user information.
+#     """
+#
+#     def get(self, request):
+#         user = request.user
+#         if not user:
+#             return Response(
+#                 {"error": "User not found"}, status=status.HTTP_404_NOT_FOUND
+#             )
+#
+#         user_data = {
+#             "id": user.id,
+#             "name": user.full_name,
+#             # "number": user.phone_number,
+#             "chat_id": user.chat_id,
+#         }
+#         return Response(user_data, status=status.HTTP_200_OK)
