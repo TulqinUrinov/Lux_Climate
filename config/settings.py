@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'data.order',
     'data.payment',
     'data.file',
+    'data.balance',
 
     'corsheaders',
     'drf_yasg',
