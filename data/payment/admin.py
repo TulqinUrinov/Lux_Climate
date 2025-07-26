@@ -1,5 +1,5 @@
 from django.contrib import admin
-from data.installmentpayment.models import InstallmentPayment
+from data.payment.models import InstallmentPayment
 
 @admin.register(InstallmentPayment)
 class PaymentAdmin(admin.ModelAdmin):
