@@ -11,7 +11,8 @@ class BalanceSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Balance
-        fields = ('user', 'customer', 'payment_date', 'amount', 'reason', 'comment')
+        fields = ('user', 'customer', 'payment_date', 'amount', 'reason', 'comment', 'change', 'type')
+        read_only_fields = ('change',)
 
 
 class MutualSettlementSerializer(serializers.Serializer):
