@@ -8,8 +8,8 @@ from data.order.models import Order
 
 class Balance(BaseModel):
     REASON_CHOICES = (
-        ('product', 'Product'),
-        ('service', 'Service')
+        ('order', 'Order'),
+        ('payment', 'Payment')
     )
 
     TRANSACTION_CHOICES = (

@@ -13,7 +13,7 @@ def mutual_settlements(
                 customer_id,
                 created_at,
                 amount AS change,
-                SUM(amount) OVER (PARTITION BY customer_id ORDER BY created_at) AS final_balance,
+                SUM(change) OVER (PARTITION BY customer_id ORDER BY created_at) AS final_balance,
                 reason,
                 comment
             FROM balance_balance
