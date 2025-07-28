@@ -6,7 +6,7 @@ from data.file.models import File
 
 class Order(BaseModel):
     ORDER_CHOICES = (
-        ('order', 'Order'),
+        ('product', 'Product'),
         ('service', 'Service'),
     )
 
