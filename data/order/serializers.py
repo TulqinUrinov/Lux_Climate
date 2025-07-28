@@ -13,14 +13,27 @@ class OrderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Order
-        fields = ('id', 'customer', 'order_type', 'get_or_take', 'comment', 'files',
+        fields = ('id', 'customer', 'order_type', 'get_or_give', 'comment', 'files',
                   'price', 'is_installment', 'installment_count', 'installment_payments')
 
     def create(self, validated_data):
         payments_data = validated_data.pop('installment_payments', [])
+        files_data = validated_data.pop('files', [])
+
         order = Order.objects.create(**validated_data)
+
+        # Fayllarni bog'lash
+        order.files.set(files_data)
 
         # To‘lovlarni saqlash
         for payment_data in payments_data:
             InstallmentPayment.objects.create(order=order, **payment_data)
+
         return order
+
+
+
+class OrderListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Order
+        fields = ('id', 'customer', 'order_type', 'price', 'created_at')
