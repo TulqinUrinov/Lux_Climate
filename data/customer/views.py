@@ -54,30 +54,35 @@ class CustomerListAPIView(APIView):
         customers = Customer.objects.all()
         result = []
 
-        if start_date and end_date:
+        for customer in customers:
+            if start_date and end_date:
+                income = Balance.objects.filter(
+                    customer=customer,
+                    type='income',
+                    created_at__range=[start_datetime, end_datetime]
+                ).aggregate(total=Sum('amount'))['total'] or 0
 
-            for customer in customers:
-                print(customer.id)
-                income = Balance.objects.filter(customer=customer, type='income',
-                                                created_at__range=[start_datetime, end_datetime]
-                                                ).aggregate(total=Sum('amount'))['total'] or 0
+                outcome = Balance.objects.filter(
+                    customer=customer,
+                    type='outcome',
+                    created_at__range=[start_datetime, end_datetime]
+                ).aggregate(total=Sum('amount'))['total'] or 0
+            else:
+                income = Balance.objects.filter(
+                    customer=customer,
+                    type='income'
+                ).aggregate(total=Sum('amount'))['total'] or 0
 
-                outcome = Balance.objects.filter(customer=customer, type='outcome',
-                                                 created_at__range=[start_datetime, end_datetime]
-                                                 ).aggregate(total=Sum('amount'))['total'] or 0
+                outcome = Balance.objects.filter(
+                    customer=customer,
+                    type='outcome'
+                ).aggregate(total=Sum('amount'))['total'] or 0
 
-        else:
-            for customer in customers:
-                income = Balance.objects.filter(type='income').aggregate(total=Sum('amount'))['total'] or 0
-                outcome = Balance.objects.filter(type='outcome').aggregate(total=Sum('amount'))['total'] or 0
+            balance = income - outcome
 
-        balance = income - outcome
-
-        result.append(
-            {
+            result.append({
                 'customer': customer.id,
                 'balance': balance
-            }
-        )
+            })
 
         return Response(result, status=status.HTTP_200_OK)
