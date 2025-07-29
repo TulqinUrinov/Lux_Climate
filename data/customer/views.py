@@ -17,27 +17,6 @@ class CustomerViewSet(viewsets.ModelViewSet):
     permission_class = [IsAuthenticated, UserPermission]
 
 
-class CustomerOrderAPIView(APIView):
-    def get(self, request, customer_id):
-        orders = Order.objects.filter(customer_id=customer_id)
-        serializer = CustomerOrderSerializer(orders, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-class CustomerOrderPaymentAPIView(APIView):
-    def get(self, request, customer_id):
-        payments = Balance.objects.filter(customer_id=customer_id, type='income')
-        serializer = CustomerOrderPaymentSerializer(payments, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-class CustomerOrderDebtAPIView(APIView):
-    def get(self, request, customer_id):
-        debt = Balance.objects.filter(customer_id=customer_id, type='outcome')
-        serializer = CustomerOrderDebtSerializer(debt, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-
 class CustomerBalanceAPIView(APIView):
     def get(self, request, customer_id):
         income = Balance.objects.filter(customer_id=customer_id, type='income').aggregate(total=Sum('amount'))[
@@ -61,34 +40,44 @@ class CustomerListAPIView(APIView):
         start_date = request.query_params.get('start_date')
         end_date = request.query_params.get('end_date')
 
-        if not start_date or not end_date:
-            today = date.today()
-            start_datetime = datetime.combine(today, time.min)
-            end_datetime = datetime.combine(today, time.max)
+        start_datetime = None
+        end_datetime = None
 
-        else:
-            start_datetime = datetime.combine(datetime.strptime(start_date, '%Y-%m_%d'), time.min)
-            end_datetime = datetime.combine(datetime.strptime(end_date, '%Y-%m_%d'), time.max)
+        try:
+            if start_date:
+                start_datetime = datetime.combine(datetime.strptime(start_date, '%Y-%m-%d'), time.min)
+            if end_date:
+                end_datetime = datetime.combine(datetime.strptime(end_date, '%Y-%m-%d'), time.max)
+        except ValueError:
+            return Response({'error': 'Invalid date format. Use YYYY-MM-DD'}, status=status.HTTP_400_BAD_REQUEST)
 
         customers = Customer.objects.all()
         result = []
 
-        for customer in customers:
-            income = Balance.objects.filter(customer=customer, type='income',
-                                            created_at__range=[start_datetime, end_datetime]
-                                            ).aggregate(total=Sum('amount'))['total'] or 0
+        if start_date and end_date:
 
-            outcome = Balance.objects.filter(customer=customer, type='outcome',
-                                             created_at__range=[start_datetime, end_datetime]
-                                             ).aggregate(total=Sum('amount'))['total'] or 0
+            for customer in customers:
+                print(customer.id)
+                income = Balance.objects.filter(customer=customer, type='income',
+                                                created_at__range=[start_datetime, end_datetime]
+                                                ).aggregate(total=Sum('amount'))['total'] or 0
 
-            balance = income - outcome
+                outcome = Balance.objects.filter(customer=customer, type='outcome',
+                                                 created_at__range=[start_datetime, end_datetime]
+                                                 ).aggregate(total=Sum('amount'))['total'] or 0
 
-            result.append(
-                {
-                    'customer': customer.id,
-                    'balance': balance
-                }
-            )
+        else:
+            for customer in customers:
+                income = Balance.objects.filter(type='income').aggregate(total=Sum('amount'))['total'] or 0
+                outcome = Balance.objects.filter(type='outcome').aggregate(total=Sum('amount'))['total'] or 0
+
+        balance = income - outcome
+
+        result.append(
+            {
+                'customer': customer.id,
+                'balance': balance
+            }
+        )
 
         return Response(result, status=status.HTTP_200_OK)

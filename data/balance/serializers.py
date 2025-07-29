@@ -24,13 +24,3 @@ class MutualSettlementSerializer(serializers.Serializer):
     created_at = serializers.DateTimeField()
     reason = serializers.CharField()
     comment = serializers.CharField()
-
-
-class PaymentSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Balance
-        fields = ('id','customer', 'reason', 'amount','created_at',)
-
-
-
-

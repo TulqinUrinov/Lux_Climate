@@ -8,5 +8,4 @@ order_router.register('orders', OrderViewSet)
 
 urlpatterns = [
     path('', include(order_router.urls)),
-    path('order_list/', OrderListView.as_view(), name='order_list'),
 ]

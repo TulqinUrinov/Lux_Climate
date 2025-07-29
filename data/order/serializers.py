@@ -1,9 +1,12 @@
 from rest_framework import serializers
+
+from data.balance.models import Balance
 from data.customer.models import Customer
 from data.file.models import File
 from data.order.models import Order
 from data.payment.models import InstallmentPayment
 from data.payment.serializers import InstallmentPaymentSerializer
+from data.user.models import User
 
 
 class OrderSerializer(serializers.ModelSerializer):
@@ -29,11 +32,55 @@ class OrderSerializer(serializers.ModelSerializer):
         for payment_data in payments_data:
             InstallmentPayment.objects.create(order=order, **payment_data)
 
-        return order
+        # Foydalanuvchini request'dan olish
+        request = self.context.get("request")
+        user_id = request.user.id
+        user = User.objects.filter(id=user_id).first()
 
+
+        if order.get_or_give == 'give_order':
+            # Biz mijozga mahsulot berdik → hali pul olmadik → chiqim
+            Balance.objects.create(
+                user=user,
+                customer=order.customer,
+                payment_date=order.created_at.date(),
+                amount=order.price,
+                reason="order",
+                comment=f"Buyurtma berildi",
+                type='outcome',
+                change=-abs(order.price),
+            )
+
+        elif order.get_or_give == 'get_order':
+            # Biz mijozdan mahsulot oldik unga + price yoziladi
+            Balance.objects.create(
+                user=user,
+                customer=order.customer,
+                payment_date=order.created_at.date(),
+                amount=order.price,
+                reason="order",
+                comment=f"Buyurtma olindi",
+                type='income',
+                change=abs(order.price),
+            )
+
+        return order
 
 
 class OrderListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = ('id', 'customer', 'order_type', 'price', 'created_at')
+
+
+class CustomerOrderSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Order
+        fields = ('id', 'order_type', 'price', 'created_at')
+
+
+# Customer Order Debt
+class CustomerOrderDebtSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Balance
+        fields = ('id', 'reason', 'amount', 'created_at')
