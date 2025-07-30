@@ -1,4 +1,4 @@
-from datetime import date, datetime, time
+from datetime import datetime, time
 from django.db.models import Sum
 from rest_framework.generics import CreateAPIView
 from rest_framework.permissions import IsAuthenticated
@@ -30,6 +30,7 @@ class BalanceCreateAPIView(CreateAPIView):
 
 class MutualSettlementView(APIView):
     permission_classes = [IsAuthenticated]
+
     def get(self, request, customer_id):
         settlements = mutual_settlements(
             self,
@@ -66,8 +67,6 @@ class BalanceStatusView(APIView):
         except ValueError:
             return Response({'error': 'Invalid date format. Use YYYY-MM-DD'}, status=status.HTTP_400_BAD_REQUEST)
 
-        result = []
-
         if start_datetime and end_datetime:
             orders = Order.objects.filter(
                 created_at__range=[start_datetime, end_datetime]
@@ -97,13 +96,11 @@ class BalanceStatusView(APIView):
         customer_debt = total_income - total_outcome
         user_debt = total_outcome - total_income
 
-        result.append({
+        return Response({
             'customer_debt': customer_debt,
             'user_debt': user_debt if user_debt < 0 else 0,
             'orders_count': orders,
             'orders_sum_price': orders_sum_price,
             'income': filtered_income,
             'due_payment': due_payment,
-        })
-
-        return Response(result, status=status.HTTP_200_OK)
+        }, status=status.HTTP_200_OK)
