@@ -14,6 +14,7 @@ from ..payment.models import InstallmentPayment
 class BalanceCreateAPIView(CreateAPIView):
     serializer_class = BalanceSerializer
     queryset = Balance.objects.all()
+    permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
         data = self.request.data
@@ -28,6 +29,7 @@ class BalanceCreateAPIView(CreateAPIView):
 
 
 class MutualSettlementView(APIView):
+    permission_classes = [IsAuthenticated]
     def get(self, request, customer_id):
         settlements = mutual_settlements(
             self,
@@ -43,10 +45,15 @@ class MutualSettlementView(APIView):
 
 
 class BalanceStatusView(APIView):
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         start_date = request.query_params.get('start_date')
         end_date = request.query_params.get('end_date')
+
+        # Umumiy (filternatsiya qilinmagan) income va outcome
+        total_income = Balance.objects.filter(type='income').aggregate(total=Sum('amount'))['total'] or 0
+        total_outcome = Balance.objects.filter(type='outcome').aggregate(total=Sum('amount'))['total'] or 0
 
         start_datetime = None
         end_datetime = None
@@ -61,17 +68,7 @@ class BalanceStatusView(APIView):
 
         result = []
 
-        if start_date and end_date:
-            income = Balance.objects.filter(
-                type='income',
-                created_at__range=[start_datetime, end_datetime]
-            ).aggregate(total=Sum('amount'))['total'] or 0
-
-            outcome = Balance.objects.filter(
-                type='outcome',
-                created_at__range=[start_datetime, end_datetime]
-            ).aggregate(total=Sum('amount'))['total'] or 0
-
+        if start_datetime and end_datetime:
             orders = Order.objects.filter(
                 created_at__range=[start_datetime, end_datetime]
             ).count()
@@ -83,23 +80,29 @@ class BalanceStatusView(APIView):
             due_payment = InstallmentPayment.objects.filter(
                 payment_date__gt=end_datetime
             ).aggregate(total=Sum('amount'))['total'] or 0
+
+            # Sana bo‘yicha faqat income ni filternatsiya qilamiz
+            filtered_income = Balance.objects.filter(
+                type='income',
+                created_at__range=[start_datetime, end_datetime]
+            ).aggregate(total=Sum('amount'))['total'] or 0
         else:
-            # Agar start_date yoki end_date berilmasa, umumiy statistika
-            income = Balance.objects.filter(type='income').aggregate(total=Sum('amount'))['total'] or 0
-            outcome = Balance.objects.filter(type='outcome').aggregate(total=Sum('amount'))['total'] or 0
             orders = Order.objects.count()
             orders_sum_price = Order.objects.aggregate(total=Sum('price'))['total'] or 0
             due_payment = InstallmentPayment.objects.aggregate(total=Sum('amount'))['total'] or 0
 
-        customer_debt = income - outcome
-        user_debt = outcome - income
+            # Agar sana yo'q bo‘lsa, income ham umumiy bo'ladi
+            filtered_income = total_income
+
+        customer_debt = total_income - total_outcome
+        user_debt = total_outcome - total_income
 
         result.append({
             'customer_debt': customer_debt,
             'user_debt': user_debt if user_debt < 0 else 0,
             'orders_count': orders,
             'orders_sum_price': orders_sum_price,
-            'income': income,
+            'income': filtered_income,
             'due_payment': due_payment,
         })
 

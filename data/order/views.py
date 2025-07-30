@@ -3,15 +3,14 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.decorators import action
 
-from data.balance.models import Balance
-from data.order.models import Order
-from data.order.serializers import OrderSerializer, OrderListSerializer, CustomerOrderSerializer, \
-    CustomerOrderDebtSerializer
+from data.common.pagination import CustomPagination
+from data.order.serializers import *
 
 
 class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all()
     permission_classes = [IsAuthenticated]
+    pagination_class = CustomPagination
 
     def get_serializer_class(self):
         if self.action == 'list':
