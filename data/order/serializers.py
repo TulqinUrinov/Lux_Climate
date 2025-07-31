@@ -42,7 +42,6 @@ class OrderCreateSerializer(serializers.ModelSerializer):
             Balance.objects.create(
                 user=user,
                 customer=order.customer,
-                payment_date=order.created_at.date(),
                 amount=order.price,
                 reason="order",
                 comment=f"Buyurtma berildi",
@@ -55,7 +54,6 @@ class OrderCreateSerializer(serializers.ModelSerializer):
             Balance.objects.create(
                 user=user,
                 customer=order.customer,
-                payment_date=order.created_at.date(),
                 amount=order.price,
                 reason="order",
                 comment=f"Buyurtma olindi",
