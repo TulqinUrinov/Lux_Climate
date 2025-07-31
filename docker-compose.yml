@@ -30,9 +30,9 @@ services:
 
     command: python manage.py runserver 0.0.0.0:8000
 
-  bot:
+  lux_bot:
     build: .
-    container_name: bot
+    container_name: lux_bot
     env_file:
       - .env
     volumes: *shared_volumes
