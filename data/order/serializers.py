@@ -37,7 +37,6 @@ class OrderSerializer(serializers.ModelSerializer):
         user_id = request.user.id
         user = User.objects.filter(id=user_id).first()
 
-
         if order.get_or_give == 'give_order':
             # Biz mijozga mahsulot berdik → hali pul olmadik → chiqim
             Balance.objects.create(
@@ -68,9 +67,14 @@ class OrderSerializer(serializers.ModelSerializer):
 
 
 class OrderListSerializer(serializers.ModelSerializer):
+    customer = serializers.SerializerMethodField()
+
     class Meta:
         model = Order
         fields = ('id', 'customer', 'order_type', 'price', 'created_at')
+
+    def get_customer(self, obj):
+        return obj.customer.full_name
 
 
 class CustomerOrderSerializer(serializers.ModelSerializer):

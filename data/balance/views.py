@@ -4,7 +4,7 @@ from rest_framework.generics import CreateAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status, generics
+from rest_framework import status
 from .services import mutual_settlements
 from .serializers import *
 from ..order.models import Order

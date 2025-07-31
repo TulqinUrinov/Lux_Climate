@@ -11,9 +11,14 @@ class InstallmentPaymentSerializer(serializers.ModelSerializer):
 
 
 class PaymentSerializer(serializers.ModelSerializer):
+    customer = serializers.SerializerMethodField()
+
     class Meta:
         model = Balance
         fields = ('id', 'customer', 'reason', 'amount', 'created_at',)
+
+    def get_customer(self, obj):
+        return obj.customer.full_name
 
 
 class CustomerOrderPaymentSerializer(serializers.ModelSerializer):
