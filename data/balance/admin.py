@@ -6,7 +6,6 @@ from .services import mutual_settlements
 class BalanceAdmin(admin.ModelAdmin):
     list_display = (
         "id",
-        "payment_date",
         "user",
         "customer",
         "type",
@@ -16,7 +15,7 @@ class BalanceAdmin(admin.ModelAdmin):
         "get_final_balance",
         "comment",
     )
-    list_filter = ("type", "reason", "payment_date", "user", "customer")
+    list_filter = ("type", "reason", "user", "customer")
     search_fields = ("user__full_name", "customer__full_name", "comment")
 
     def get_queryset(self, request):

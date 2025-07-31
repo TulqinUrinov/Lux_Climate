@@ -9,7 +9,7 @@ from data.payment.serializers import InstallmentPaymentSerializer
 from data.user.models import User
 
 
-class OrderSerializer(serializers.ModelSerializer):
+class OrderCreateSerializer(serializers.ModelSerializer):
     customer = serializers.PrimaryKeyRelatedField(queryset=Customer.objects.all())
     files = serializers.PrimaryKeyRelatedField(queryset=File.objects.all(), many=True)
     installment_payments = InstallmentPaymentSerializer(many=True)
@@ -88,3 +88,9 @@ class CustomerOrderDebtSerializer(serializers.ModelSerializer):
     class Meta:
         model = Balance
         fields = ('id', 'reason', 'amount', 'created_at')
+
+
+
+class OrderSerializer(serializers.ModelSerializer):
+    model = Order
+    fields = ('id','customer', 'order_type', 'get_or_give','price',)

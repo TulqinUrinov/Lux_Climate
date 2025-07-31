@@ -19,9 +19,8 @@ class Balance(BaseModel):
 
     user: "User" = models.ForeignKey("user.User", on_delete=models.CASCADE)
     customer: "Customer" = models.ForeignKey("customer.Customer", on_delete=models.CASCADE)
-    payment_date = models.DateField()
     amount = models.DecimalField(max_digits=10, decimal_places=2)
-    reason = models.CharField(choices=REASON_CHOICES, max_length=20)
+    reason = models.CharField(choices=REASON_CHOICES, max_length=20, default='payment')
     comment = models.TextField()
-    type = models.CharField(choices=TRANSACTION_CHOICES, max_length=20)
+    type = models.CharField(choices=TRANSACTION_CHOICES, max_length=20, default='income')
     change = models.DecimalField(max_digits=10, decimal_places=2)

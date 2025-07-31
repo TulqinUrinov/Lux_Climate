@@ -22,7 +22,7 @@ class OrderViewSet(viewsets.ModelViewSet):
         elif self.action == 'customer_debts':
             return CustomerOrderDebtSerializer
 
-        return OrderSerializer
+        return OrderCreateSerializer
 
     @action(detail=False, methods=['get'], url_path='by_customer')
     def customer_orders(self, request):
@@ -58,3 +58,7 @@ class OrderViewSet(viewsets.ModelViewSet):
 
         serializer = self.get_serializer(debts, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+
+
