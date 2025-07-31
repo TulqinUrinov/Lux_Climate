@@ -1,3 +1,8 @@
 from django.contrib import admin
 
-# Register your models here.
+from data.file.models import File
+
+
+@admin.register(File)
+class FileAdmin(admin.ModelAdmin):
+    list_display = ('id', 'file')

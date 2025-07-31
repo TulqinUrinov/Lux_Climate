@@ -26,8 +26,8 @@ SECRET_KEY = 'django-insecure-)b^lp@!8yez0no6f_le9puwe(1)v#wi6)k3$8)mojy)qrbyzb=
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["127.0.0.1", "localhost", "192.168.0.103", "ba1c0d15c695.ngrok-free.app", "luxe-climate.vercel.app",
-                 "91.186.197.71"]
+ALLOWED_HOSTS = ["127.0.0.1", "localhost", "192.168.0.103", "1a892d4ac10a.ngrok-free.app", "luxe-climate.vercel.app",
+                 "91.186.197.71", "app.lux.sector-soft.ru", ]
 
 # Application definition
 
@@ -105,7 +105,7 @@ DATABASES = {
         "USER": config("POSTGRES_USER"),
         "PASSWORD": config("POSTGRES_PASSWORD"),
         "HOST": config("POSTGRES_HOST", default="localhost"),
-        "PORT": config("POSTGRES_PORT", default=5433, cast=int),
+        "PORT": config("POSTGRES_PORT", default=5432, cast=int),
         "OPTIONS": {
             "client_encoding": "UTF8",
         },
@@ -194,10 +194,11 @@ CORS_ALLOW_HEADERS = (
 CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOWED_ORIGINS = [
+    "https://app.lux.sector-soft.ru",
     "http://91.186.197.71:8001",
 
     "https://luxe-climate.vercel.app",
-    "https://ba1c0d15c695.ngrok-free.app",
+    "https://1a892d4ac10a.ngrok-free.app",
 
     "http://192.168.0.103:8000",
     "http://192.168.0.103:3000",
@@ -212,14 +213,17 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3001",
     "http://localhost:3002",
     "http://127.0.0.1:8000",
+    "http://127.0.0.1:8001",
     "https://system.tgfu.sector-soft.ru",
     "http://system.tgfu.sector-soft.ru",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
+    "https://app.lux.sector-soft.ru",
     "http://91.186.197.71:8001",
 
     "http://127.0.0.1:8000",
+    "http://127.0.0.1:8001",
     "http://localhost:3000",
     "http://localhost:3001",
     "http://192.168.0.103:8000",
@@ -227,6 +231,6 @@ CSRF_TRUSTED_ORIGINS = [
     "https://system.tgfu.sector-soft.ru",
     "http://system.tgfu.sector-soft.ru",
 
-    "https://ba1c0d15c695.ngrok-free.app",
+    "https://1a892d4ac10a.ngrok-free.app",
     "https://luxe-climate.vercel.app",
 ]

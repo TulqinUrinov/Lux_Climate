@@ -13,7 +13,7 @@ services:
     volumes:
       - db:/var/lib/postgresql/data/
     ports:
-      - "5433:5433"
+      - "5433:5432"
 
 
 
@@ -37,8 +37,8 @@ services:
       - .env
     volumes: *shared_volumes
     depends_on:
-     - db
-     - django
+      - db
+      - django
 
     restart: unless-stopped
     command: python manage.py bot
