@@ -26,7 +26,8 @@ SECRET_KEY = 'django-insecure-)b^lp@!8yez0no6f_le9puwe(1)v#wi6)k3$8)mojy)qrbyzb=
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["127.0.0.1", "localhost", "192.168.0.103", "ba1c0d15c695.ngrok-free.app", "luxe-climate.vercel.app"]
+ALLOWED_HOSTS = ["127.0.0.1", "localhost", "192.168.0.103", "ba1c0d15c695.ngrok-free.app", "luxe-climate.vercel.app",
+                 "91.186.197.71"]
 
 # Application definition
 
@@ -193,6 +194,8 @@ CORS_ALLOW_HEADERS = (
 CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOWED_ORIGINS = [
+    "http://91.186.197.71:8001",
+
     "https://luxe-climate.vercel.app",
     "https://ba1c0d15c695.ngrok-free.app",
 
@@ -214,6 +217,8 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 CSRF_TRUSTED_ORIGINS = [
+    "http://91.186.197.71:8001",
+
     "http://127.0.0.1:8000",
     "http://localhost:3000",
     "http://localhost:3001",
