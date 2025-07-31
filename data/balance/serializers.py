@@ -6,12 +6,12 @@ from data.user.models import User
 
 
 class BalanceSerializer(serializers.ModelSerializer):
-    user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+    # user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
     customer = serializers.PrimaryKeyRelatedField(queryset=Customer.objects.all())
 
     class Meta:
         model = Balance
-        fields = ('user', 'customer', 'amount', 'reason', 'comment', 'change', 'type')
+        fields = ('customer', 'amount', 'reason', 'comment', 'change', 'type')
         read_only_fields = ('change',)
 
 
