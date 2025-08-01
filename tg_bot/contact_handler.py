@@ -46,7 +46,7 @@ async def contact_handler(update, context):
         button = [
             [
                 InlineKeyboardButton(text="Dasturga kirish",
-                                     url="https://luxe-climate.vercel.app/")
+                                     url="https://luxe-climate.vercel.app/user_info")
             ]
         ]
         reply_markup = InlineKeyboardMarkup(button)
