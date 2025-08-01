@@ -67,7 +67,7 @@ class BalanceReportExportView(APIView):
         # Ma’lumotlar
         for row_num, balance in enumerate(balances, start=1):
             bal_data = balances_map.get(balance.id, {})
-            worksheet.write(row_num, 0, balance.payment_date.strftime('%d-%m-%Y'))
+            worksheet.write(row_num, 0, balance.created_at.strftime('%d-%m-%Y'))
             worksheet.write(row_num, 1, type_display.get(balance.type, balance.type))
             worksheet.write(row_num, 2, reason_display.get(balance.reason, balance.reason))
             worksheet.write(row_num, 3, bal_data.get("start_balance", "-"))
