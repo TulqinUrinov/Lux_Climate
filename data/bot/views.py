@@ -88,11 +88,11 @@ class Me(APIView):
 
     def get(self, request):
         bot_user = request.bot_user
-
-        user = bot_user.user
-        customer = bot_user.customer
-        # user = request.user
-        # customer = request.customer
+        print(bot_user)
+        user = request.user
+        print(user)
+        customer = request.customer
+        print(customer)
 
         if not bot_user:
             return Response({"error": " BotUser not found"}, status=status.HTTP_404_NOT_FOUND)
