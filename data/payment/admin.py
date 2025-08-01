@@ -3,6 +3,6 @@ from data.payment.models import InstallmentPayment
 
 @admin.register(InstallmentPayment)
 class PaymentAdmin(admin.ModelAdmin):
-    list_display = ('order', 'created_at', 'amount')
+    list_display = ('order', 'payment_date', 'amount','created_at')
     search_fields = ('order',)
-    list_filter = ('created_at',)
+    list_filter = ('payment_date','created_at',)
