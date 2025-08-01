@@ -1,3 +1,4 @@
+from Crypto.SelfTest.Hash.test_cSHAKE import custom
 from decouple import config
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -87,8 +88,11 @@ class Me(APIView):
 
     def get(self, request):
         bot_user = request.bot_user
-        user = request.user
-        customer = request.customer
+
+        user = bot_user.user
+        customer = bot_user.customer
+        # user = request.user
+        # customer = request.customer
 
         if not bot_user:
             return Response({"error": " BotUser not found"}, status=status.HTTP_404_NOT_FOUND)
