@@ -89,7 +89,7 @@ class Me(APIView):
     def get(self, request):
         bot_user = request.bot_user
         print(bot_user)
-        user = request.user
+        user = request.admin
         print(user)
         customer = request.customer
         print(customer)

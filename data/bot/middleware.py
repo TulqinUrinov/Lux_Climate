@@ -32,7 +32,7 @@ class BotUserJWTMiddleware:
                 if bot_user_id:
                     request.bot_user = BotUser.objects.filter(id=bot_user_id).first()
                 if user_id:
-                    request.user = User.objects.filter(id=user_id).first()
+                    request.admin = User.objects.filter(id=user_id).first()
                 if customer_id:
                     request.customer = Customer.objects.filter(id=customer_id).first()
 
