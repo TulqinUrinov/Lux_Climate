@@ -20,11 +20,20 @@ class Bot:
             await update.message.reply_text(text=text, reply_markup=reply_markup)
 
         else:
+            if bot_user.user:
+                url = "https://luxe-climate.vercel.app/"
+
+            elif bot_user.customer:
+                url = "https://luxe-climate.vercel.app/user_info"
+
+            else:
+                url = "https://luxe-climate.vercel.app/not-allowed"
+
             text = "Pastdagi tugmani bosing"
             button = [
                 [
                     InlineKeyboardButton(text="Dasturga kirish",
-                                         web_app=WebAppInfo(url="https://luxe-climate.vercel.app/"))
+                                         web_app=WebAppInfo(url=url))
                 ]
             ]
             reply_markup = InlineKeyboardMarkup(button)
