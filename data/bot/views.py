@@ -96,7 +96,7 @@ class Me(APIView):
         customer = request.customer
 
         if not bot_user:
-            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": " BotUser not found"}, status=status.HTTP_404_NOT_FOUND)
 
         if user:
             user_data = {
