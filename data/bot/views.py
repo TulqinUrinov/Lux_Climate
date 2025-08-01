@@ -87,13 +87,12 @@ class Me(APIView):
 
     def get(self, request):
         bot_user = request.bot_user
-        user = bot_user.user
-        customer = bot_user.customer
-        # user = request.user
-        # customer = request.customer
 
         if not bot_user:
-            return Response({"error": " BotUser not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "BotUser not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        user = bot_user.user
+        customer = bot_user.customer
 
         if user:
             user_data = {
@@ -113,7 +112,6 @@ class Me(APIView):
             return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 
         return Response(user_data, status=status.HTTP_200_OK)
-
 # class Me(APIView):
 #     authentication_classes = [BotUserJWTMiddleware]
 #     """
