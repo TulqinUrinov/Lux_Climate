@@ -7,7 +7,7 @@ from data.payment.models import InstallmentPayment
 class InstallmentPaymentSerializer(serializers.ModelSerializer):
     class Meta:
         model = InstallmentPayment
-        fields = ('id', 'amount', 'payment_date')
+        fields = ('id', 'amount', 'created_at')
 
 
 class PaymentSerializer(serializers.ModelSerializer):
