@@ -18,47 +18,42 @@ if not BOT_TOKEN:
 
 
 class JWTtokenGenerator(APIView):
-    """
-    Generate JWT token using telegram mini app credentials.
-    """
-
     permission_classes = []
 
     def post(self, request):
         init_data = request.data.get("init_data")
-        # bot = request.data.get("bot").strip().upper() if request.data.get("bot") else None
-
         if not init_data:
             raise ValidationError("init_data is required")
 
         secret_key = generate_secret_key(BOT_TOKEN)
-
         authenticator = TelegramAuthenticator(secret_key)
-
         auth_data = authenticator.validate(init_data)
+
         user_id = auth_data.user.id
         bot_user = BotUser.objects.filter(chat_id=user_id).first()
 
         if not bot_user:
             return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 
-        # refresh = RefreshToken()
-        #
-        # refresh.payload['user'] = bot_user.id
+        payload = {}
         if bot_user.user:
             refresh = RefreshToken.for_user(bot_user.user)
-
-            return Response({
-                "access": str(refresh.access_token),
-                "refresh": str(refresh)
-            }, status=status.HTTP_200_OK)
-
+            payload['user_id'] = bot_user.user.id
         elif bot_user.customer:
             refresh = RefreshToken.for_user(bot_user.customer)
-            return Response({
-                "access": str(refresh.access_token),
-                "refresh": str(refresh)
-            }, status=status.HTTP_200_OK)
+            payload['customer_id'] = bot_user.customer.id
+
+        # Har ikki holatda ham bot_user mavjud
+        payload['bot_user_id'] = bot_user.id
+
+        # Custom payloadni qo‘shamiz
+        for key, value in payload.items():
+            refresh[key] = value
+
+        return Response({
+            "access": str(refresh.access_token),
+            "refresh": str(refresh)
+        }, status=status.HTTP_200_OK)
 
 
 class JWTtokenRefresh(APIView):
