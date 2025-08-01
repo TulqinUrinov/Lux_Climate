@@ -91,16 +91,56 @@ class Me(APIView):
     """
 
     def get(self, request):
-        user = request.user or request.bot_user or request.customer
-        if not user:
-            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+        user = None
 
-        user_data = {
-            "id": user.id,
-            "name": getattr(user, "full_name", ""),
-            "number": getattr(user, "phone_number", ""),
-            "chat_id": getattr(user, "chat_id", None),
-        }
+        # 1. Avval oddiy User
+        if request.user:
+            user = request.user
+            user_data = {
+                "id": user.id,
+                "name": user.full_name or "",
+                "number": user.phone_number or "",
+                "chat_id": None
+            }
+
+        # 2. Customer bo‘lsa
+        elif request.customer:
+            customer = request.customer
+            user_data = {
+                "id": customer.id,
+                "name": customer.full_name,
+                "number": customer.phone_number,
+                "chat_id": None
+            }
+
+        # 3. BotUser bo‘lsa
+        elif request.bot_user:
+            bot_user = request.bot_user
+            if bot_user.user:
+                user = bot_user.user
+                user_data = {
+                    "id": user.id,
+                    "name": user.full_name or "",
+                    "number": user.phone_number or "",
+                    "chat_id": bot_user.chat_id
+                }
+            elif bot_user.customer:
+                customer = bot_user.customer
+                user_data = {
+                    "id": customer.id,
+                    "name": customer.full_name,
+                    "number": customer.phone_number,
+                    "chat_id": bot_user.chat_id
+                }
+            else:
+                user_data = {
+                    "id": bot_user.id,
+                    "name": bot_user.tg_name or "",
+                    "number": "",
+                    "chat_id": bot_user.chat_id
+                }
+        else:
+            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 
         return Response(user_data, status=status.HTTP_200_OK)
 
