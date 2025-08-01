@@ -31,9 +31,9 @@ class BalanceReportExportView(APIView):
                             status=status.HTTP_400_BAD_REQUEST)
 
         balances = Balance.objects.filter(
-            payment_date__range=(start, end),
+            created_at__range=(start, end),
             customer_id=customer_id
-        ).select_related('user', 'customer').order_by('-payment_date', '-id')
+        ).select_related('user', 'customer').order_by('-created_at', '-id')
 
         # Balanslar xaritasi
         balances_map = {}
