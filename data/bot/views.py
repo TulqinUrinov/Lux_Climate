@@ -5,6 +5,7 @@ from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.exceptions import ValidationError
 
+from .middleware import BotUserJWTMiddleware
 from .models import BotUser
 from .utils import BotUserJWTAuthentication
 
@@ -83,23 +84,43 @@ class JWTtokenRefresh(APIView):
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
+
 class Me(APIView):
-    authentication_classes = [BotUserJWTAuthentication]
     """
     Get user information.
     """
 
     def get(self, request):
-        user = request.user
+        user = request.user or request.bot_user or request.customer
         if not user:
-            return Response(
-                {"error": "User not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 
         user_data = {
             "id": user.id,
-            "name": user.full_name,
-            "number": user.phone_number,
-            "chat_id": user.chat_id,
+            "name": getattr(user, "full_name", ""),
+            "number": getattr(user, "phone_number", ""),
+            "chat_id": getattr(user, "chat_id", None),
         }
+
         return Response(user_data, status=status.HTTP_200_OK)
+
+# class Me(APIView):
+#     authentication_classes = [BotUserJWTMiddleware]
+#     """
+#     Get user information.
+#     """
+#
+#     def get(self, request):
+#         user = request.user
+#         if not user:
+#             return Response(
+#                 {"error": "User not found"}, status=status.HTTP_404_NOT_FOUND
+#             )
+#
+#         user_data = {
+#             "id": user.id,
+#             "name": user.full_name,
+#             "number": user.phone_number,
+#             "chat_id": user.chat_id,
+#         }
+#         return Response(user_data, status=status.HTTP_200_OK)
