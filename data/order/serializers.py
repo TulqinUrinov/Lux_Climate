@@ -99,6 +99,7 @@ class OrderSerializer(serializers.ModelSerializer):
                   'order_type',
                   'get_or_give',
                   'price',
+                  'created_at',
                   'is_installment',
                   'installment_count',
                   'installment_payments',)
