@@ -91,30 +91,8 @@ class Me(APIView):
     """
 
     def get(self, request):
-        user = None
 
-        # 1. Avval oddiy User
-        if request.user:
-            user = request.user
-            user_data = {
-                "id": user.id,
-                "name": user.full_name or "",
-                "number": user.phone_number or "",
-                "chat_id": None
-            }
-
-        # 2. Customer bo‘lsa
-        elif request.customer:
-            customer = request.customer
-            user_data = {
-                "id": customer.id,
-                "name": customer.full_name,
-                "number": customer.phone_number,
-                "chat_id": None
-            }
-
-        # 3. BotUser bo‘lsa
-        elif request.bot_user:
+        if request.bot_user:
             bot_user = request.bot_user
             if bot_user.user:
                 user = bot_user.user
