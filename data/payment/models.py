@@ -6,4 +6,3 @@ from data.order.models import Order
 class InstallmentPayment(BaseModel):
     order: "Order" = models.ForeignKey("order.Order", models.CASCADE, related_name='installment_payments')
     amount = models.DecimalField(max_digits=10, decimal_places=2)
-    payment_date = models.DateField()
