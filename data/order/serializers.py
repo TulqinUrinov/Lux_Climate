@@ -89,6 +89,7 @@ class CustomerOrderDebtSerializer(serializers.ModelSerializer):
 
 
 class OrderSerializer(serializers.ModelSerializer):
+    customer = serializers.SerializerMethodField()
     installment_payments = InstallmentPaymentSerializer(many=True, read_only=True)
 
     class Meta:
@@ -101,3 +102,6 @@ class OrderSerializer(serializers.ModelSerializer):
                   'is_installment',
                   'installment_count',
                   'installment_payments',)
+
+    def get_customer(self, obj):
+        return obj.customer.full_name
