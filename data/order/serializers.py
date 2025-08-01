@@ -91,12 +91,13 @@ class CustomerOrderDebtSerializer(serializers.ModelSerializer):
 class OrderSerializer(serializers.ModelSerializer):
     installment_payments = InstallmentPaymentSerializer(many=True, read_only=True)
 
-    model = Order
-    fields = ('id',
-              'customer',
-              'order_type',
-              'get_or_give',
-              'price',
-              'is_installment',
-              'installment_count',
-              'installment_payments',)
+    class Meta:
+        model = Order
+        fields = ('id',
+                  'customer',
+                  'order_type',
+                  'get_or_give',
+                  'price',
+                  'is_installment',
+                  'installment_count',
+                  'installment_payments',)
