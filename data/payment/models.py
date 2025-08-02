@@ -10,6 +10,12 @@ if TYPE_CHECKING:
 
 
 class InstallmentPayment(BaseModel):
+
+    ORDER_TYPE_CHOICES = (
+        ("CUSTOMER_TO_COMPANY", "Get Order"),
+        ("COMPANY_TO_CUSTOMER", "Give Order"),
+    )
+
     order: "Order" = models.ForeignKey(
         "order.Order",
         models.CASCADE,
@@ -24,6 +30,11 @@ class InstallmentPayment(BaseModel):
         related_name="order_splits",
     )
 
+    order_type = models.CharField(
+        max_length=255,
+        choices=ORDER_TYPE_CHOICES,
+    )
+
     amount = models.DecimalField(max_digits=10, decimal_places=2)
 
     payment_date = models.DateField()
@@ -33,6 +44,7 @@ class InstallmentPayment(BaseModel):
     def save(self, *args, **kwargs):
         if self.order is not None:
             self.customer = self.order.customer
+            self.order_type = self.order.order_type
 
         return super().save(*args, **kwargs)
 
