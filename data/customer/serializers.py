@@ -5,7 +5,6 @@ from data.customer.models import Customer
 
 
 class CustomerSerializer(serializers.ModelSerializer):
-    balance = serializers.SerializerMethodField()
     orders_count = serializers.SerializerMethodField()
 
     class Meta:
