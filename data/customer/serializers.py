@@ -28,4 +28,4 @@ class CustomerSerializer(serializers.ModelSerializer):
         return balance
 
     def get_orders_count(self, customer):
-        return customer.order_set.count()
+        return customer.orders.count()
