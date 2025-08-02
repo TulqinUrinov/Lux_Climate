@@ -38,9 +38,15 @@ class Customer(BaseModel):
 
             # 2. Create balances from orders
             for order in self.orders.all():
-                direction = order.order_type  # "CUSTOMER_TO_COMPANY" or "COMPANY_TO_CUSTOMER"
+                direction = (
+                    order.order_type
+                )  # "CUSTOMER_TO_COMPANY" or "COMPANY_TO_CUSTOMER"
                 amount = order.price
-                sign = Decimal("-1") if direction == "CUSTOMER_TO_COMPANY" else Decimal("1")
+                sign = (
+                    Decimal("-1")
+                    if direction == "CUSTOMER_TO_COMPANY"
+                    else Decimal("1")
+                )
                 transaction_type = "INCOME" if sign > 0 else "OUTCOME"
 
                 balance_entries.append(
@@ -58,8 +64,12 @@ class Customer(BaseModel):
 
             # 3. Create balances from payments
             for payment in self.payments.filter(is_deleted=False):
-                p_type = payment.payment_type  # "CUSTOMER_TO_COMPANY" or "COMPANY_TO_CUSTOMER"
-                sign = Decimal("1") if p_type == "CUSTOMER_TO_COMPANY" else Decimal("-1")
+                p_type = (
+                    payment.payment_type
+                )  # "CUSTOMER_TO_COMPANY" or "COMPANY_TO_CUSTOMER"
+                sign = (
+                    Decimal("1") if p_type == "CUSTOMER_TO_COMPANY" else Decimal("-1")
+                )
                 transaction_type = "INCOME" if sign > 0 else "OUTCOME"
 
                 balance_entries.append(
@@ -80,12 +90,15 @@ class Customer(BaseModel):
             Balance.objects.bulk_create(balance_entries)
 
             # 5. Recalculate OrderSplit.left for CUSTOMER_TO_COMPANY
-            total_received = self.balances.aggregate(total=Sum("change"))["total"] or Decimal("0")
+            total_received = self.balances.aggregate(total=Sum("change"))[
+                "total"
+            ] or Decimal("0")
             available_received = total_received
 
             splits = (
-                OrderSplit.objects
-                .filter(order__customer=self, order__order_type="CUSTOMER_TO_COMPANY")
+                OrderSplit.objects.filter(
+                    order__customer=self, order__order_type="CUSTOMER_TO_COMPANY"
+                )
                 .select_related("order")
                 .order_by("payment_date")
             )
@@ -105,12 +118,15 @@ class Customer(BaseModel):
                 split.save(update_fields=["left"])
 
             # 6. Recalculate OrderSplit.left for COMPANY_TO_CUSTOMER
-            total_paid = self.balances.aggregate(total=Sum("change"))["total"] or Decimal("0")
+            total_paid = self.balances.aggregate(total=Sum("change"))[
+                "total"
+            ] or Decimal("0")
             available_paid = abs(total_paid) if total_paid < 0 else Decimal("0")
 
             splits = (
-                OrderSplit.objects
-                .filter(order__customer=self, order__order_type="COMPANY_TO_CUSTOMER")
+                OrderSplit.objects.filter(
+                    order__customer=self, order__order_type="COMPANY_TO_CUSTOMER"
+                )
                 .select_related("order")
                 .order_by("payment_date")
             )
@@ -130,5 +146,7 @@ class Customer(BaseModel):
                 split.save(update_fields=["left"])
 
             # 7. Save snapshot balance to Customer
-            self.balance = self.balances.aggregate(total=Sum("change"))["total"] or Decimal("0")
+            self.balance = self.balances.aggregate(total=Sum("change"))[
+                "total"
+            ] or Decimal("0")
             self.save(update_fields=["balance"])
