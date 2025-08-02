@@ -1,10 +1,14 @@
-from rest_framework.generics import ListCreateAPIView
+from rest_framework.generics import ListAPIView, ListCreateAPIView
 from rest_framework.permissions import IsAuthenticated
 
 from data.common.pagination import CustomPagination
 from data.customer.models import Customer
-from data.payment.models import Payment
-from data.payment.serializers import PaymentSerializer, CustomerOrderPaymentSerializer
+from data.payment.models import InstallmentPayment, Payment
+from data.payment.serializers import (
+    InstallmentPaymentSerializer,
+    PaymentSerializer,
+    CustomerOrderPaymentSerializer,
+)
 
 
 class PaymentListView(ListCreateAPIView):
@@ -26,3 +30,18 @@ class PaymentListView(ListCreateAPIView):
     def perform_create(self, serializer: PaymentSerializer):
 
         serializer.save(created_by=self.request.admin)
+
+
+class DebtSplitsListAPIView(ListAPIView):
+
+    permission_classes = [IsAuthenticated]
+    pagination_class = CustomPagination
+
+    serializer_class = InstallmentPaymentSerializer
+
+    def get_queryset(self):
+
+        if self.request.role == "ADMIN":
+            return InstallmentPayment.objects.filter(left__gt=0)
+
+        customer: Customer = self.request.customer

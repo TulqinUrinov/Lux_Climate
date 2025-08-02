@@ -16,11 +16,26 @@ class InstallmentPayment(BaseModel):
         related_name="order_splits",
     )
 
+    customer = models.ForeignKey(
+        "customer.Customer",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="order_splits",
+    )
+
     amount = models.DecimalField(max_digits=10, decimal_places=2)
 
     payment_date = models.DateField()
 
     left = models.DecimalField(max_digits=12, decimal_places=2)
+
+    def save(self, *args, **kwargs):
+
+        if self.order is not None:
+            self.customer = self.order.customer
+
+        return self.save(*args, **kwargs)
 
 
 class Payment(BaseModel):
