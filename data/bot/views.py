@@ -1,4 +1,3 @@
-
 from decouple import config
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -30,31 +29,36 @@ class JWTtokenGenerator(APIView):
         authenticator = TelegramAuthenticator(secret_key)
         auth_data = authenticator.validate(init_data)
 
+        print(auth_data, user_id)
+
         user_id = auth_data.user.id
         bot_user = BotUser.objects.filter(chat_id=user_id).first()
 
         if not bot_user:
-            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {"error": "User not found", "user_id": user_id},
+                status=status.HTTP_404_NOT_FOUND,
+            )
 
         payload = {}
         if bot_user.user:
             refresh = RefreshToken.for_user(bot_user.user)
-            payload['user_id'] = bot_user.user.id
+            payload["user_id"] = bot_user.user.id
         elif bot_user.customer:
             refresh = RefreshToken.for_user(bot_user.customer)
-            payload['customer_id'] = bot_user.customer.id
+            payload["customer_id"] = bot_user.customer.id
 
         # Har ikki holatda ham bot_user mavjud
-        payload['bot_user_id'] = bot_user.id
+        payload["bot_user_id"] = bot_user.id
 
         # Custom payloadni qo‘shamiz
         for key, value in payload.items():
             refresh[key] = value
 
-        return Response({
-            "access": str(refresh.access_token),
-            "refresh": str(refresh)
-        }, status=status.HTTP_200_OK)
+        return Response(
+            {"access": str(refresh.access_token), "refresh": str(refresh)},
+            status=status.HTTP_200_OK,
+        )
 
 
 class JWTtokenRefresh(APIView):
@@ -95,26 +99,31 @@ class Me(APIView):
         print(customer)
 
         if not bot_user:
-            return Response({"error": " BotUser not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {"error": " BotUser not found"}, status=status.HTTP_404_NOT_FOUND
+            )
 
         if user:
             user_data = {
                 "id": user.id,
                 "name": user.full_name or "",
                 "number": user.phone_number or "",
-                "chat_id": bot_user.chat_id
+                "chat_id": bot_user.chat_id,
             }
         elif customer:
             user_data = {
                 "id": customer.id,
                 "name": customer.full_name or "",
                 "number": customer.phone_number or "",
-                "chat_id": bot_user.chat_id
+                "chat_id": bot_user.chat_id,
             }
         else:
-            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {"error": "User not found"}, status=status.HTTP_404_NOT_FOUND
+            )
 
         return Response(user_data, status=status.HTTP_200_OK)
+
 
 # class Me(APIView):
 #     authentication_classes = [BotUserJWTMiddleware]
