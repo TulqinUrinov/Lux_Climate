@@ -138,4 +138,5 @@ class Customer(BaseModel):
             self.balance = self.balances.aggregate(total=Sum("change"))[
                 "total"
             ] or Decimal("0")
+
             self.save(update_fields=["balance"])
