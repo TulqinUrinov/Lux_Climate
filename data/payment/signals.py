@@ -7,7 +7,8 @@ from data.payment.models import Payment
 @receiver(post_save, sender="payment.Payment")
 def on_new_payment(sender, instance: Payment, created: bool, **kwargs):
 
-    instance.customer.recalculate_balance()
+    if instance.customer:
+        instance.customer.recalculate_balance()
 
 
 @receiver(post_delete, sender=Payment)
