@@ -43,9 +43,9 @@ class Customer(BaseModel):
                 )  # "CUSTOMER_TO_COMPANY" or "COMPANY_TO_CUSTOMER"
                 amount = order.price
                 sign = (
-                    Decimal("1")
+                    Decimal("-1")
                     if direction == "CUSTOMER_TO_COMPANY"
-                    else Decimal("-1")
+                    else Decimal("1")
                 )
                 transaction_type = "INCOME" if sign > 0 else "OUTCOME"
 
@@ -68,6 +68,7 @@ class Customer(BaseModel):
                 sign = (
                     Decimal("1") if p_type == "CUSTOMER_TO_COMPANY" else Decimal("-1")
                 )
+                
                 transaction_type = "INCOME" if sign > 0 else "OUTCOME"
 
                 balance_entries.append(
