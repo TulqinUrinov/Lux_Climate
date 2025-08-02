@@ -3,9 +3,7 @@ from rest_framework import routers
 
 from data.order.views import *
 
-order_router = routers.DefaultRouter()
-order_router.register('orders', OrderViewSet)
+router = routers.DefaultRouter()
+router.register("", OrderViewSet)
 
-urlpatterns = [
-    path('', include(order_router.urls)),
-]
+urlpatterns = router.urls

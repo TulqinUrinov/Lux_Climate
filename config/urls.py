@@ -32,16 +32,14 @@ schema_view = get_schema_view(
 )
 
 urlpatterns = [
-
-    path('admin/', admin.site.urls),
-    path('api/', include('data.bot.urls')),
-    path('api/', include('data.user.urls')),
-    path('api/', include('data.customer.urls')),
-    path('api/', include('data.order.urls')),
-    path('api/', include('data.balance.urls')),
-    path('api/', include('data.file.urls')),
-    path('api/', include('data.payment.urls')),
-
+    path("admin/", admin.site.urls),
+    path("api/", include("data.bot.urls")),
+    path("api/", include("data.user.urls")),
+    path("api/", include("data.customer.urls")),
+    path("api/orders/", include("data.order.urls")),
+    path("api/", include("data.balance.urls")),
+    path("api/", include("data.file.urls")),
+    path("api/", include("data.payment.urls")),
     # Swagger
     re_path(
         r"^swagger(?P<format>\.json|\.yaml)$",
@@ -51,13 +49,3 @@ urlpatterns = [
     path("", schema_view.with_ui("swagger", cache_timeout=0), name="schema-swagger-ui"),
     path("redoc/", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"),
 ]
-
-# from django.contrib import admin
-# from django.urls import path, include
-#
-# urlpatterns = [
-#     path('admin/', admin.site.urls),
-#     path('api/bot/', include('data.bot.urls')),
-#     path('api/user/', include('data.user.urls')),
-#
-# ]

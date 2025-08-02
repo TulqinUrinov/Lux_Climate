@@ -1,6 +1,8 @@
 from django.db import models
 from typing import TYPE_CHECKING
 from data.common.models import BaseModel
+from data.payment.models import InstallmentPayment
+from data.user.models import User
 
 if TYPE_CHECKING:
     from data.customer.models import Customer
@@ -8,21 +10,54 @@ if TYPE_CHECKING:
 
 
 class Order(BaseModel):
+
     ORDER_CHOICES = (
-        ('product', 'Product'),
-        ('service', 'Service'),
+        ("PRODUCT", "Product"),
+        ("PRODUCT", "Service"),
     )
 
-    GET_OR_GIVE = (
-        ('get_order', 'Get_order'),
-        ('give_order', 'Give_order')
+    ORDER_TYPE_CHOICES = (
+        ("CUSTOMER_TO_COMPANY", "Get Order"),
+        ("COMPANY_TO_CUSTOMER", "Give Order"),
     )
 
-    customer: "Customer" = models.ForeignKey("customer.Customer", on_delete=models.SET_NULL, null=True, blank=True)
-    order_type = models.CharField(choices=ORDER_CHOICES, max_length=10, default='order')
-    get_or_give = models.CharField(choices=GET_OR_GIVE, max_length=20, default=' get_order')
+    customer: "Customer" = models.ForeignKey(
+        "customer.Customer",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
+
+    order_type = models.CharField(
+        choices=ORDER_CHOICES,
+        max_length=10,
+    )
+
+    get_or_give = models.CharField(
+        choices=ORDER_TYPE_CHOICES,
+        max_length=20,
+    )
+
     comment = models.TextField(blank=True, null=True)
-    price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+
+    price = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=0,
+    )
+
     is_installment = models.BooleanField(default=False)
-    installment_count = models.PositiveIntegerField(null=True, blank=True)
+
+    installment_count = models.PositiveIntegerField(default=0)
+
+    created_by: "User | None" = models.ForeignKey(
+        "user.User",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="created_orders",
+    )
+
     files: "File" = models.ManyToManyField("file.File", blank=True)
+
+    order_splits: "models.QuerySet[InstallmentPayment]"
