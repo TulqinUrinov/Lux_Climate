@@ -96,8 +96,8 @@ class Customer(BaseModel):
 
             for order in self.orders.filter(
                 order_type="CUSTOMER_TO_COMPANY"
-            ).prefetch_related("ordersplit_set"):
-                for split in order.ordersplit_set.all().order_by("due_date"):
+            ).prefetch_related("order_splits"):
+                for split in order.order_splits.all().order_by("due_date"):
                     planned = split.amount
 
                     if available_received >= planned:
@@ -119,8 +119,8 @@ class Customer(BaseModel):
 
             for order in self.orders.filter(
                 order_type="COMPANY_TO_CUSTOMER"
-            ).prefetch_related("ordersplit_set"):
-                for split in order.ordersplit_set.all().order_by("due_date"):
+            ).prefetch_related("order_splits"):
+                for split in order.order_splits.all().order_by("due_date"):
                     planned = split.amount
 
                     if available_paid >= planned:
