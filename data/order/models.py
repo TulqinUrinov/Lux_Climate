@@ -11,9 +11,9 @@ if TYPE_CHECKING:
 
 class Order(BaseModel):
 
-    ORDER_CHOICES = (
+    PRODUCT_CHOICES = (
         ("PRODUCT", "Product"),
-        ("PRODUCT", "Service"),
+        ("SERVICE", "Service"),
     )
 
     ORDER_TYPE_CHOICES = (
@@ -29,8 +29,8 @@ class Order(BaseModel):
         related_name="orders",
     )
 
-    order_type = models.CharField(
-        choices=ORDER_CHOICES,
+    product = models.CharField(
+        choices=PRODUCT_CHOICES,
         max_length=10,
     )
 
