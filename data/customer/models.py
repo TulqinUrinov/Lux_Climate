@@ -10,10 +10,10 @@ from django.db import transaction
 
 from django.db.models import Sum
 
+from data.balance.models import Balance
 
 if TYPE_CHECKING:
     from data.payment.models import Payment
-    from data.balance.models import Balance
 
 
 class Customer(BaseModel):
