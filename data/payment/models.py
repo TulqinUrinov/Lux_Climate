@@ -31,7 +31,7 @@ class Payment(BaseModel):
     )
 
     customer: "Customer | None" = models.ForeignKey(
-        "costumer.Customer",
+        "customer.Customer",
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
