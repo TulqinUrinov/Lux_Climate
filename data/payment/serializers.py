@@ -13,6 +13,7 @@ class InstallmentPaymentSerializer(serializers.ModelSerializer):
             "id",
             "amount",
             "payment_date",
+            "left",
             "created_at",
         )
 
