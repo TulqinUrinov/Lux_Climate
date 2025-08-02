@@ -58,6 +58,8 @@ class Balance(BaseModel):
 
     payment: "Payment" = models.OneToOneField(
         "payment.Payment",
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         related_name="_balance",
+        null=True,
+        blank=True,
     )
