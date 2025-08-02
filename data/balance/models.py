@@ -13,7 +13,8 @@ if TYPE_CHECKING:
 class Balance(BaseModel):
     REASON_CHOICES = (
         ("ORDER", "Order"),
-        ("PAYMENT", "Payment"),
+        ("PAYMENT_INCOME", "Payment Income"),
+        ("PAYMENT_OUTCOME", "Payment Outcome"),
     )
 
     TRANSACTION_CHOICES = (
