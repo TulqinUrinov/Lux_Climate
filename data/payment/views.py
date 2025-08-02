@@ -45,8 +45,9 @@ class DebtSplitsListAPIView(ListAPIView):
 
         # Assuming role is ADMIN (or something else allowed)
         queryset = InstallmentPayment.objects.filter(left__gt=0)
-        
+
         customer_id = self.request.GET.get("customer")
+
         if customer_id:
             queryset = queryset.filter(customer_id=customer_id)
 
