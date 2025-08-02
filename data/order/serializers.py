@@ -12,7 +12,7 @@ from data.user.models import User
 class OrderCreateSerializer(serializers.ModelSerializer):
     customer = serializers.PrimaryKeyRelatedField(queryset=Customer.objects.all())
     files = serializers.PrimaryKeyRelatedField(queryset=File.objects.all(), many=True)
-    installment_payments = InstallmentPaymentSerializer(many=True)
+    order_splits = InstallmentPaymentSerializer(many=True)
 
     class Meta:
         model = Order
@@ -26,11 +26,11 @@ class OrderCreateSerializer(serializers.ModelSerializer):
             "price",
             "is_installment",
             "installment_count",
-            "installment_payments",
+            "order_splits",
         )
 
     def create(self, validated_data):
-        payments_data = validated_data.pop("installment_payments", [])
+        payments_data = validated_data.pop("order_splits", [])
         files_data = validated_data.pop("files", [])
 
         order = Order.objects.create(**validated_data)
@@ -100,7 +100,7 @@ class CustomerOrderDebtSerializer(serializers.ModelSerializer):
 
 class OrderSerializer(serializers.ModelSerializer):
     customer = serializers.SerializerMethodField()
-    installment_payments = InstallmentPaymentSerializer(many=True, read_only=True)
+    order_splits = InstallmentPaymentSerializer(many=True, read_only=True)
 
     class Meta:
         model = Order
@@ -113,7 +113,7 @@ class OrderSerializer(serializers.ModelSerializer):
             "created_at",
             "is_installment",
             "installment_count",
-            "installment_payments",
+            "order_splits",
         )
 
     def get_customer(self, obj):
