@@ -44,7 +44,6 @@ class Order(BaseModel):
     price = models.DecimalField(
         max_digits=10,
         decimal_places=2,
-        default=0,
     )
 
     is_installment = models.BooleanField(default=False)
