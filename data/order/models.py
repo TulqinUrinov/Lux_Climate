@@ -26,6 +26,7 @@ class Order(BaseModel):
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
+        related_name="orders",
     )
 
     order_type = models.CharField(
