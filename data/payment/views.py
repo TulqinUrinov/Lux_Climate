@@ -40,10 +40,14 @@ class DebtSplitsListAPIView(ListAPIView):
     serializer_class = InstallmentPaymentSerializer
 
     def get_queryset(self):
+        if self.request.role == "CUSTOMER":
+            return self.request.customer.order_splits.filter(left__gt=0)
 
-        if self.request.role == "ADMIN":
-            return InstallmentPayment.objects.filter(left__gt=0)
+        # Assuming role is ADMIN (or something else allowed)
+        queryset = InstallmentPayment.objects.filter(left__gt=0)
+        
+        customer_id = self.request.GET.get("customer")
+        if customer_id:
+            queryset = queryset.filter(customer_id=customer_id)
 
-        customer: Customer = self.request.customer
-
-        return customer.order_splits.filter(left__gt=0)
+        return queryset
