@@ -45,6 +45,5 @@ class DebtSplitsListAPIView(ListAPIView):
             return InstallmentPayment.objects.filter(left__gt=0)
 
         customer: Customer = self.request.customer
-        
-        
-        return customer.order_splits
+
+        return customer.order_splits.filter(left__gt=0)
