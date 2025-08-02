@@ -19,7 +19,7 @@ class CustomerViewSet(viewsets.ModelViewSet):
         return {"request": self.request}
 
     @action(detail=True, methods=["get", "post"], url_path="recalculate")
-    def recalculate(self, request):
+    def recalculate(self, request, pk):
 
         customer: "Customer" = cast(Customer, self.get_object())
 
