@@ -34,7 +34,7 @@ class Order(BaseModel):
         max_length=10,
     )
 
-    get_or_give = models.CharField(
+    order_type = models.CharField(
         choices=ORDER_TYPE_CHOICES,
         max_length=20,
     )
