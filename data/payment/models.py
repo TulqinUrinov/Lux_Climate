@@ -31,11 +31,10 @@ class InstallmentPayment(BaseModel):
     left = models.DecimalField(max_digits=12, decimal_places=2)
 
     def save(self, *args, **kwargs):
-
         if self.order is not None:
             self.customer = self.order.customer
 
-        return self.save(*args, **kwargs)
+        return super().save(*args, **kwargs)
 
 
 class Payment(BaseModel):
