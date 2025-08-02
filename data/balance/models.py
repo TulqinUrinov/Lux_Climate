@@ -23,7 +23,9 @@ class Balance(BaseModel):
 
     user: "User" = models.ForeignKey(
         "user.User",
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
     )
 
     customer: "Customer" = models.ForeignKey(
