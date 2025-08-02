@@ -55,7 +55,7 @@ class Customer(BaseModel):
                         user=order.created_by,
                         reason="ORDER",
                         change=amount * sign,
-                        amount=order.amount * sign,
+                        amount=amount * sign,
                         type=transaction_type,
                         created_at=order.created_at,
                         comment=f"Order #{order.id}",
