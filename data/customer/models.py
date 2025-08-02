@@ -11,6 +11,7 @@ from django.db import transaction
 from django.db.models import Sum
 
 from data.balance.models import Balance
+from data.payment.models import InstallmentPayment
 
 if TYPE_CHECKING:
     from data.payment.models import Payment
@@ -96,7 +97,7 @@ class Customer(BaseModel):
             available_received = total_received
 
             splits = (
-                OrderSplit.objects.filter(
+                InstallmentPayment.objects.filter(
                     order__customer=self, order__order_type="CUSTOMER_TO_COMPANY"
                 )
                 .select_related("order")
@@ -124,7 +125,7 @@ class Customer(BaseModel):
             available_paid = abs(total_paid) if total_paid < 0 else Decimal("0")
 
             splits = (
-                OrderSplit.objects.filter(
+                InstallmentPayment.objects.filter(
                     order__customer=self, order__order_type="COMPANY_TO_CUSTOMER"
                 )
                 .select_related("order")
