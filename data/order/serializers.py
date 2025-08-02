@@ -49,7 +49,7 @@ class OrderCreateSerializer(serializers.ModelSerializer):
                 payment_date=order.created_at,
                 left=order.price,
             )
-            
+
         order.customer.recalculate_balance()
 
         return order

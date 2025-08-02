@@ -108,6 +108,7 @@ class Customer(BaseModel):
                         split.left = planned - available_received
                         available_received = Decimal("0")
                     else:
+                        print("no planned")
                         split.left = planned
 
                     split.save(update_fields=["left"])
