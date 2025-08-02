@@ -35,7 +35,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/", include("data.bot.urls")),
     path("api/", include("data.user.urls")),
-    path("api/", include("data.customer.urls")),
+    path("api/customers/", include("data.customer.urls")),
     path("api/orders/", include("data.order.urls")),
     path("api/", include("data.balance.urls")),
     path("api/", include("data.file.urls")),
