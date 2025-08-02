@@ -16,12 +16,22 @@ class OrderCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Order
-        fields = ('id', 'customer', 'order_type', 'get_or_give', 'comment', 'files',
-                  'price', 'is_installment', 'installment_count', 'installment_payments')
+        fields = (
+            "id",
+            "customer",
+            "order_type",
+            "get_or_give",
+            "comment",
+            "files",
+            "price",
+            "is_installment",
+            "installment_count",
+            "installment_payments",
+        )
 
     def create(self, validated_data):
-        payments_data = validated_data.pop('installment_payments', [])
-        files_data = validated_data.pop('files', [])
+        payments_data = validated_data.pop("installment_payments", [])
+        files_data = validated_data.pop("files", [])
 
         order = Order.objects.create(**validated_data)
 
@@ -33,33 +43,33 @@ class OrderCreateSerializer(serializers.ModelSerializer):
             InstallmentPayment.objects.create(order=order, **payment_data)
 
         # Foydalanuvchini request'dan olish
-        request = self.context.get("request")
-        user_id = request.user.id
-        user = User.objects.filter(id=user_id).first()
+        # request = self.context.get("request")
+        # user_id = request.user.id
+        # user = User.objects.filter(id=user_id).first()
 
-        if order.get_or_give == 'give_order':
-            # Biz mijozga mahsulot berdik → hali pul olmadik → chiqim
-            Balance.objects.create(
-                user=user,
-                customer=order.customer,
-                amount=order.price,
-                reason="order",
-                comment=f"Buyurtma berildi",
-                type='outcome',
-                change=-abs(order.price),
-            )
+        # if order.get_or_give == "give_order":
+        #     # Biz mijozga mahsulot berdik → hali pul olmadik → chiqim
+        #     Balance.objects.create(
+        #         user=user,
+        #         customer=order.customer,
+        #         amount=order.price,
+        #         reason="order",
+        #         comment=f"Buyurtma berildi",
+        #         type="outcome",
+        #         change=-abs(order.price),
+        #     )
 
-        elif order.get_or_give == 'get_order':
-            # Biz mijozdan mahsulot oldik unga + price yoziladi
-            Balance.objects.create(
-                user=user,
-                customer=order.customer,
-                amount=order.price,
-                reason="order",
-                comment=f"Buyurtma olindi",
-                type='income',
-                change=abs(order.price),
-            )
+        # elif order.get_or_give == "get_order":
+        #     # Biz mijozdan mahsulot oldik unga + price yoziladi
+        #     Balance.objects.create(
+        #         user=user,
+        #         customer=order.customer,
+        #         amount=order.price,
+        #         reason="order",
+        #         comment=f"Buyurtma olindi",
+        #         type="income",
+        #         change=abs(order.price),
+        #     )
 
         return order
 
@@ -69,7 +79,7 @@ class OrderListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Order
-        fields = ('id', 'customer', 'order_type', 'price', 'created_at')
+        fields = ("id", "customer", "order_type", "price", "created_at")
 
     def get_customer(self, obj):
         return obj.customer.full_name
@@ -78,14 +88,14 @@ class OrderListSerializer(serializers.ModelSerializer):
 class CustomerOrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
-        fields = ('id', 'order_type', 'price', 'created_at')
+        fields = ("id", "order_type", "price", "created_at")
 
 
 # Customer Order Debt
 class CustomerOrderDebtSerializer(serializers.ModelSerializer):
     class Meta:
         model = Balance
-        fields = ('id', 'reason', 'amount', 'created_at')
+        fields = ("id", "reason", "amount", "created_at")
 
 
 class OrderSerializer(serializers.ModelSerializer):
@@ -94,15 +104,17 @@ class OrderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Order
-        fields = ('id',
-                  'customer',
-                  'order_type',
-                  'get_or_give',
-                  'price',
-                  'created_at',
-                  'is_installment',
-                  'installment_count',
-                  'installment_payments',)
+        fields = (
+            "id",
+            "customer",
+            "order_type",
+            "get_or_give",
+            "price",
+            "created_at",
+            "is_installment",
+            "installment_count",
+            "installment_payments",
+        )
 
     def get_customer(self, obj):
         return obj.customer.full_name
