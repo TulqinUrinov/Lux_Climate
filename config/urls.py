@@ -39,7 +39,7 @@ urlpatterns = [
     path("api/orders/", include("data.order.urls")),
     path("api/", include("data.balance.urls")),
     path("api/", include("data.file.urls")),
-    path("api/", include("data.payment.urls")),
+    path("api/payments", include("data.payment.urls")),
     # Swagger
     re_path(
         r"^swagger(?P<format>\.json|\.yaml)$",
