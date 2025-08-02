@@ -39,37 +39,16 @@ class OrderCreateSerializer(serializers.ModelSerializer):
         order.files.set(files_data)
 
         # To‘lovlarni saqlash
-        for payment_data in payments_data:
-            InstallmentPayment.objects.create(order=order, **payment_data)
-
-        # Foydalanuvchini request'dan olish
-        # request = self.context.get("request")
-        # user_id = request.user.id
-        # user = User.objects.filter(id=user_id).first()
-
-        # if order.get_or_give == "give_order":
-        #     # Biz mijozga mahsulot berdik → hali pul olmadik → chiqim
-        #     Balance.objects.create(
-        #         user=user,
-        #         customer=order.customer,
-        #         amount=order.price,
-        #         reason="order",
-        #         comment=f"Buyurtma berildi",
-        #         type="outcome",
-        #         change=-abs(order.price),
-        #     )
-
-        # elif order.get_or_give == "get_order":
-        #     # Biz mijozdan mahsulot oldik unga + price yoziladi
-        #     Balance.objects.create(
-        #         user=user,
-        #         customer=order.customer,
-        #         amount=order.price,
-        #         reason="order",
-        #         comment=f"Buyurtma olindi",
-        #         type="income",
-        #         change=abs(order.price),
-        #     )
+        if order.is_installment:
+            for payment_data in payments_data:
+                InstallmentPayment.objects.create(order=order, **payment_data)
+        else:
+            InstallmentPayment.objects.create(
+                order=order,
+                amount=order.price,
+                payment_date=order.created_at,
+                left=order.price,
+            )
 
         return order
 
