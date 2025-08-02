@@ -19,7 +19,7 @@ class OrderCreateSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "customer",
-            "order_type",
+            "product",
             "order_type",
             "comment",
             "files",
@@ -60,7 +60,7 @@ class OrderListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Order
-        fields = ("id", "customer", "order_type", "price", "created_at")
+        fields = ("id", "customer", "product", "order_type", "price", "created_at")
 
     def get_customer(self, obj):
         return obj.customer.full_name
@@ -69,7 +69,7 @@ class OrderListSerializer(serializers.ModelSerializer):
 class CustomerOrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
-        fields = ("id", "order_type", "price", "created_at")
+        fields = ("id", "order_type", "product", "price", "created_at")
 
 
 # Customer Order Debt
