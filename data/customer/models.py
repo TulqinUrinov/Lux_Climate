@@ -95,6 +95,8 @@ class Customer(BaseModel):
             ] or Decimal("0")
             available_received = total_received
 
+            print(available_received)
+
             for order in self.orders.filter(
                 order_type="CUSTOMER_TO_COMPANY"
             ).prefetch_related("order_splits"):
