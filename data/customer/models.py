@@ -31,6 +31,8 @@ class Customer(BaseModel):
     balances: "models.QuerySet[Balance]"
     orders: "models.QuerySet[Order]"
 
+    order_splits: "models.QuerySet[InstallmentPayment]"
+
     def recalculate_balance(self):
         with transaction.atomic():
             # 1. Delete old balances
