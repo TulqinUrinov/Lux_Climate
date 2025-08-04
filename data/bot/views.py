@@ -9,6 +9,7 @@ from rest_framework.exceptions import ValidationError
 
 from .middleware import BotUserJWTMiddleware
 from .models import BotUser
+from .permission import IsBotAuthenticated
 from .utils import BotUserJWTAuthentication
 
 from telegram_webapp_auth.auth import TelegramAuthenticator, generate_secret_key
@@ -90,6 +91,7 @@ class Me(APIView):
     """
     Get user or customer information.
     """
+    permission_classes = [IsBotAuthenticated]
 
     def get(self, request):
         bot_user = request.bot_user
