@@ -1,12 +1,12 @@
 from datetime import datetime, time
 from django.db.models import Sum
 from rest_framework.generics import CreateAPIView
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .services import mutual_settlements
 from .serializers import *
+from ..bot.permission import IsBotAuthenticated
 from ..order.models import Order
 from ..payment.models import InstallmentPayment
 
@@ -14,7 +14,7 @@ from ..payment.models import InstallmentPayment
 class BalanceCreateAPIView(CreateAPIView):
     serializer_class = BalanceSerializer
     queryset = Balance.objects.all()
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsBotAuthenticated]
 
     def perform_create(self, serializer):
         data = self.request.data
@@ -31,7 +31,7 @@ class BalanceCreateAPIView(CreateAPIView):
 
 
 class MutualSettlementView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsBotAuthenticated]
 
     def get(self, request, customer_id):
         settlements = mutual_settlements(self, customer_id=customer_id, last_one=False)
@@ -46,7 +46,7 @@ class MutualSettlementView(APIView):
 
 
 class BalanceStatusView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsBotAuthenticated]
 
     def get(self, request):
         start_date = request.query_params.get("start_date")
