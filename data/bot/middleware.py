@@ -26,6 +26,7 @@ class BotUserJWTMiddleware:
                 payload = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
 
                 bot_user_id = payload.get("bot_user_id")
+
                 user_id = payload.get("user_id")
                 customer_id = payload.get("customer_id")
 
@@ -33,18 +34,18 @@ class BotUserJWTMiddleware:
                     request.bot_user = BotUser.objects.filter(id=bot_user_id).first()
 
                 if user_id:
-                    request.user = User.objects.filter(id=user_id).first()
-                    # request.admin = User.objects.filter(id=user_id).first()
+                    # request.user = User.objects.filter(id=user_id).first()
+                    request.admin = User.objects.filter(id=user_id).first()
 
 
                 if customer_id:
                     request.customer = Customer.objects.filter(id=customer_id).first()
 
-                # request.role = (
-                #     "ADMIN"
-                #     if request.user is not None
-                #     else ("CUSTOMER" if request.customer is not None else None)
-                # )
+                request.role = (
+                    "ADMIN"
+                    if request.user is not None
+                    else ("CUSTOMER" if request.customer is not None else None)
+                )
 
             except jwt.ExpiredSignatureError:
                 return JsonResponse({"error": "Token expired"}, status=401)
