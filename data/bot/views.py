@@ -31,20 +31,20 @@ class JWTtokenGenerator(APIView):
         authenticator = TelegramAuthenticator(secret_key)
         auth_data = authenticator.validate(init_data)
 
-        user_id = auth_data.user.id
-        bot_user = BotUser.objects.filter(chat_id=user_id).first()
-        print(auth_data, user_id)
+        tg_user_id = auth_data.user.id
+        bot_user = BotUser.objects.filter(chat_id=tg_user_id).first()
+        print(auth_data, tg_user_id)
 
         if not bot_user:
             return Response(
-                {"error": "User not found", "user_id": user_id},
+                {"error": "User not found", "user_id": tg_user_id},
                 status=status.HTTP_404_NOT_FOUND,
             )
 
         payload = {}
         if bot_user.user:
             refresh = RefreshToken.for_user(bot_user.user)
-            payload["user_id"] = bot_user.user.id
+            payload["tg_user_id"] = bot_user.user.id
         elif bot_user.customer:
             refresh = RefreshToken.for_user(bot_user.customer)
             payload["customer_id"] = bot_user.customer.id

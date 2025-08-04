@@ -28,6 +28,7 @@ class BotUserJWTMiddleware:
                 bot_user_id = payload.get("bot_user_id")
 
                 user_id = payload.get("user_id")
+
                 customer_id = payload.get("customer_id")
 
                 if bot_user_id:
