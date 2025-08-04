@@ -21,7 +21,7 @@ if not BOT_TOKEN:
 
 
 class JWTtokenGenerator(APIView):
-    permission_classes = [IsBotAuthenticated]
+    permission_classes = []
 
     def post(self, request):
         init_data = request.data.get("init_data")
