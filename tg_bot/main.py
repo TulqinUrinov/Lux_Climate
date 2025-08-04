@@ -8,7 +8,12 @@ from telegram import (
 )
 from telegram.ext import ApplicationBuilder, MessageHandler, filters
 from data.bot.models import BotUser
-from tg_bot.contact_handler import contact_handler
+# from tg_bot.contact_handler import contact_handler
+
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup
+from data.bot.models import BotUser
+from data.customer.models import Customer
+from data.user.models import User
 
 
 class Bot:
@@ -51,8 +56,69 @@ class Bot:
     def __init__(self):
         BOT_TOKEN = os.environ.get("BOT_TOKEN")
         self.app = ApplicationBuilder().token(BOT_TOKEN).build()
-        self.app.add_handler(MessageHandler(filters.CONTACT, contact_handler))
+        self.app.add_handler(MessageHandler(filters.CONTACT, self.contact_handler))
         self.app.add_handler(MessageHandler(filters.TEXT, self.start))
 
     def run(self):
         self.app.run_polling()
+
+    async def contact_handler(self, update, context):
+        contact = update.message.contact
+        phone_number = contact.phone_number
+        tg_user = update.effective_user
+
+        print(phone_number)
+
+        user_obj = User.objects.filter(phone_number=phone_number).first()
+        customer_obj = Customer.objects.filter(phone_number=phone_number).first()
+
+        if user_obj:
+            bot_user, _ = BotUser.objects.get_or_create(
+                chat_id=tg_user.id,
+                defaults={
+                    "tg_name": tg_user.full_name,
+                    "username": tg_user.username,
+                    "user": user_obj,
+                },
+            )
+
+            # text = "Pastdagi tugmani bosing"
+            # button = [
+            #     [
+            #         InlineKeyboardButton(
+            #             text="Dasturga kirish", url="https://luxe-climate.vercel.app/"
+            #         )
+            #     ]
+            # ]
+            # reply_markup = InlineKeyboardMarkup(button)
+
+            # await update.message.reply_text(text=text, reply_markup=reply_markup)
+
+            return await self.start(update, context)
+
+        elif customer_obj:
+            bot_user, _ = BotUser.objects.get_or_create(
+                chat_id=tg_user.id,
+                defaults={
+                    "tg_name": tg_user.full_name,
+                    "username": tg_user.username,
+                    "customer": customer_obj,
+                },
+            )
+            # text = "Pastdagi tugmani bosing"
+            # button = [
+            #     [
+            #         InlineKeyboardButton(
+            #             text="Dasturga kirish",
+            #             url="https://luxe-climate.vercel.app/user_info",
+            #         )
+            #     ]
+            # ]
+            # reply_markup = InlineKeyboardMarkup(button)
+
+            # await update.message.reply_text(text=text, reply_markup=reply_markup)
+
+            return await self.start(update, context)
+
+        else:
+            await update.message.reply_text(text="Telefon raqami topilmadi!!!")
