@@ -37,14 +37,17 @@ class BotUserJWTMiddleware:
 
                 if bot_user_id:
                     request.bot_user = BotUser.objects.filter(id=bot_user_id).first()
+                    print(f"bot_user: {request.bot_user}")
 
                 if user_id:
                     # request.user = User.objects.filter(id=user_id).first()
                     request.admin = User.objects.filter(id=user_id).first()
+                    print(f"admin: {request.admin}")
 
 
                 if customer_id:
                     request.customer = Customer.objects.filter(id=customer_id).first()
+                    print(f"customer: {request.customer}")
 
                 request.role = (
                     "ADMIN"
