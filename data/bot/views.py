@@ -99,37 +99,31 @@ class Me(APIView):
         customer = request.customer
         print(customer)
 
-        print("sdiufhsdifuh")
+        if not bot_user:
+            return Response(
+                {"error": " BotUser not found"}, status=status.HTTP_404_NOT_FOUND
+            )
 
-        return Response({"user": user,
-                         "customer": customer,},
-                        status=status.HTTP_200_OK)
+        if user:
+            user_data = {
+                "id": user.id,
+                "name": user.full_name or "",
+                "number": user.phone_number or "",
+                "chat_id": bot_user.chat_id,
+            }
+        elif customer:
+            user_data = {
+                "id": customer.id,
+                "name": customer.full_name or "",
+                "number": customer.phone_number or "",
+                "chat_id": bot_user.chat_id,
+            }
+        else:
+            return Response(
+                {"error": "User not found aaa"}, status=status.HTTP_404_NOT_FOUND
+            )
 
-        # if not bot_user:
-        #     return Response(
-        #         {"error": " BotUser not found"}, status=status.HTTP_404_NOT_FOUND
-        #     )
-        #
-        # if user:
-        #     user_data = {
-        #         "id": user.id,
-        #         "name": user.full_name or "",
-        #         "number": user.phone_number or "",
-        #         "chat_id": bot_user.chat_id,
-        #     }
-        # elif customer:
-        #     user_data = {
-        #         "id": customer.id,
-        #         "name": customer.full_name or "",
-        #         "number": customer.phone_number or "",
-        #         "chat_id": bot_user.chat_id,
-        #     }
-        # else:
-        #     return Response(
-        #         {"error": "User not found aaa"}, status=status.HTTP_404_NOT_FOUND
-        #     )
-        #
-        # return Response(user_data, status=status.HTTP_200_OK)
+        return Response(user_data, status=status.HTTP_200_OK)
 
 # class Me(APIView):
 #     authentication_classes = [BotUserJWTMiddleware]
