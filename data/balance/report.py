@@ -3,15 +3,15 @@ import xlsxwriter
 from datetime import datetime, time
 from django.http import HttpResponse
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 from data.balance.models import Balance
 from data.balance.services import mutual_settlements
+from data.bot.permission import IsBotAuthenticated
 
 
 class BalanceReportExportView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsBotAuthenticated]
 
     def get(self, request):
         start_date = request.query_params.get("start_date")
