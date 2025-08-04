@@ -44,7 +44,7 @@ class BotUserJWTMiddleware:
 
                 request.role = (
                     "ADMIN"
-                    if request.user is not None
+                    if request.admin is not None
                     else ("CUSTOMER" if request.customer is not None else None)
                 )
 

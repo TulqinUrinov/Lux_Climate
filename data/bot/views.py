@@ -95,7 +95,6 @@ class Me(APIView):
         bot_user = request.bot_user
         print(bot_user)
         user = request.admin
-        # user = request.user
         print(user)
         customer = request.customer
         print(customer)
