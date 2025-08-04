@@ -12,10 +12,13 @@ class BotUserJWTMiddleware:
 
     def __call__(self, request):
         auth_header = request.headers.get("Authorization")
+        print(f"[Middleware] Authorization header: {auth_header}")
         if auth_header and auth_header.startswith("Bearer "):
             token = auth_header.split(" ")[1]
         else:
             token = None
+
+        print(f"[Middleware] JWT token: {token}")
 
         request.bot_user = None
         request.customer = None
@@ -26,10 +29,11 @@ class BotUserJWTMiddleware:
                 payload = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
 
                 bot_user_id = payload.get("bot_user_id")
-
+                print(f"bot_user_id: {bot_user_id}")
                 user_id = payload.get("user_id")
-
+                print(f"user_id: {user_id}")
                 customer_id = payload.get("customer_id")
+                print(f"customer_id: {customer_id}")
 
                 if bot_user_id:
                     request.bot_user = BotUser.objects.filter(id=bot_user_id).first()
