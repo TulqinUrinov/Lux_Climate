@@ -120,7 +120,7 @@ class Me(APIView):
             }
         else:
             return Response(
-                {"error": "User not found"}, status=status.HTTP_404_NOT_FOUND
+                {"error": "User not found aaa"}, status=status.HTTP_404_NOT_FOUND
             )
 
         return Response(user_data, status=status.HTTP_200_OK)
