@@ -8,7 +8,7 @@ from telegram import (
 )
 from telegram.ext import ApplicationBuilder, MessageHandler, filters
 from data.bot.models import BotUser
-from tg_bot.contact_handler import contact_handler
+# from tg_bot.contact_handler import contact_handler
 
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 from data.bot.models import BotUser
