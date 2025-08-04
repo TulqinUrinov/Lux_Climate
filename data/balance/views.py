@@ -54,16 +54,16 @@ class BalanceStatusView(APIView):
 
         # Umumiy (filternatsiya qilinmagan) income va outcome
         total_income = (
-            Balance.objects.filter(type="income").aggregate(total=Sum("amount"))[
-                "total"
-            ]
-            or 0
+                Balance.objects.filter(type="income").aggregate(total=Sum("amount"))[
+                    "total"
+                ]
+                or 0
         )
         total_outcome = (
-            Balance.objects.filter(type="outcome").aggregate(total=Sum("amount"))[
-                "total"
-            ]
-            or 0
+                Balance.objects.filter(type="outcome").aggregate(total=Sum("amount"))[
+                    "total"
+                ]
+                or 0
         )
 
         start_datetime = None
@@ -90,31 +90,31 @@ class BalanceStatusView(APIView):
             ).count()
 
             orders_sum_price = (
-                Order.objects.filter(
-                    created_at__range=[start_datetime, end_datetime]
-                ).aggregate(total=Sum("price"))["total"]
-                or 0
+                    Order.objects.filter(
+                        created_at__range=[start_datetime, end_datetime]
+                    ).aggregate(total=Sum("price"))["total"]
+                    or 0
             )
 
             due_payment = (
-                InstallmentPayment.objects.filter(
-                    created_at__gt=end_datetime
-                ).aggregate(total=Sum("amount"))["total"]
-                or 0
+                    InstallmentPayment.objects.filter(
+                        created_at__gt=end_datetime
+                    ).aggregate(total=Sum("amount"))["total"]
+                    or 0
             )
 
             # Sana bo‘yicha faqat income ni filternatsiya qilamiz
             filtered_income = (
-                Balance.objects.filter(
-                    type="income", created_at__range=[start_datetime, end_datetime]
-                ).aggregate(total=Sum("amount"))["total"]
-                or 0
+                    Balance.objects.filter(
+                        type="income", created_at__range=[start_datetime, end_datetime]
+                    ).aggregate(total=Sum("amount"))["total"]
+                    or 0
             )
         else:
             orders = Order.objects.count()
             orders_sum_price = Order.objects.aggregate(total=Sum("price"))["total"] or 0
             due_payment = (
-                InstallmentPayment.objects.aggregate(total=Sum("amount"))["total"] or 0
+                    InstallmentPayment.objects.aggregate(total=Sum("amount"))["total"] or 0
             )
 
             # Agar sana yo'q bo‘lsa, income ham umumiy bo'ladi

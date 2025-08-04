@@ -26,8 +26,14 @@ SECRET_KEY = 'django-insecure-)b^lp@!8yez0no6f_le9puwe(1)v#wi6)k3$8)mojy)qrbyzb=
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["127.0.0.1", "localhost", "192.168.0.103", "1a892d4ac10a.ngrok-free.app", "luxe-climate.vercel.app",
-                 "91.186.197.71", "app.lux.sector-soft.ru", ]
+ALLOWED_HOSTS = ["127.0.0.1",
+                 "localhost",
+                 "192.168.0.103",
+                 "1a892d4ac10a.ngrok-free.app",
+                 "luxe-climate.vercel.app",
+                 "91.186.197.71",
+                 "app.lux.sector-soft.ru",
+                 ]
 
 # Application definition
 
@@ -52,6 +58,7 @@ INSTALLED_APPS = [
     'drf_yasg',
     'rest_framework',
     'rest_framework_simplejwt',
+    'django_celery_beat',
 ]
 
 MIDDLEWARE = [
@@ -150,6 +157,16 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Celery broker URL (Redis service nomidan)
+CELERY_BROKER_URL = 'redis://redis:6379/0'
+
+# Task serialization
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+
+# Beat scheduler (django-celery-beat bilan ishlatish uchun)
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 
 REST_FRAMEWORK = {
 

@@ -16,7 +16,6 @@ services:
       - "5433:5432"
 
 
-
   django:
     build: .
     container_name: django
@@ -30,6 +29,7 @@ services:
 
     command: python manage.py runserver 0.0.0.0:8001
 
+
   lux_bot:
     build: .
     container_name: lux_bot
@@ -42,6 +42,38 @@ services:
 
     restart: unless-stopped
     command: python manage.py bot
+
+
+  celery:
+    build: .
+    container_name: celery
+    env_file:
+      - .env
+    volumes: *shared_volumes
+    depends_on:
+      - django
+      - db
+    command: celery -A config worker --loglevel=info
+
+
+  celery_beat:
+    build: .
+    container_name: celery_beat
+    env_file:
+      - .env
+    volumes: *shared_volumes
+    depends_on:
+      - django
+      - db
+    command: celery -A config beat --loglevel=info --scheduler django_celery_beat.schedulers:DatabaseScheduler
+
+
+  redis:
+    image: redis:alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+
 
 volumes:
   db:
