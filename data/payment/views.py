@@ -1,6 +1,6 @@
 from rest_framework.generics import ListAPIView, ListCreateAPIView
-from rest_framework.permissions import IsAuthenticated
 
+from data.bot.permission import IsBotAuthenticated
 from data.common.pagination import CustomPagination
 from data.customer.models import Customer
 from data.payment.models import InstallmentPayment, Payment
@@ -12,14 +12,12 @@ from data.payment.serializers import (
 
 
 class PaymentListView(ListCreateAPIView):
-
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsBotAuthenticated]
     pagination_class = CustomPagination
 
     serializer_class = PaymentSerializer
 
     def get_queryset(self):
-
         if self.request.role == "ADMIN":
             return Payment.objects.all()
 
@@ -28,13 +26,11 @@ class PaymentListView(ListCreateAPIView):
         return customer.payments.all()
 
     def perform_create(self, serializer: PaymentSerializer):
-
         serializer.save(created_by=self.request.admin)
 
 
 class DebtSplitsListAPIView(ListAPIView):
-
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsBotAuthenticated]
     pagination_class = CustomPagination
 
     serializer_class = InstallmentPaymentSerializer

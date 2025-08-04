@@ -1,13 +1,12 @@
 from rest_framework import viewsets
-from rest_framework.permissions import IsAuthenticated
 from .models import User
-from .permission import UserPermission
 from .serializers import UserSerializer
+from ..bot.permission import IsBotAuthenticated
 from ..common.pagination import CustomPagination
 
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_class = [IsAuthenticated, UserPermission]
+    permission_classes = [IsBotAuthenticated]
     pagination_class = CustomPagination

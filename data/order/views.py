@@ -1,15 +1,15 @@
 from rest_framework import viewsets, status
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.decorators import action
 
+from data.bot.permission import IsBotAuthenticated
 from data.common.pagination import CustomPagination
 from data.order.serializers import *
 
 
 class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all()
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsBotAuthenticated]
     pagination_class = CustomPagination
 
     def get_serializer_class(self):
