@@ -24,3 +24,5 @@ def check_upcoming_installments():
                     amount=installment.amount,
                     date=installment.payment_date
                 )
+            else:
+                pass
