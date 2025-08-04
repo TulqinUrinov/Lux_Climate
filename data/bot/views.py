@@ -44,7 +44,7 @@ class JWTtokenGenerator(APIView):
         payload = {}
         if bot_user.user:
             refresh = RefreshToken.for_user(bot_user.user)
-            payload["tg_user_id"] = bot_user.user.id
+            payload["tg_user_id"] = tg_user_id
         elif bot_user.customer:
             refresh = RefreshToken.for_user(bot_user.customer)
             payload["customer_id"] = bot_user.customer.id
