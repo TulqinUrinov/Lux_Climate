@@ -20,9 +20,9 @@ class BotUserJWTMiddleware:
 
         print(f"[Middleware] JWT token: {token}")
 
-        request.bot_user = None
-        request.customer = None
-        request.user = None
+        # request.bot_user = None
+        # request.customer = None
+        # request.user = None
 
         if token:
             try:
