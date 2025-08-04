@@ -54,6 +54,8 @@ class BotUserJWTMiddleware:
                     else ("CUSTOMER" if request.customer is not None else None)
                 )
 
+                print(f"role: {request.role}")
+
             except jwt.ExpiredSignatureError:
                 return JsonResponse({"error": "Token expired"}, status=401)
             except jwt.DecodeError:
