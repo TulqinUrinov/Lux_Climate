@@ -26,7 +26,14 @@ class PaymentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Payment
-        fields = ["id", "customer", "payment_type", "amount", "created_by"]
+        fields = [
+            "id",
+            "customer",
+            "payment_type",
+            "amount",
+            "created_by",
+            "created_at",
+        ]
 
     def to_representation(self, instance):
         res = super().to_representation(instance)
