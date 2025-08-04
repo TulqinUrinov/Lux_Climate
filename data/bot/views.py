@@ -1,3 +1,5 @@
+from traceback import print_tb
+
 from decouple import config
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -91,9 +93,12 @@ class Me(APIView):
 
     def get(self, request):
         bot_user = request.bot_user
+        print(f"Bot User: {bot_user}")
         # user = request.admin
         user = request.user
+        print(f"User: {user}")
         customer = request.customer
+        print(f"Customer: {customer}")
 
         if not bot_user:
             return Response(
