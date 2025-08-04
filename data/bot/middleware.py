@@ -49,6 +49,8 @@ class BotUserJWTMiddleware:
                     request.customer = Customer.objects.filter(id=customer_id).first()
                     print(f"customer: {request.customer}")
 
+                request.user = request.admin or request.customer
+
                 request.role = (
                     "ADMIN"
                     if request.admin is not None
