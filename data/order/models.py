@@ -1,12 +1,12 @@
 from django.db import models
 from typing import TYPE_CHECKING
 from data.common.models import BaseModel
-from data.payment.models import InstallmentPayment
 from data.user.models import User
 
 if TYPE_CHECKING:
     from data.customer.models import Customer
     from data.file.models import File
+    from data.payment.models import InstallmentPayment
 
 
 class Order(BaseModel):
