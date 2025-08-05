@@ -16,6 +16,7 @@ def check_upcoming_installments():
         for installment in installments:
             customer = installment.customer
             telegram_id = customer.bot_user.chat_id
+            print(f" Customer Telegram ID: {telegram_id}")
 
             if customer and telegram_id:
                 send_payment_reminder(
