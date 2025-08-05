@@ -43,6 +43,12 @@ services:
     restart: unless-stopped
     command: python manage.py bot
 
+  redis:
+    image: redis:alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
 
   celery:
     build: .
@@ -53,8 +59,10 @@ services:
     depends_on:
       - django
       - db
+      - redis
+    restart: unless-stopped
+    working_dir: /usr/src/app
     command: celery -A config worker --loglevel=info
-
 
   celery_beat:
     build: .
@@ -65,15 +73,10 @@ services:
     depends_on:
       - django
       - db
-    command: celery -A config beat --loglevel=info --scheduler django_celery_beat.schedulers:DatabaseScheduler
-
-
-  redis:
-    image: redis:alpine
-    container_name: redis
-    ports:
-      - "6379:6379"
-
+      - redis
+    restart: unless-stopped
+    working_dir: /usr/src/app
+    command: celery -A config beat --loglevel=info --scheduler celery.beat.PersistentScheduler
 
 volumes:
   db:

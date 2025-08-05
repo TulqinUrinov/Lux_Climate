@@ -158,15 +158,14 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Celery broker URL (Redis service nomidan)
-CELERY_BROKER_URL = 'redis://redis:6379/0'
-
-# Task serialization
+# Celery sozlamalari
+CELERY_BROKER_URL = 'redis://localhost:6379/0'  # yoki boshqa broker URL
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'Asia/Tashkent'
 
-# Beat scheduler (django-celery-beat bilan ishlatish uchun)
-CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=120),
