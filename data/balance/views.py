@@ -93,11 +93,17 @@ class BalanceStatusView(APIView):
             )
 
             due_payment = (
-                    InstallmentPayment.objects.filter(
-                        created_at__gt=end_datetime
-                    ).aggregate(total=Sum("amount"))["total"]
-                    or 0
+                InstallmentPayment.objects.filter(
+                    left__gt = 0
+                ).aggregate(total=Sum("amount"))["total"] or 0
             )
+
+            # due_payment = (
+            #         InstallmentPayment.objects.filter(
+            #             created_at__gt=end_datetime
+            #         ).aggregate(total=Sum("amount"))["total"]
+            #         or 0
+            # )
 
             # Sana bo‘yicha faqat income ni filternatsiya qilamiz
             filtered_income = (
