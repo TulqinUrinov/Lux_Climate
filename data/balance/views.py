@@ -18,9 +18,9 @@ class BalanceCreateAPIView(CreateAPIView):
 
     def perform_create(self, serializer):
         data = self.request.data
-        if data.get("type") == "outcome":
+        if data.get("type") == "OUTCOME":
             change = -abs(float(data["amount"]))
-        elif data.get("type") == "income":
+        elif data.get("type") == "INCOME":
             change = abs(float(data["amount"]))
         else:
             raise serializers.ValidationError(
@@ -54,16 +54,12 @@ class BalanceStatusView(APIView):
 
         # Umumiy (filternatsiya qilinmagan) income va outcome
         total_income = (
-                Balance.objects.filter(type="income").aggregate(total=Sum("amount"))[
-                    "total"
-                ]
-                or 0
+                Balance.objects.filter(type="INCOME").aggregate(
+                    total=Sum("amount"))["total"] or 0
         )
         total_outcome = (
-                Balance.objects.filter(type="outcome").aggregate(total=Sum("amount"))[
-                    "total"
-                ]
-                or 0
+                Balance.objects.filter(type="OUTCOME").aggregate(
+                    total=Sum("amount"))["total"] or 0
         )
 
         start_datetime = None
@@ -106,7 +102,7 @@ class BalanceStatusView(APIView):
             # Sana bo‘yicha faqat income ni filternatsiya qilamiz
             filtered_income = (
                     Balance.objects.filter(
-                        type="income", created_at__range=[start_datetime, end_datetime]
+                        type="INCOME", created_at__range=[start_datetime, end_datetime]
                     ).aggregate(total=Sum("amount"))["total"]
                     or 0
             )
