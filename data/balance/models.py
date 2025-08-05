@@ -36,7 +36,7 @@ class Balance(BaseModel):
     )
 
     amount = models.DecimalField(
-        max_digits=10,
+        max_digits=20,
         decimal_places=2,
     )
 
@@ -55,7 +55,7 @@ class Balance(BaseModel):
     )
 
     change = models.DecimalField(
-        max_digits=10,
+        max_digits=20,
         decimal_places=2,
     )
 

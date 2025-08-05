@@ -159,13 +159,14 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Celery sozlamalari
-CELERY_BROKER_URL = 'redis://localhost:6379/0'  # yoki boshqa broker URL
-CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+CELERY_BROKER_URL = 'redis://redis:6379/0'
+CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'Asia/Tashkent'
-
+CELERY_IMPORTS = ('data.payment.tasks',)  # Qo'shimcha import
+CELERYBEAT_SCHEDULE_FILENAME = '/path/to/celerybeat-schedule'
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=120),

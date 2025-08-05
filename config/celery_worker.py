@@ -1,14 +1,20 @@
 import os
-from datetime import timedelta
-
 from celery import Celery
+from datetime import timedelta
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
 
 app = Celery('config')
+app.config_from_object('django.conf:settings', namespace='CELERY')
+
+# Aniq app nomlarini ko'rsatish
+app.autodiscover_tasks(['data.payment'])
+
+# Beat sozlamalari
 app.conf.beat_schedule = {
     'check-installments-daily': {
         'task': 'data.payment.tasks.check_upcoming_installments',
-        'schedule': timedelta(days=1),  # har kuni
+        'schedule': timedelta(minutes=1),
     },
 }
+

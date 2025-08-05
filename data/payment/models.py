@@ -67,7 +67,7 @@ class Payment(BaseModel):
 
     payment_type = models.CharField(max_length=255, choices=PAYMENT_TYPE_CHOICES)
 
-    amount = models.DecimalField(max_digits=12, decimal_places=2)
+    amount = models.DecimalField(max_digits=20, decimal_places=2)
 
     comment = models.TextField(null=True, blank=True)
 

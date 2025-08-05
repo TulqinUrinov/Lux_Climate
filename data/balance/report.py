@@ -1,4 +1,7 @@
 import io
+import os
+
+import requests
 import xlsxwriter
 from datetime import datetime, time
 from django.http import HttpResponse
@@ -8,6 +11,7 @@ from rest_framework import status
 from data.balance.models import Balance
 from data.balance.services import mutual_settlements
 from data.bot.permission import IsBotAuthenticated
+from data.customer.models import Customer
 
 
 class BalanceReportExportView(APIView):
@@ -17,6 +21,8 @@ class BalanceReportExportView(APIView):
         start_date = request.query_params.get("start_date")
         end_date = request.query_params.get("end_date")
         customer_id = request.query_params.get("customer_id")
+        # customer = Customer.objects.filter(id=customer_id).first()
+        # chat_id = customer.botuser.chat_id
 
         if not start_date or not end_date or not customer_id:
             return Response(
@@ -91,6 +97,34 @@ class BalanceReportExportView(APIView):
         output.seek(0)
 
         filename = f"balance_hisobot_{start_date}_dan_{end_date}_gacha_customer_{customer_id}.xlsx"
+
+        # files = {'document': (filename, output.getvalue())}
+        # data = {'chat_id': chat_id}
+        #
+        # BOT_TOKEN = os.environ.get("BOT_TOKEN")
+        # if not BOT_TOKEN:
+        #     return Response(
+        #         {"error": "Telegram bot tokeni sozlanmagan"},
+        #         status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        #     )
+        #
+        # response = requests.post(
+        #     f'https://api.telegram.org/bot{BOT_TOKEN}/sendDocument',
+        #     files=files,
+        #     data=data
+        # )
+        #
+        # if response.status_code != 200:
+        #     return Response(
+        #         {"error": "Telegramga fayl yuborishda xatolik", "details": response.json()},
+        #         status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        #     )
+        #
+        # return Response(
+        #     {"success": "Hisobot fayli muvaffaqiyatli yuborildi"},
+        #     status=status.HTTP_200_OK,
+        # )
+
         response = HttpResponse(
             output,
             content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
