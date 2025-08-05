@@ -95,7 +95,7 @@ class BalanceStatusView(APIView):
             due_payment = (
                 InstallmentPayment.objects.filter(
                     left__gt = 0
-                ).aggregate(total=Sum("amount"))["total"] or 0
+                ).aggregate(total=Sum("left"))["total"] or 0
             )
 
             # due_payment = (
