@@ -29,15 +29,15 @@ class Customer(BaseModel):
     def clean(self):
         super().clean()
 
-        # + belgisi olib tashlanadi
-        if self.phone_number and self.phone_number.startswith('+'):
-            self.phone_number = self.phone_number[1:]
+        cleaned_phone = self.phone_number.lstrip('+') if self.phone_number else None
 
-        # User modelida bu telefon raqami bor-yo‘qligini tekshiramiz
         from data.user.models import User
 
-        if User.objects.filter(phone_number=self.phone_number).exists():
+        if cleaned_phone and User.objects.filter(phone_number=cleaned_phone).exists():
             raise ValidationError("Bu telefon raqami allaqachon User sifatida mavjud.")
+
+        # Modelga + belgisisiz telefon raqamni yozamiz
+        self.phone_number = cleaned_phone
 
     def save(self, *args, **kwargs):
         self.full_clean()
