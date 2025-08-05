@@ -19,6 +19,11 @@ class PaymentListView(ListCreateAPIView):
 
     def get_queryset(self):
         if self.request.role == "ADMIN":
+            customer_id = self.request.query_params.get("customer_id")
+
+            if customer_id:
+                return Payment.objects.filter(customer_id=customer_id).all()
+
             return Payment.objects.all()
 
         customer: Customer = self.request.customer
