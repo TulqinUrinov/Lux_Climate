@@ -55,7 +55,8 @@ class OrderViewSet(viewsets.ModelViewSet):
                 {"error": "customer_id is required"}, status=status.HTTP_400_BAD_REQUEST
             )
 
-        debts = Balance.objects.filter(customer_id=customer_id, type="outcome")
+        # debts = Balance.objects.filter(customer_id=customer_id, type="OUTCOME")
+        debts = InstallmentPayment.objects(customer_id=customer_id, left__gt=0)
 
         page = self.paginate_queryset(debts)
         if page is not None:
