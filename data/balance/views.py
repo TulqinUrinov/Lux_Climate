@@ -92,13 +92,6 @@ class BalanceStatusView(APIView):
                     or 0
             )
 
-            # due_payment = (
-            #         InstallmentPayment.objects.filter(
-            #             created_at__gt=end_datetime
-            #         ).aggregate(total=Sum("amount"))["total"]
-            #         or 0
-            # )
-
             # Sana bo‘yicha filternatsiya qilamiz
             filtered_income = (
                     Balance.objects.filter(
@@ -119,9 +112,6 @@ class BalanceStatusView(APIView):
         else:
             orders = Order.objects.count()
             orders_sum_price = Order.objects.aggregate(total=Sum("price"))["total"] or 0
-            # due_payment = (
-            #         InstallmentPayment.objects.aggregate(total=Sum("amount"))["total"] or 0
-            # )
 
             due_payment = total_outcome - total_income
 

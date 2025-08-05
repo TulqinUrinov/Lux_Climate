@@ -29,24 +29,18 @@ class BotUserJWTMiddleware:
                 payload = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
 
                 bot_user_id = payload.get("bot_user_id")
-                print(f"bot_user_id: {bot_user_id}")
                 user_id = payload.get("user_id")
-                print(f"user_id: {user_id}")
                 customer_id = payload.get("customer_id")
-                print(f"customer_id: {customer_id}")
 
                 if bot_user_id:
                     request.bot_user = BotUser.objects.filter(id=bot_user_id).first()
-                    print(f"bot_user: {request.bot_user}")
 
                 if user_id:
-                    # request.user = User.objects.filter(id=user_id).first()
                     request.admin = User.objects.filter(id=user_id).first()
-                    print(f"admin: {request.admin}")
 
                 if customer_id:
                     request.customer = Customer.objects.filter(id=customer_id).first()
-                    print(f"customer: {request.customer}")
+
 
                 request.role = (
                     "ADMIN"

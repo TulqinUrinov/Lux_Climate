@@ -1,5 +1,3 @@
-from traceback import print_tb
-
 from decouple import config
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -7,10 +5,8 @@ from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.exceptions import ValidationError
 
-from .middleware import BotUserJWTMiddleware
 from .models import BotUser
 from .permission import IsBotAuthenticated
-from .utils import BotUserJWTAuthentication
 
 from telegram_webapp_auth.auth import TelegramAuthenticator, generate_secret_key
 
@@ -34,7 +30,6 @@ class JWTtokenGenerator(APIView):
 
         user_id = auth_data.user.id
         bot_user = BotUser.objects.filter(chat_id=user_id).first()
-        print(auth_data, user_id, bot_user)
 
         if not bot_user:
             return Response(
@@ -95,11 +90,8 @@ class Me(APIView):
 
     def get(self, request):
         bot_user = request.bot_user
-        print(bot_user)
         user = request.admin
-        print(user)
         customer = request.customer
-        print(customer)
 
         if not bot_user:
             return Response(
@@ -126,24 +118,3 @@ class Me(APIView):
             )
 
         return Response(user_data, status=status.HTTP_200_OK)
-
-# class Me(APIView):
-#     authentication_classes = [BotUserJWTMiddleware]
-#     """
-#     Get user information.
-#     """
-#
-#     def get(self, request):
-#         user = request.user
-#         if not user:
-#             return Response(
-#                 {"error": "User not found"}, status=status.HTTP_404_NOT_FOUND
-#             )
-#
-#         user_data = {
-#             "id": user.id,
-#             "name": user.full_name,
-#             "number": user.phone_number,
-#             "chat_id": user.chat_id,
-#         }
-#         return Response(user_data, status=status.HTTP_200_OK)
