@@ -22,8 +22,8 @@ class OrderViewSet(viewsets.ModelViewSet):
         elif self.action == "customer_orders":
             return CustomerOrderSerializer
 
-        # elif self.action == "customer_debts":
-        #     return CustomerOrderDebtSerializer
+        elif self.action == "customer_debts":
+            return CustomerOrderDebtSerializer
 
         return OrderCreateSerializer
 
@@ -47,24 +47,24 @@ class OrderViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(orders, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    # @action(detail=False, methods=["get"], url_path="debt_by_customer")
-    # def customer_debts(self, request):
-    #     customer_id = request.query_params.get("customer_id")
-    #     if not customer_id:
-    #         return Response(
-    #             {"error": "customer_id is required"}, status=status.HTTP_400_BAD_REQUEST
-    #         )
-    #
-    #     # debts = Balance.objects.filter(customer_id=customer_id, type="OUTCOME")
-    #     debts = InstallmentPayment.objects.filter(customer_id=customer_id, left__gt=0).all()
-    #
-    #     page = self.paginate_queryset(debts)
-    #     if page is not None:
-    #         serializer = self.get_serializer(page, many=True)
-    #         return self.get_paginated_response(serializer.data)
-    #
-    #     serializer = self.get_serializer(debts, many=True)
-    #     return Response(serializer.data, status=status.HTTP_200_OK)
+    @action(detail=False, methods=["get"], url_path="debt_by_customer")
+    def customer_debts(self, request):
+        customer_id = request.query_params.get("customer_id")
+        if not customer_id:
+            return Response(
+                {"error": "customer_id is required"}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # debts = Balance.objects.filter(customer_id=customer_id, type="OUTCOME")
+        debts = InstallmentPayment.objects.filter(customer_id=customer_id, left__gt=0).all()
+
+        page = self.paginate_queryset(debts)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(debts, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def perform_create(self, serializer):
 
