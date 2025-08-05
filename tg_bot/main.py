@@ -42,7 +42,8 @@ class Bot:
             button = [
                 [
                     InlineKeyboardButton(
-                        text="Dasturga kirish", web_app=WebAppInfo(url=url)
+                        text="Dasturga kirish",
+                        web_app=WebAppInfo(url=url),
                     )
                 ]
             ]
@@ -82,18 +83,6 @@ class Bot:
                 },
             )
 
-            # text = "Pastdagi tugmani bosing"
-            # button = [
-            #     [
-            #         InlineKeyboardButton(
-            #             text="Dasturga kirish", url="https://luxe-climate.vercel.app/"
-            #         )
-            #     ]
-            # ]
-            # reply_markup = InlineKeyboardMarkup(button)
-
-            # await update.message.reply_text(text=text, reply_markup=reply_markup)
-
             return await self.start(update, context)
 
         elif customer_obj:
@@ -105,18 +94,6 @@ class Bot:
                     "customer": customer_obj,
                 },
             )
-            # text = "Pastdagi tugmani bosing"
-            # button = [
-            #     [
-            #         InlineKeyboardButton(
-            #             text="Dasturga kirish",
-            #             url="https://luxe-climate.vercel.app/user_info",
-            #         )
-            #     ]
-            # ]
-            # reply_markup = InlineKeyboardMarkup(button)
-
-            # await update.message.reply_text(text=text, reply_markup=reply_markup)
 
             return await self.start(update, context)
 

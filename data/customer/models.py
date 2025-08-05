@@ -1,6 +1,8 @@
 from decimal import Decimal
 from typing import TYPE_CHECKING
 
+from rest_framework.exceptions import ValidationError
+
 from data.common.models import BaseModel
 from django.db import models
 
@@ -26,11 +28,19 @@ class Customer(BaseModel):
 
     def clean(self):
         super().clean()
+
+        # + belgisi olib tashlanadi
         if self.phone_number and self.phone_number.startswith('+'):
-            self.phone_number = self.phone_number[1:]  # + ni olib tashlaymiz
+            self.phone_number = self.phone_number[1:]
+
+        # User modelida bu telefon raqami bor-yo‘qligini tekshiramiz
+        from data.user.models import User
+
+        if User.objects.filter(phone_number=self.phone_number).exists():
+            raise ValidationError("Bu telefon raqami allaqachon User sifatida mavjud.")
 
     def save(self, *args, **kwargs):
-        self.full_clean()  # clean() metodini avtomatik chaqiramiz
+        self.full_clean()
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -161,6 +171,6 @@ class Customer(BaseModel):
 
             # 7. Save snapshot balance to Customer
             self.balance = self.balances.aggregate(total=Sum("change"))[
-                "total"
-            ] or Decimal("0")
+                               "total"
+                           ] or Decimal("0")
             self.save(update_fields=["balance"])
