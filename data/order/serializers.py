@@ -73,10 +73,17 @@ class CustomerOrderSerializer(serializers.ModelSerializer):
 
 
 # Customer Order Debt
+# class CustomerOrderDebtSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Balance
+#         fields = ("id", "reason", "amount", "created_at")
+
 class CustomerOrderDebtSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Balance
-        fields = ("id", "reason", "amount", "created_at")
+        model = InstallmentPayment
+        fields = ('id','left','amount', 'left', 'payment_date')
+
+
 
 
 class OrderSerializer(serializers.ModelSerializer):
