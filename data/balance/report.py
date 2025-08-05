@@ -22,7 +22,7 @@ class BalanceReportExportView(APIView):
         end_date = request.query_params.get("end_date")
         customer_id = request.query_params.get("customer_id")
         customer = Customer.objects.filter(id=customer_id).first()
-        chat_id = customer.bot_user.chat_id
+        chat_id = customer.bot_user.first().chat_id
 
         if not start_date or not end_date or not customer_id:
             return Response(
