@@ -24,6 +24,15 @@ class Customer(BaseModel):
 
     balance = models.DecimalField(max_digits=12, decimal_places=2, default=Decimal("0"))
 
+    def clean(self):
+        super().clean()
+        if self.phone_number and self.phone_number.startswith('+'):
+            self.phone_number = self.phone_number[1:]  # + ni olib tashlaymiz
+
+    def save(self, *args, **kwargs):
+        self.full_clean()  # clean() metodini avtomatik chaqiramiz
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return self.full_name
 
