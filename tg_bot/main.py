@@ -25,10 +25,10 @@ class Bot:
         BOT_TOKEN = os.environ.get("BOT_TOKEN")
         self.app = ApplicationBuilder().token(BOT_TOKEN).build()
         self.app.add_handler(MessageHandler(filters.CONTACT, self.contact_handler))
-        self.app.add_handler(MessageHandler(filters.TEXT, self.start))
         self.app.add_handler(CallbackQueryHandler(button_handler, pattern='^start_post$'))
         self.app.add_handler(CallbackQueryHandler(confirm_cancel_handler, pattern='^(confirm_post|cancel_post)$'))
         self.app.add_handler(MessageHandler(filters.ALL, message_handler))
+        self.app.add_handler(MessageHandler(filters.TEXT, self.start))
 
     def run(self):
         self.app.run_polling()
