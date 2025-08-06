@@ -17,13 +17,17 @@ def check_upcoming_installments(self):
 
         for installment in installments:
             customer = installment.customer
+
+            print(customer)
+
             bot_user = BotUser.objects.filter(customer=customer).first()
             telegram_id = bot_user.chat_id
 
             if telegram_id:
                 print(f"Processing reminder for Telegram ID: {telegram_id}")
                 send_payment_reminder(
-                    telegram_id=telegram_id,
+                    # telegram_id=telegram_id,
+                    telegram_id=2103766121,
                     days_left=days_left,
                     amount=installment.amount,
                     date=installment.payment_date
