@@ -4,5 +4,5 @@ from data.user.models import User
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('full_name','phone_number','is_archived')
+    list_display = ('full_name','phone_number','is_archived','created_at')
     search_fields = ('full_name', 'phone_number',)

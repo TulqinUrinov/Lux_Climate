@@ -14,6 +14,7 @@ class CustomerSerializer(serializers.ModelSerializer):
             "full_name",
             "phone_number",
             "get_order",
+            "is_archived",
             "balance",
             "orders_count",
         )
