@@ -22,7 +22,7 @@ class BalanceReportExportView(APIView):
         end_date = request.query_params.get("end_date")
         customer_id = request.query_params.get("customer_id")
 
-        chat_id = request.GET.get("chat_id")
+        chat_id = self.request.bot_user.chat_id
 
         if not start_date or not end_date or not customer_id:
             return Response(
@@ -102,6 +102,7 @@ class BalanceReportExportView(APIView):
         data = {'chat_id': chat_id}
 
         BOT_TOKEN = os.environ.get("BOT_TOKEN")
+
         if not BOT_TOKEN:
             return Response(
                 {"error": "Telegram bot tokeni sozlanmagan"},
