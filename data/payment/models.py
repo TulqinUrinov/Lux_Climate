@@ -57,7 +57,7 @@ class Payment(BaseModel):
     PAYMENT_METHOD_CHOICES = (
         ("CLICK", "Click"),
         ("PAYME", "Payme"),
-        ("CASH", "Cash"),
+        ("CASH", "Naqd Pul"),
     )
 
     customer: "Customer | None" = models.ForeignKey(
