@@ -10,7 +10,6 @@ if TYPE_CHECKING:
 
 
 class InstallmentPayment(BaseModel):
-
     ORDER_TYPE_CHOICES = (
         ("CUSTOMER_TO_COMPANY", "Get Order"),
         ("COMPANY_TO_CUSTOMER", "Give Order"),
@@ -42,7 +41,6 @@ class InstallmentPayment(BaseModel):
     left = models.DecimalField(max_digits=12, decimal_places=2)
 
     def save(self, *args, **kwargs):
-
         if self.order is not None:
             self.customer = self.order.customer
             self.order_type = self.order.order_type
@@ -51,10 +49,15 @@ class InstallmentPayment(BaseModel):
 
 
 class Payment(BaseModel):
-
     PAYMENT_TYPE_CHOICES = (
         ("CUSTOMER_TO_COMPANY", "Get Order"),
         ("COMPANY_TO_CUSTOMER", "Give Order"),
+    )
+
+    PAYMENT_METHOD_CHOICES = (
+        ("CLICK", "Click"),
+        ("PAYME", "Payme"),
+        ("CASH", "Cash"),
     )
 
     customer: "Customer | None" = models.ForeignKey(
@@ -66,6 +69,8 @@ class Payment(BaseModel):
     )
 
     payment_type = models.CharField(max_length=255, choices=PAYMENT_TYPE_CHOICES)
+
+    payment_method = models.CharField(max_length=50, choices=PAYMENT_METHOD_CHOICES)
 
     amount = models.DecimalField(max_digits=20, decimal_places=2)
 
