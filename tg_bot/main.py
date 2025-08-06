@@ -70,8 +70,10 @@ class Bot:
 
         print(phone_number)
 
-        user_obj = User.objects.filter(phone_number=phone_number).first()
-        customer_obj = Customer.objects.filter(phone_number=phone_number).first()
+        cleaned_phone = self.phone_number.lstrip('+') if self.phone_number else None
+
+        user_obj = User.objects.filter(phone_number=cleaned_phone).first()
+        customer_obj = Customer.objects.filter(phone_number=cleaned_phone).first()
 
         if user_obj:
             bot_user, _ = BotUser.objects.get_or_create(
