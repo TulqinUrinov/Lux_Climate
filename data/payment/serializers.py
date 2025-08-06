@@ -7,6 +7,8 @@ from data.payment.models import InstallmentPayment, Payment
 
 
 class InstallmentPaymentSerializer(serializers.ModelSerializer):
+    customer = serializers.SerializerMethodField()
+
     class Meta:
         model = InstallmentPayment
         fields = (
@@ -19,9 +21,11 @@ class InstallmentPaymentSerializer(serializers.ModelSerializer):
             "customer",
         )
 
+    def get_customer(self, obj):
+        return obj.customer.full_name
+
 
 class PaymentSerializer(serializers.ModelSerializer):
-
     customer = serializers.PrimaryKeyRelatedField(queryset=Customer.objects.all())
 
     class Meta:
