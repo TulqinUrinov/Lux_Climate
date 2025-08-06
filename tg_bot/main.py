@@ -4,7 +4,7 @@ from telegram import (
     ReplyKeyboardMarkup,
     InlineKeyboardButton,
     InlineKeyboardMarkup,
-    WebAppInfo,
+    WebAppInfo, ReplyKeyboardRemove,
 )
 from telegram.ext import ApplicationBuilder, MessageHandler, filters
 from data.bot.models import BotUser
@@ -75,7 +75,15 @@ class Bot:
         user_obj = User.objects.filter(phone_number=cleaned_phone).first()
         customer_obj = Customer.objects.filter(phone_number=cleaned_phone).first()
 
+        msg = await update.message.reply_text(
+            text="Ma'lumot tekshirilmoqda...",
+            reply_markup=ReplyKeyboardRemove()
+        )
+
         if user_obj:
+
+            await context.bot.delete_message(chat_id=update.effective_chat.id, message_id=msg.message_id)
+
             bot_user, _ = BotUser.objects.get_or_create(
                 chat_id=tg_user.id,
                 defaults={
@@ -88,6 +96,9 @@ class Bot:
             return await self.start(update, context)
 
         elif customer_obj:
+
+            await context.bot.delete_message(chat_id=update.effective_chat.id, message_id=msg.message_id)
+
             bot_user, _ = BotUser.objects.get_or_create(
                 chat_id=tg_user.id,
                 defaults={
@@ -100,4 +111,6 @@ class Bot:
             return await self.start(update, context)
 
         else:
+            await context.bot.delete_message(chat_id=update.effective_chat.id, message_id=msg.message_id)
+
             await update.message.reply_text(text="Telefon raqami topilmadi!!!")
