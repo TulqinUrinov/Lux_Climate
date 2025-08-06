@@ -17,6 +17,7 @@ def check_upcoming_installments(self):
 
         for installment in installments:
             customer = installment.customer
+            payment_date = installment.payment_date.strftime("%d-%m-%Y")
 
             print(customer)
 
@@ -30,7 +31,7 @@ def check_upcoming_installments(self):
                     telegram_id=2103766121,
                     days_left=days_left,
                     amount=installment.amount,
-                    date=installment.payment_date
+                    date=payment_date,
                 )
             else:
                 print(f"No Telegram ID found for customer {getattr(customer, 'id', 'unknown')}")
