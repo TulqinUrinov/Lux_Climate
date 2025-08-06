@@ -1,3 +1,5 @@
+from datetime import date
+
 from rest_framework.generics import ListAPIView, ListCreateAPIView
 
 from data.bot.permission import IsBotAuthenticated
@@ -41,15 +43,34 @@ class DebtSplitsListAPIView(ListAPIView):
     serializer_class = InstallmentPaymentSerializer
 
     def get_queryset(self):
+
+        today = date.today()
+
+        status = self.request.GET.get("status")
+
         if self.request.role == "CUSTOMER":
             return self.request.customer.order_splits.filter(left__gt=0)
 
+
         # Assuming role is ADMIN (or something else allowed)
-        queryset = InstallmentPayment.objects.filter(left__gt=0)
+        # queryset = InstallmentPayment.objects.filter(left__gt=0)
+        queryset = InstallmentPayment.objects.all()
 
         customer_id = self.request.GET.get("customer")
 
         if customer_id:
             queryset = queryset.filter(customer_id=customer_id)
+
+        # To'langan
+        if status == "paid":
+            queryset = queryset.filter(left=0)
+
+        # To'lanmagan va muddati o'tgan
+        elif status == "overdue":
+            queryset = queryset.filter(left__gt=0, payment_date__lt=today)
+
+        # To'lanmagan va muddati hali kelmagan
+        elif status == "not_due":
+            queryset = queryset.filter(left__gt=0, payment_date__gte=today)
 
         return queryset
