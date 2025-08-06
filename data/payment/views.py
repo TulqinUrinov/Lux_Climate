@@ -51,7 +51,6 @@ class DebtSplitsListAPIView(ListAPIView):
         if self.request.role == "CUSTOMER":
             return self.request.customer.order_splits.filter(left__gt=0)
 
-
         # Assuming role is ADMIN (or something else allowed)
         # queryset = InstallmentPayment.objects.filter(left__gt=0)
         queryset = InstallmentPayment.objects.all()
@@ -73,4 +72,30 @@ class DebtSplitsListAPIView(ListAPIView):
         elif status == "not_due":
             queryset = queryset.filter(left__gt=0, payment_date__gte=today)
 
+        elif status == "partial":
+            queryset = queryset.filter(left__gt=0)
+
         return queryset
+
+    def list(self, request, *args, **kwargs):
+        response = super().list(request, *args, **kwargs)
+        today = date.today()
+        modified_data = []
+
+        for item in response.data["results"]:
+            payment_date = item.get("payment_date")
+            left = float(item.get("left", 0))
+
+            # Status aniqlash
+            if left == 0:
+                status = "paid"
+            elif payment_date < str(today):
+                status = "overdue"
+            else:
+                status = "not_due"
+
+            item["status"] = status
+            modified_data.append(item)
+
+        response.data["results"] = modified_data
+        return response
