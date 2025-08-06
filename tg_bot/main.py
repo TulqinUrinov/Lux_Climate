@@ -24,14 +24,28 @@ class Bot:
     def __init__(self):
         BOT_TOKEN = os.environ.get("BOT_TOKEN")
         self.app = ApplicationBuilder().token(BOT_TOKEN).build()
-        self.app.add_handler(MessageHandler(filters.CONTACT, self.contact_handler))
+        # self.app.add_handler(MessageHandler(filters.CONTACT, self.contact_handler))
         self.app.add_handler(CallbackQueryHandler(button_handler, pattern='^start_post$'))
         self.app.add_handler(CallbackQueryHandler(confirm_cancel_handler, pattern='^(confirm_post|cancel_post)$'))
-        self.app.add_handler(MessageHandler(filters.ALL, message_handler))
-        self.app.add_handler(MessageHandler(filters.TEXT, self.start))
+        self.app.add_handler(MessageHandler(filters.ALL, self.route_handler))
+        # self.app.add_handler(MessageHandler(filters.ALL, message_handler))
+        # self.app.add_handler(MessageHandler(filters.TEXT, self.start))
 
     def run(self):
         self.app.run_polling()
+
+    async def route_handler(self, update, context):
+        user_post = context.user_data.get("post")
+
+        if user_post:
+            await message_handler(update, context)  # bu sizning mavjud funksiyangiz
+        elif update.message and update.message.text:
+            await self.start(update, context)
+        elif update.message.contact:
+            await self.contact_handler(update, context)
+        else:
+            # boshqa holatlar uchun default javob
+            await update.message.reply_text("Iltimos, to‘g‘ri buyruq yuboring.")
 
     async def start(self, update, context):
         user = update.effective_user
