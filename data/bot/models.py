@@ -22,14 +22,14 @@ class BotUser(BaseModel):
 
     user: "User" = models.ForeignKey(
         "user.User",
-        on_delete=models.SET_NULL,
+        on_delete=models.CASCADE,
         null=True,
         blank=True,
     )
 
     customer: "Customer" = models.ForeignKey(
         "customer.Customer",
-        on_delete=models.SET_NULL,
+        on_delete=models.CASCADE,
         null=True,
         blank=True,
         related_name="bot_user",
