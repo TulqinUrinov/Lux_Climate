@@ -28,7 +28,7 @@ def check_upcoming_installments(self):
                 print(f"Processing reminder for Telegram ID: {telegram_id}")
                 send_payment_reminder(
                     # telegram_id=telegram_id,
-                    telegram_id=5575104582,
+                    telegram_id=2103766121,
                     days_left=days_left,
                     amount=installment.amount,
                     date=payment_date,

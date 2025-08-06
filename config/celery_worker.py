@@ -16,7 +16,7 @@ app.autodiscover_tasks(['data.payment'])
 app.conf.beat_schedule = {
     'check-installments-daily-10am': {
         'task': 'data.payment.tasks.check_upcoming_installments',
-        'schedule': crontab(hour=10, minute=0),
+        'schedule': crontab(hour=14, minute=44),
     },
 }
 
