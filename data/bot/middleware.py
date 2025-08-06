@@ -12,13 +12,11 @@ class BotUserJWTMiddleware:
 
     def __call__(self, request):
         auth_header = request.headers.get("Authorization")
-        print(f"[Middleware] Authorization header: {auth_header}")
+
         if auth_header and auth_header.startswith("Bearer "):
             token = auth_header.split(" ")[1]
         else:
             token = None
-
-        print(f"[Middleware] JWT token: {token}")
 
         request.bot_user = None
         request.customer = None
@@ -41,14 +39,11 @@ class BotUserJWTMiddleware:
                 if customer_id:
                     request.customer = Customer.objects.filter(id=customer_id).first()
 
-
                 request.role = (
                     "ADMIN"
                     if request.admin is not None
                     else ("CUSTOMER" if request.customer is not None else None)
                 )
-
-                print(f"role: {request.role}")
 
             except jwt.ExpiredSignatureError:
                 return JsonResponse({"error": "Token expired"}, status=401)
