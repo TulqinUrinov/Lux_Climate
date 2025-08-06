@@ -6,17 +6,32 @@ from telegram import (
     InlineKeyboardMarkup,
     WebAppInfo, ReplyKeyboardRemove,
 )
-from telegram.ext import ApplicationBuilder, MessageHandler, filters
-from data.bot.models import BotUser
-# from tg_bot.contact_handler import contact_handler
+from telegram.ext import (
+    ApplicationBuilder,
+    MessageHandler,
+    filters, CallbackQueryHandler
+)
 
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 from data.bot.models import BotUser
 from data.customer.models import Customer
 from data.user.models import User
+from tg_bot.button_handler import button_handler, confirm_cancel_handler
+from tg_bot.message_handler import message_handler
 
 
 class Bot:
+
+    def __init__(self):
+        BOT_TOKEN = os.environ.get("BOT_TOKEN")
+        self.app = ApplicationBuilder().token(BOT_TOKEN).build()
+        self.app.add_handler(MessageHandler(filters.CONTACT, self.contact_handler))
+        self.app.add_handler(MessageHandler(filters.TEXT, self.start))
+        self.app.add_handler(CallbackQueryHandler(button_handler, pattern='^start_post$'))
+        self.app.add_handler(CallbackQueryHandler(confirm_cancel_handler, pattern='^(confirm_post|cancel_post)$'))
+        self.app.add_handler(MessageHandler(filters.ALL, message_handler))
+
+    def run(self):
+        self.app.run_polling()
 
     async def start(self, update, context):
         user = update.effective_user
@@ -31,37 +46,64 @@ class Bot:
             await update.message.reply_text(text=text, reply_markup=reply_markup)
 
         else:
+            reply_text = "Pastdagi tugmani bosing"
+            reply_buttons = []
+
             if bot_user.user:
                 url = "https://luxe-climate.vercel.app/"
+                reply_buttons.append(
+                    [
+                        InlineKeyboardButton(
+                            text="Dasturga kirish",
+                            web_app=WebAppInfo(url=url),
+                        )
+                    ]
+                )
+
+                reply_buttons.append(
+                    [
+                        InlineKeyboardButton(
+                            text="📝 Post yuborish",
+                            callback_data="start_post",
+                        )
+                    ]
+                )
+
             elif bot_user.customer:
                 url = "https://luxe-climate.vercel.app/user_info"
+                reply_buttons.append(
+                    [
+                        InlineKeyboardButton(
+                            text="Dasturga kirish",
+                            web_app=WebAppInfo(url=url),
+                        )
+                    ]
+                )
             else:
                 url = "https://luxe-climate.vercel.app/not-allowed"
+                reply_buttons.append(
+                    [
+                        InlineKeyboardButton(
+                            text="Dasturga kirish",
+                            web_app=WebAppInfo(url=url),
+                        )
+                    ]
+                )
 
-            text = "Pastdagi tugmani bosing"
-            button = [
-                [
-                    InlineKeyboardButton(
-                        text="Dasturga kirish",
-                        web_app=WebAppInfo(url=url),
-                    )
-                ]
-            ]
-            reply_markup = InlineKeyboardMarkup(button)
+            markup = InlineKeyboardMarkup(reply_buttons)
+            await update.message.reply_text(text=reply_text, reply_markup=markup)
 
-            await update.message.reply_text(
-                text=text,
-                reply_markup=reply_markup,
-            )
-
-    def __init__(self):
-        BOT_TOKEN = os.environ.get("BOT_TOKEN")
-        self.app = ApplicationBuilder().token(BOT_TOKEN).build()
-        self.app.add_handler(MessageHandler(filters.CONTACT, self.contact_handler))
-        self.app.add_handler(MessageHandler(filters.TEXT, self.start))
-
-    def run(self):
-        self.app.run_polling()
+    # def __init__(self):
+    #     BOT_TOKEN = os.environ.get("BOT_TOKEN")
+    #     self.app = ApplicationBuilder().token(BOT_TOKEN).build()
+    #     self.app.add_handler(MessageHandler(filters.CONTACT, self.contact_handler))
+    #     self.app.add_handler(MessageHandler(filters.TEXT, self.start))
+    #     self.app.add_handler(CallbackQueryHandler(button_handler, pattern='^start_post$'))
+    #     self.app.add_handler(CallbackQueryHandler(confirm_cancel_handler, pattern='^(confirm_post|cancel_post)$'))
+    #     self.app.add_handler(MessageHandler(filters.ALL, message_handler))
+    #
+    # def run(self):
+    #     self.app.run_polling()
 
     async def contact_handler(self, update, context):
         contact = update.message.contact
