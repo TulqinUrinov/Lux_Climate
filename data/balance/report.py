@@ -96,7 +96,7 @@ class BalanceReportExportView(APIView):
         workbook.close()
         output.seek(0)
 
-        filename = f"balance_hisobot_{start_date}_dan_{end_date}_gacha_customer_{customer_id}.xlsx"
+        filename = f"hisobot_{start_date}_dan_{end_date}_gacha.xlsx"
 
         files = {'document': (filename, output.getvalue())}
         data = {'chat_id': chat_id}
