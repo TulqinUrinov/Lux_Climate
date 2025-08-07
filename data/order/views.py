@@ -7,7 +7,7 @@ from data.order.serializers import *
 
 
 class OrderViewSet(viewsets.ModelViewSet):
-    queryset = Order.objects.all()
+    queryset = Order.objects.all().order_by('-created_at')
     permission_classes = [IsBotAuthenticated]
     pagination_class = CustomPagination
 
