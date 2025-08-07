@@ -22,7 +22,7 @@ class OrderViewSet(viewsets.ModelViewSet):
         elif self.action == "retrieve":   #, "create", "update", "partial_update"]:
             return OrderSerializer
 
-        return OrderCreateSerializer
+        return OrderCreateUpdateSerializer
 
     @action(detail=False, methods=["get"], url_path="by_customer")
     def customer_orders(self, request):

@@ -9,7 +9,7 @@ from data.payment.serializers import InstallmentPaymentSerializer
 from data.user.models import User
 
 
-class OrderCreateSerializer(serializers.ModelSerializer):
+class OrderCreateUpdateSerializer(serializers.ModelSerializer):
     customer = serializers.PrimaryKeyRelatedField(queryset=Customer.objects.all())
     files = serializers.PrimaryKeyRelatedField(queryset=File.objects.all(), many=True)
     order_splits = InstallmentPaymentSerializer(many=True)
@@ -87,14 +87,14 @@ class OrderCreateSerializer(serializers.ModelSerializer):
 
 
 class OrderListSerializer(serializers.ModelSerializer):
-    customer = serializers.SerializerMethodField()
+    # customer = serializers.SerializerMethodField()
 
     class Meta:
         model = Order
         fields = ("id", "customer", "product", "order_type", "price", "created_at")
 
-    def get_customer(self, obj):
-        return obj.customer.full_name
+    # def get_customer(self, obj):
+    #     return obj.customer.full_name
 
 
 class CustomerOrderSerializer(serializers.ModelSerializer):
@@ -112,7 +112,6 @@ class OrderSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "customer",
-            "order_type",
             "order_type",
             "price",
             "created_at",
