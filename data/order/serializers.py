@@ -75,7 +75,7 @@ class OrderCreateUpdateSerializer(serializers.ModelSerializer):
         instance.files.set(files_data)
 
         # Eski to‘lovlarni o‘chirish
-        instance.installmentpayment_set.all().delete()
+        instance.order_splits.all().delete()
 
         # Yangi to‘lovlarni yozish
         if instance.is_installment:
