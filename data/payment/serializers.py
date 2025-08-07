@@ -27,13 +27,11 @@ class InstallmentPaymentSerializer(serializers.ModelSerializer):
 
 class PaymentSerializer(serializers.ModelSerializer):
     customer = serializers.PrimaryKeyRelatedField(queryset=Customer.objects.all())
-    user = serializers.SerializerMethodField()
 
     class Meta:
         model = Payment
         fields = [
             "id",
-            "user",
             "customer",
             "payment_type",
             "payment_method",
@@ -41,9 +39,6 @@ class PaymentSerializer(serializers.ModelSerializer):
             "created_by",
             "created_at",
         ]
-
-    def get_user(self,obj):
-        return obj.user.full_name
 
     def to_representation(self, instance):
         res = super().to_representation(instance)
