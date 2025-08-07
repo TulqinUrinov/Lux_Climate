@@ -16,14 +16,17 @@ class OrderViewSet(viewsets.ModelViewSet):
         if self.action == "list":
             return OrderListSerializer
 
-        elif self.action == "retrieve":
-            return OrderSerializer
+        # elif self.action == "retrieve":
+        #     return OrderSerializer
 
         elif self.action == "customer_orders":
             return CustomerOrderSerializer
 
         elif self.action == "customer_debts":
             return CustomerOrderDebtSerializer
+
+        elif self.action in ["retrieve","create", "update", "partial_update"]:
+            return OrderSerializer
 
         return OrderCreateSerializer
 

@@ -54,6 +54,37 @@ class OrderCreateSerializer(serializers.ModelSerializer):
 
         return order
 
+    def update(self, instance, validated_data):
+        payments_data = validated_data.pop("order_splits", [])
+        files_data = validated_data.pop("files", [])
+
+        # Order fieldlarini yangilash
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+
+        # Fayllarni yangilash
+        instance.files.set(files_data)
+
+        # Eski to‘lovlarni o‘chirish
+        instance.installmentpayment_set.all().delete()
+
+        # Yangi to‘lovlarni yozish
+        if instance.is_installment:
+            for payment_data in payments_data:
+                InstallmentPayment.objects.create(order=instance, **payment_data)
+        else:
+            InstallmentPayment.objects.create(
+                order=instance,
+                amount=instance.price,
+                payment_date=instance.created_at,
+                left=instance.price,
+            )
+
+        instance.customer.recalculate_balance()
+
+        return instance
+
 
 class OrderListSerializer(serializers.ModelSerializer):
     customer = serializers.SerializerMethodField()
@@ -72,18 +103,10 @@ class CustomerOrderSerializer(serializers.ModelSerializer):
         fields = ("id", "order_type", "product", "price", "created_at")
 
 
-# Customer Order Debt
-# class CustomerOrderDebtSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Balance
-#         fields = ("id", "reason", "amount", "created_at")
-
 class CustomerOrderDebtSerializer(serializers.ModelSerializer):
     class Meta:
         model = InstallmentPayment
-        fields = ('id','left','amount', 'left', 'payment_date')
-
-
+        fields = ('id', 'left', 'amount', 'left', 'payment_date')
 
 
 class OrderSerializer(serializers.ModelSerializer):
