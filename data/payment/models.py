@@ -60,6 +60,14 @@ class Payment(BaseModel):
         ("CASH", "Naqd Pul"),
     )
 
+    user: "User | None" = models.ForeignKey(
+        "user.User",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="payments",
+    )
+
     customer: "Customer | None" = models.ForeignKey(
         "customer.Customer",
         on_delete=models.SET_NULL,
