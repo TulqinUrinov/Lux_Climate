@@ -19,6 +19,7 @@ class OrderCreateUpdateSerializer(serializers.ModelSerializer):
     customer = serializers.PrimaryKeyRelatedField(queryset=Customer.objects.all())
     files = serializers.PrimaryKeyRelatedField(queryset=File.objects.all(), many=True)
     order_splits = InstallmentPaymentWriteSerializer(many=True)
+
     # order_splits = InstallmentPaymentSerializer(many=True)
 
     class Meta:
@@ -126,4 +127,7 @@ class OrderSerializer(serializers.ModelSerializer):
         )
 
     def get_customer(self, obj):
-        return obj.customer.full_name
+        return {
+            "id": obj.customer.id,
+            "full_name": obj.customer.full_name,
+        }
