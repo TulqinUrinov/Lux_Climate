@@ -27,6 +27,7 @@ class InstallmentPaymentSerializer(serializers.ModelSerializer):
 
 class PaymentSerializer(serializers.ModelSerializer):
     customer = serializers.PrimaryKeyRelatedField(queryset=Customer.objects.all())
+    created_by = serializers.SerializerMethodField()
 
     class Meta:
         model = Payment
@@ -39,6 +40,9 @@ class PaymentSerializer(serializers.ModelSerializer):
             "created_by",
             "created_at",
         ]
+
+    def get_created_by(self,obj):
+        return obj.created_by.full_name
 
     def to_representation(self, instance):
         res = super().to_representation(instance)
