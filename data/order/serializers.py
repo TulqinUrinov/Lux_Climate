@@ -103,12 +103,6 @@ class CustomerOrderSerializer(serializers.ModelSerializer):
         fields = ("id", "order_type", "product", "price", "created_at")
 
 
-# class CustomerOrderDebtSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = InstallmentPayment
-#         fields = ('id', 'left', 'amount', 'left', 'payment_date')
-
-
 class OrderSerializer(serializers.ModelSerializer):
     customer = serializers.SerializerMethodField()
     order_splits = InstallmentPaymentSerializer(many=True, read_only=True)
