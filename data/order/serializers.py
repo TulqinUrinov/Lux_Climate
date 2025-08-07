@@ -1,5 +1,4 @@
 from rest_framework import serializers
-
 from data.balance.models import Balance
 from data.customer.models import Customer
 from data.file.models import File
@@ -84,13 +83,6 @@ class OrderCreateUpdateSerializer(serializers.ModelSerializer):
         instance.customer.recalculate_balance()
 
         return instance
-
-
-# Customerga tegishli bo'lgan buyurtmalar
-class CustomerOrderSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Order
-        fields = ("id", "order_type", "product", "price", "created_at")
 
 
 # Barcha buyurtmalar ro'yxati
