@@ -87,14 +87,14 @@ class OrderCreateUpdateSerializer(serializers.ModelSerializer):
 
 
 class OrderListSerializer(serializers.ModelSerializer):
-    # customer = serializers.SerializerMethodField()
+    customer = serializers.SerializerMethodField()
 
     class Meta:
         model = Order
         fields = ("id", "customer", "product", "order_type", "price", "created_at")
 
-    # def get_customer(self, obj):
-    #     return obj.customer.full_name
+    def get_customer(self, obj):
+        return obj.customer.full_name
 
 
 class CustomerOrderSerializer(serializers.ModelSerializer):
