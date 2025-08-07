@@ -15,7 +15,7 @@ from telegram.ext import (
 from data.bot.models import BotUser
 from data.customer.models import Customer
 from data.user.models import User
-from tg_bot.button_handler import button_handler #, confirm_cancel_handler
+from tg_bot.button_handler import button_handler
 from tg_bot.message_handler import message_handler
 
 
@@ -26,8 +26,7 @@ class Bot:
         self.app = ApplicationBuilder().token(BOT_TOKEN).build()
         self.app.add_handler(CallbackQueryHandler(button_handler,
                                                   pattern='^(start_post|add_video|add_photo|add_text|confirm_post|cancel_post)$'))
-        # self.app.add_handler(CallbackQueryHandler(button_handler, pattern='^start_post$'))
-        # self.app.add_handler(CallbackQueryHandler(confirm_cancel_handler, pattern='^(confirm_post|cancel_post)$'))
+
         self.app.add_handler(MessageHandler(filters.ALL, self.route_handler))
 
     def run(self):
