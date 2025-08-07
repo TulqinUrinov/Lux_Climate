@@ -6,6 +6,5 @@ router = DefaultRouter()
 router.register(r"", CustomerViewSet, basename="customer")
 
 urlpatterns = [
-    path('', include(router.urls)),
-    path('list/', CustomerListAPIView.as_view())
-]
+                  path('list/', CustomerListAPIView.as_view()),
+              ] + router.urls
