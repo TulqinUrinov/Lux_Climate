@@ -1,5 +1,5 @@
 from typing import cast
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, filters
 
 from data.bot.permission import IsBotAuthenticated
 from data.common.pagination import CustomPagination
@@ -15,6 +15,8 @@ class CustomerViewSet(viewsets.ModelViewSet):
     serializer_class = CustomerSerializer
     permission_classes = [IsBotAuthenticated]
     pagination_class = CustomPagination
+    filter_backends = [filters.SearchFilter]
+    search_fields = ["full_name", "phone_number"]
 
     def get_serializer_context(self):
         return {"request": self.request}

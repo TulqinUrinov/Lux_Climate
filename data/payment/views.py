@@ -1,5 +1,5 @@
 from datetime import date
-
+from django.utils.dateparse import parse_date
 from rest_framework.generics import ListAPIView, ListCreateAPIView
 
 from data.bot.permission import IsBotAuthenticated
@@ -9,7 +9,6 @@ from data.payment.models import InstallmentPayment, Payment
 from data.payment.serializers import (
     InstallmentPaymentSerializer,
     PaymentSerializer,
-    CustomerOrderPaymentSerializer,
 )
 
 
@@ -20,17 +19,39 @@ class PaymentListView(ListCreateAPIView):
     serializer_class = PaymentSerializer
 
     def get_queryset(self):
+
         if self.request.role == "ADMIN":
+
+            queryset = Payment.objects.all()
+
             customer_id = self.request.query_params.get("customer_id")
+            start_date = self.request.query_params.get("start_date")
+            end_date = self.request.query_params.get("end_date")
 
             if customer_id:
-                return Payment.objects.filter(customer_id=customer_id).all()
+                queryset = Payment.objects.filter(customer_id=customer_id).all()
 
-            return Payment.objects.all()
+            if start_date:
+                queryset = queryset.filter(created_at__gte=parse_date(start_date))
+
+            if end_date:
+                queryset = queryset.filter(created_at__lte=parse_date(end_date))
+
+            return queryset
 
         customer: Customer = self.request.customer
+        queryset = customer.payments.all()
 
-        return customer.payments.all()
+        start_date = self.request.query_params.get("start_date")
+        end_date = self.request.query_params.get("end_date")
+
+        if start_date:
+            queryset = queryset.filter(created_at__date__gte=parse_date(start_date))
+
+        if end_date:
+            queryset = queryset.filter(created_at__date__lte=parse_date(end_date))
+
+        return queryset
 
     def perform_create(self, serializer: PaymentSerializer):
         serializer.save(created_by=self.request.admin)
@@ -52,7 +73,6 @@ class DebtSplitsListAPIView(ListAPIView):
             return self.request.customer.order_splits.filter(left__gt=0)
 
         # Assuming role is ADMIN (or something else allowed)
-        # queryset = InstallmentPayment.objects.filter(left__gt=0)
         queryset = InstallmentPayment.objects.all()
 
         customer_id = self.request.GET.get("customer")

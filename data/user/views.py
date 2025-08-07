@@ -1,5 +1,4 @@
-from rest_framework import viewsets, status
-from rest_framework.decorators import action
+from rest_framework import viewsets, status, filters
 from rest_framework.response import Response
 
 from .models import User
@@ -13,6 +12,8 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     permission_classes = [IsBotAuthenticated]
     pagination_class = CustomPagination
+    filter_backends = [filters.SearchFilter]
+    search_fields = ["full_name", "phone_number"]
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -23,10 +24,3 @@ class UserViewSet(viewsets.ModelViewSet):
             {"detail": "User has been archived"},
             status=status.HTTP_204_NO_CONTENT
         )
-
-    # @action(detail=True, methods=['post'])
-    # def restore(self, request, pk=None):
-    #     user = self.get_object()
-    #     user.is_archived = False
-    #     user.save()
-    #     return Response({"detail": "User restored successfully."})

@@ -1,6 +1,5 @@
 from rest_framework import serializers
 
-from data.balance.models import Balance
 from data.customer.models import Customer
 from data.customer.serializers import CustomerSerializer
 from data.payment.models import InstallmentPayment, Payment
@@ -41,7 +40,7 @@ class PaymentSerializer(serializers.ModelSerializer):
             "created_at",
         ]
 
-    def get_created_by(self,obj):
+    def get_created_by(self, obj):
         return obj.created_by.full_name
 
     def to_representation(self, instance):
@@ -52,9 +51,3 @@ class PaymentSerializer(serializers.ModelSerializer):
         )
 
         return res
-
-
-class CustomerOrderPaymentSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Balance
-        fields = ("id", "reason", "amount", "created_at")
