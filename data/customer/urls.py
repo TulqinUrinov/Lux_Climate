@@ -5,4 +5,7 @@ from .views import *
 router = DefaultRouter()
 router.register(r"", CustomerViewSet, basename="customer")
 
-urlpatterns = router.urls
+urlpatterns = [
+    path('', include(router.urls)),
+    path('list/', CustomerListAPIView.as_view())
+]

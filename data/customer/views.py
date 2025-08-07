@@ -1,5 +1,5 @@
 from typing import cast
-from rest_framework import viewsets, status, filters
+from rest_framework import viewsets, status, filters, generics
 
 from data.bot.permission import IsBotAuthenticated
 from data.common.pagination import CustomPagination
@@ -37,3 +37,12 @@ class CustomerViewSet(viewsets.ModelViewSet):
         customer.recalculate_balance()
 
         return Response(CustomerSerializer(customer).data)
+
+
+# Paginationsiz
+class CustomerListAPIView(generics.ListAPIView):
+    queryset = Customer.objects.filter(is_archived=False)
+    serializer_class = CustomerSerializer
+    permission_classes = [IsBotAuthenticated]
+    filter_backends = [filters.SearchFilter]
+    search_fields = ["full_name", "phone_number"]
