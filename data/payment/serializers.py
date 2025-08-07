@@ -13,6 +13,7 @@ class InstallmentPaymentSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "amount",
+            "order",
             "order_type",
             "payment_date",
             "left",
