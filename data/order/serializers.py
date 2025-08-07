@@ -8,10 +8,17 @@ from data.payment.serializers import InstallmentPaymentSerializer
 from data.user.models import User
 
 
+class InstallmentPaymentWriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = InstallmentPayment
+        exclude = ("id", "created_at", "order", "customer", "order_type")
+
+
 class OrderCreateUpdateSerializer(serializers.ModelSerializer):
     customer = serializers.PrimaryKeyRelatedField(queryset=Customer.objects.all())
     files = serializers.PrimaryKeyRelatedField(queryset=File.objects.all(), many=True)
-    order_splits = InstallmentPaymentSerializer(many=True)
+    order_splits = InstallmentPaymentWriteSerializer(many=True)
+    # order_splits = InstallmentPaymentSerializer(many=True)
 
     class Meta:
         model = Order
