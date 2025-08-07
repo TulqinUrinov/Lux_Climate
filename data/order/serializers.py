@@ -86,6 +86,14 @@ class OrderCreateUpdateSerializer(serializers.ModelSerializer):
         return instance
 
 
+# Customerga tegishli bo'lgan buyurtmalar
+class CustomerOrderSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Order
+        fields = ("id", "order_type", "product", "price", "created_at")
+
+
+# Barcha buyurtmalar ro'yxati
 class OrderListSerializer(serializers.ModelSerializer):
     customer = serializers.SerializerMethodField()
 
@@ -97,12 +105,7 @@ class OrderListSerializer(serializers.ModelSerializer):
         return obj.customer.full_name
 
 
-class CustomerOrderSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Order
-        fields = ("id", "order_type", "product", "price", "created_at")
-
-
+# Faqat 1 ta buyurtma uchun
 class OrderSerializer(serializers.ModelSerializer):
     customer = serializers.SerializerMethodField()
     order_splits = InstallmentPaymentSerializer(many=True, read_only=True)
