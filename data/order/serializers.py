@@ -2,6 +2,7 @@ from rest_framework import serializers
 from data.balance.models import Balance
 from data.customer.models import Customer
 from data.file.models import File
+from data.file.serializers import FileSerializer
 from data.order.models import Order
 from data.payment.models import InstallmentPayment
 from data.payment.serializers import InstallmentPaymentSerializer
@@ -108,6 +109,7 @@ class OrderListSerializer(serializers.ModelSerializer):
 class OrderSerializer(serializers.ModelSerializer):
     customer = serializers.SerializerMethodField()
     order_splits = InstallmentPaymentSerializer(many=True, read_only=True)
+    files = FileSerializer(many=True, read_only=True)
 
     class Meta:
         model = Order
@@ -119,6 +121,7 @@ class OrderSerializer(serializers.ModelSerializer):
             "created_at",
             "is_installment",
             "installment_count",
+            "files",
             "order_splits",
         )
 
