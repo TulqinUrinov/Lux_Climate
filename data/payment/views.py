@@ -22,7 +22,7 @@ class PaymentListView(ListCreateAPIView):
 
         if self.request.role == "ADMIN":
 
-            queryset = Payment.objects.all()
+            queryset = Payment.objects.all().order_by("-created_at")
 
             customer_id = self.request.query_params.get("customer_id")
             start_date = self.request.query_params.get("start_date")
@@ -40,7 +40,7 @@ class PaymentListView(ListCreateAPIView):
             return queryset
 
         customer: Customer = self.request.customer
-        queryset = customer.payments.all()
+        queryset = customer.payments.all().order_by("-created_at")
 
         start_date = self.request.query_params.get("start_date")
         end_date = self.request.query_params.get("end_date")
@@ -73,7 +73,7 @@ class DebtSplitsListAPIView(ListAPIView):
             return self.request.customer.order_splits.filter(left__gt=0)
 
         # Assuming role is ADMIN (or something else allowed)
-        queryset = InstallmentPayment.objects.all()
+        queryset = InstallmentPayment.objects.all().order_by("-created_at")
 
         customer_id = self.request.GET.get("customer")
 

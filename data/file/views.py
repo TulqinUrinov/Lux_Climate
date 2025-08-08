@@ -8,7 +8,7 @@ from data.file.models import File
 
 
 class FileViewSet(viewsets.ModelViewSet):
-    queryset = File.objects.all()
+    queryset = File.objects.all().order_by("-created_at")
     serializer_class = FileSerializer
     permission_classes = [IsBotAuthenticated]
     pagination_class = CustomPagination

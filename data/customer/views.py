@@ -11,7 +11,7 @@ from rest_framework.response import Response
 
 
 class CustomerViewSet(viewsets.ModelViewSet):
-    queryset = Customer.objects.filter(is_archived=False)
+    queryset = Customer.objects.filter(is_archived=False).order_by("-created_at")
     serializer_class = CustomerSerializer
     permission_classes = [IsBotAuthenticated]
     pagination_class = CustomPagination
@@ -41,7 +41,7 @@ class CustomerViewSet(viewsets.ModelViewSet):
 
 # Paginationsiz
 class CustomerListAPIView(generics.ListAPIView):
-    queryset = Customer.objects.filter(is_archived=False)
+    queryset = Customer.objects.filter(is_archived=False).order_by("-created_at")
     serializer_class = CustomerSerializer
     permission_classes = [IsBotAuthenticated]
     filter_backends = [filters.SearchFilter]

@@ -8,7 +8,7 @@ from ..common.pagination import CustomPagination
 
 
 class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.filter(is_archived=False)
+    queryset = User.objects.filter(is_archived=False).order_by("-created_at")
     serializer_class = UserSerializer
     permission_classes = [IsBotAuthenticated]
     pagination_class = CustomPagination

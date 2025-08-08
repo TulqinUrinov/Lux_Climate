@@ -25,7 +25,7 @@ class OrderViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
 
-        queryset = Order.objects.all()
+        queryset = Order.objects.all().order_by('-created_at')
 
         customer_id = self.request.query_params.get('customer_id')
         start_date = self.request.query_params.get('start_date')
