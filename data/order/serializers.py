@@ -117,6 +117,7 @@ class OrderSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "customer",
+            "product",
             "order_type",
             "price",
             "created_at",
