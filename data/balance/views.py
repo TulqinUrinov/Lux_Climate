@@ -126,12 +126,12 @@ class BalanceStatusView(APIView):
 
         return Response(
             {
-                "customer_debt": customer_debt,
+                "customer_debt": customer_debt if customer_debt < 0 else 0,
                 "user_debt": user_debt if user_debt < 0 else 0,
                 "orders_count": orders,
                 "orders_sum_price": orders_sum_price,
                 "income": filtered_income,
-                "due_payment": due_payment,
+                "due_payment": due_payment if due_payment > 0 else 0,
             },
             status=status.HTTP_200_OK,
         )
