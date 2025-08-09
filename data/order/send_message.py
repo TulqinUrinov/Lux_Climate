@@ -28,12 +28,12 @@ def send_order_to_customer(order):
         "text": text
     })
 
-    # Agar Product bo‘lsa va fayllar mavjud bo‘lsa — fayllarni yuboramiz
     if order.product == "PRODUCT" and order.files.exists():
         for file in order.files.all():
-            if file.file:  # file modeldagi FileField
-                requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendDocument", data={
-                    "chat_id": chat_id
-                }, files={
-                    "document": open(file.file.path, "rb")
-                })
+            if file.file:
+                with open(file.file.path, "rb") as f:
+                    requests.post(
+                        f"https://api.telegram.org/bot{BOT_TOKEN}/sendDocument",
+                        data={"chat_id": chat_id},
+                        files={"document": f}
+                    )
