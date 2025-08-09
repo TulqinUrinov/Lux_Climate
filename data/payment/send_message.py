@@ -2,8 +2,8 @@ import os
 import requests
 
 PAYMENT_TYPE_LABELS = {
-    "CUSTOMER_TO_COMPANY": "To‘lov qabul qilish",
-    "COMPANY_TO_CUSTOMER": "To‘lov berish",
+    "CUSTOMER_TO_COMPANY": "Chiqim",
+    "COMPANY_TO_CUSTOMER": "Kirim",
 }
 
 PAYMENT_METHOD_LABELS = {
