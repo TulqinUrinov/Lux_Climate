@@ -1,3 +1,4 @@
+import json
 import os
 
 from django.conf import settings
@@ -23,18 +24,39 @@ def send_order_to_customer(order):
 
     BOT_TOKEN = os.environ.get("BOT_TOKEN")
 
-    # Xabar yuborish
-    requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage", data={
-        "chat_id": chat_id,
-        "text": text
-    })
+    # # Xabar yuborish
+    # requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage", data={
+    #     "chat_id": chat_id,
+    #     "text": text
+    # })
 
+    # Agar PRODUCT bo'lsa va fayllar bo'lsa — sendMediaGroup ishlatamiz
     if order.product == "PRODUCT" and order.files.exists():
-        for file in order.files.all():
-            if file.file:  # Fayl mavjud bo‘lsa
-                with open(file.file.path, "rb") as f:
-                    requests.post(
-                        f"https://api.telegram.org/bot{BOT_TOKEN}/sendDocument",
-                        data={"chat_id": chat_id},
-                        files={"document": f}
-                    )
+        files = {}
+        media = []
+
+        for idx, file in enumerate(order.files.all()):
+            if file.file:
+                file_key = f"file{idx}"
+                files[file_key] = open(file.file.path, "rb")
+                media_item = {
+                    "type": "document",
+                    "media": f"attach://{file_key}"
+                }
+                # Faqat birinchi faylga caption qo'yamiz
+                if idx == 0:
+                    media_item["caption"] = text
+                media.append(media_item)
+
+        requests.post(
+            f"https://api.telegram.org/bot{BOT_TOKEN}/sendMediaGroup",
+            data={"chat_id": chat_id, "media": json.dumps(media)},
+            files=files
+        )
+
+    else:
+        # Fayl bo'lmasa — faqat matn yuboramiz
+        requests.post(
+            f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
+            data={"chat_id": chat_id, "text": text}
+        )
