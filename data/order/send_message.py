@@ -24,12 +24,12 @@ def send_order_to_customer(order):
 
     product_label = PRODUCT_LABELS.get(order.product, order.product)
     order_type_label = ORDER_TYPE_LABELS.get(order.order_type, order.order_type)
-
+    price_str = f"{order.price:,.2f}".replace(",", " ")
     text = (
         f"🆕 Yangi buyurtma\n"
         f"📌 Mahsulot turi: {product_label}\n"
         f"📦 Buyurtma turi: {order_type_label}\n"
-        f"💰 Narx: {order.price}\n"
+        f"💰 Narx: {price_str}\n"
         f"📄 Izoh: {order.comment or '-'}\n"
     )
 
