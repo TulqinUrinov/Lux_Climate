@@ -51,11 +51,17 @@ class OrderCreateUpdateSerializer(serializers.ModelSerializer):
             for payment_data in payments_data:
                 InstallmentPayment.objects.create(order=order, **payment_data)
         else:
+
+            if payments_data:  # frontend yuborgan bo‘lsa
+                payment_date = payments_data[0].get("payment_date")
+            else:
+                payment_date = order.created_at  # fallback, agar yuborilmasa
+
             InstallmentPayment.objects.create(
                 order=order,
                 amount=order.price,
                 # payment_date=order.created_at,
-                payment_data=order.payments_data,
+                payment_data=payment_date,
                 left=order.price,
             )
 
@@ -83,11 +89,17 @@ class OrderCreateUpdateSerializer(serializers.ModelSerializer):
             for payment_data in payments_data:
                 InstallmentPayment.objects.create(order=instance, **payment_data)
         else:
+
+            if payments_data:  # frontend yuborgan bo‘lsa
+                payment_date = payments_data[0].get("payment_date")
+            else:
+                payment_date = instance.created_at  # fallback
+
             InstallmentPayment.objects.create(
                 order=instance,
                 amount=instance.price,
                 # payment_date=instance.created_at,
-                payment_date=instance.payments_data,
+                payment_date=payment_date,
                 left=instance.price,
             )
 
