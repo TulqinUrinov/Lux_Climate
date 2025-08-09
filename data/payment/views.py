@@ -6,6 +6,7 @@ from data.bot.permission import IsBotAuthenticated
 from data.common.pagination import CustomPagination
 from data.customer.models import Customer
 from data.payment.models import InstallmentPayment, Payment
+from data.payment.send_message import send_payment_to_customer
 from data.payment.serializers import (
     InstallmentPaymentSerializer,
     PaymentSerializer,
@@ -54,7 +55,8 @@ class PaymentListView(ListCreateAPIView):
         return queryset
 
     def perform_create(self, serializer: PaymentSerializer):
-        serializer.save(created_by=self.request.admin)
+        payment = serializer.save(created_by=self.request.admin)
+        send_payment_to_customer(payment)
 
 
 class DebtSplitsListAPIView(ListAPIView):
