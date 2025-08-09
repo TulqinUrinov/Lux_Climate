@@ -1,3 +1,5 @@
+import os
+
 from django.conf import settings
 import requests
 
@@ -18,8 +20,10 @@ def send_order_to_customer(order):
         f"📄 Izoh: {order.comment or '-'}\n"
     )
 
+    BOT_TOKEN = os.environ.get("BOT_TOKEN")
+
     # Xabar yuborish
-    requests.post(f"https://api.telegram.org/bot{settings.BOT_TOKEN}/sendMessage", data={
+    requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage", data={
         "chat_id": chat_id,
         "text": text
     })
@@ -28,7 +32,7 @@ def send_order_to_customer(order):
     if order.product == "PRODUCT" and order.files.exists():
         for file in order.files.all():
             if file.file:  # file modeldagi FileField
-                requests.post(f"https://api.telegram.org/bot{settings.BOT_TOKEN}/sendDocument", data={
+                requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendDocument", data={
                     "chat_id": chat_id
                 }, files={
                     "document": open(file.file.path, "rb")
