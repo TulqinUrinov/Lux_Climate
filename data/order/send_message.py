@@ -3,6 +3,7 @@ import os
 from django.conf import settings
 import requests
 
+
 def send_order_to_customer(order):
     # Customer bilan bog‘langan BotUser topamiz
     bot_user = order.customer.bot_user.first()
@@ -30,7 +31,7 @@ def send_order_to_customer(order):
 
     if order.product == "PRODUCT" and order.files.exists():
         for file in order.files.all():
-            if file.file:
+            if file.file:  # Fayl mavjud bo‘lsa
                 with open(file.file.path, "rb") as f:
                     requests.post(
                         f"https://api.telegram.org/bot{BOT_TOKEN}/sendDocument",
