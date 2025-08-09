@@ -29,7 +29,7 @@ class PaymentListView(ListCreateAPIView):
             end_date = self.request.query_params.get("end_date")
 
             if customer_id:
-                queryset = Payment.objects.filter(customer_id=customer_id).all()
+                queryset = queryset.filter(customer_id=customer_id).all()
 
             if start_date:
                 queryset = queryset.filter(created_at__gte=parse_date(start_date))
