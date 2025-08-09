@@ -3,6 +3,7 @@ from rest_framework import viewsets
 
 from data.bot.permission import IsBotAuthenticated
 from data.common.pagination import CustomPagination
+from data.order.send_message import send_order_to_customer
 from data.order.serializers import *
 
 
@@ -42,6 +43,14 @@ class OrderViewSet(viewsets.ModelViewSet):
 
         return queryset
 
-    def perform_create(self, serializer):
+    # def perform_create(self, serializer):
+    #
+    #     serializer.save(created_by=self.request.admin)
 
-        serializer.save(created_by=self.request.admin)
+    def perform_create(self, serializer):
+        order = serializer.save(created_by=self.request.admin)
+        send_order_to_customer(order)  # 🟢 Yangi buyurtma haqida xabar yuborish
+
+    def perform_update(self, serializer):
+        order = serializer.save()
+        send_order_to_customer(order)
