@@ -57,10 +57,13 @@ class BalanceStatusView(APIView):
                 Balance.objects.filter(type="INCOME").aggregate(
                     total=Sum("amount"))["total"] or 0
         )
+        print(total_income)
+
         total_outcome = (
                 Balance.objects.filter(type="OUTCOME").aggregate(
                     total=Sum("amount"))["total"] or 0
         )
+        print(total_outcome)
 
         start_datetime = None
         end_datetime = None

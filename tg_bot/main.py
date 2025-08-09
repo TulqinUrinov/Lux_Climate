@@ -110,8 +110,6 @@ class Bot:
         phone_number = contact.phone_number
         tg_user = update.effective_user
 
-        print(phone_number)
-
         cleaned_phone = phone_number.lstrip('+')
 
         user_obj = User.objects.filter(phone_number=cleaned_phone).first()

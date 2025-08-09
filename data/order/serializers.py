@@ -54,7 +54,8 @@ class OrderCreateUpdateSerializer(serializers.ModelSerializer):
             InstallmentPayment.objects.create(
                 order=order,
                 amount=order.price,
-                payment_date=order.created_at,
+                # payment_date=order.created_at,
+                payment_data=order.payments_data,
                 left=order.price,
             )
 
@@ -85,7 +86,8 @@ class OrderCreateUpdateSerializer(serializers.ModelSerializer):
             InstallmentPayment.objects.create(
                 order=instance,
                 amount=instance.price,
-                payment_date=instance.created_at,
+                # payment_date=instance.created_at,
+                payment_date=instance.payments_data,
                 left=instance.price,
             )
 
