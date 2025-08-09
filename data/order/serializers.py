@@ -61,7 +61,7 @@ class OrderCreateUpdateSerializer(serializers.ModelSerializer):
                 order=order,
                 amount=order.price,
                 # payment_date=order.created_at,
-                payment_data=payment_date,
+                payment_date=payment_date,
                 left=order.price,
             )
 
