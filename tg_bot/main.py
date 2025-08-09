@@ -51,7 +51,7 @@ class Bot:
 
         if not bot_user:
             text = "Pastdagi tugma orqali telefon raqamingizni yuboring 👇 "
-            button = [[KeyboardButton("Share Contact", request_contact=True)]]
+            button = [[KeyboardButton("Yuborish", request_contact=True)]]
             reply_markup = ReplyKeyboardMarkup(
                 button, resize_keyboard=True, one_time_keyboard=True
             )
