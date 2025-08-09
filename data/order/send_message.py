@@ -1,7 +1,6 @@
 import json
 import os
 
-from django.conf import settings
 import requests
 
 
@@ -13,22 +12,28 @@ def send_order_to_customer(order):
 
     chat_id = bot_user.chat_id
 
-    # Xabar matnini tayyorlash
+    PRODUCT_LABELS = {
+        "PRODUCT": "Mahsulot",
+        "SERVICE": "Xizmat",
+    }
+
+    ORDER_TYPE_LABELS = {
+        "CUSTOMER_TO_COMPANY": "Buyurtma qabul qilish",
+        "COMPANY_TO_CUSTOMER": "Buyurtma berish",
+    }
+
+    product_label = PRODUCT_LABELS.get(order.product, order.product)
+    order_type_label = ORDER_TYPE_LABELS.get(order.order_type, order.order_type)
+
     text = (
         f"🆕 Yangi buyurtma\n"
-        f"📌 Mahsulot turi: {order.get_product_display()}\n"
-        f"📦 Buyurtma turi: {order.get_order_type_display()}\n"
+        f"📌 Mahsulot turi: {product_label}\n"
+        f"📦 Buyurtma turi: {order_type_label}\n"
         f"💰 Narx: {order.price}\n"
         f"📄 Izoh: {order.comment or '-'}\n"
     )
 
     BOT_TOKEN = os.environ.get("BOT_TOKEN")
-
-    # # Xabar yuborish
-    # requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage", data={
-    #     "chat_id": chat_id,
-    #     "text": text
-    # })
 
     # Agar PRODUCT bo'lsa va fayllar bo'lsa — sendMediaGroup ishlatamiz
     if order.product == "PRODUCT" and order.files.exists():
