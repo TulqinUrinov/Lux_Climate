@@ -92,6 +92,7 @@ class Me(APIView):
         bot_user = request.bot_user
         user = request.admin
         customer = request.customer
+        role = request.role
 
         if not bot_user:
             return Response(
@@ -104,6 +105,7 @@ class Me(APIView):
                 "name": user.full_name or "",
                 "number": user.phone_number or "",
                 "chat_id": bot_user.chat_id,
+                "role": role,
             }
         elif customer:
             user_data = {
@@ -111,6 +113,7 @@ class Me(APIView):
                 "name": customer.full_name or "",
                 "number": customer.phone_number or "",
                 "chat_id": bot_user.chat_id,
+                "role": role,
             }
         else:
             return Response(
