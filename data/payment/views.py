@@ -103,15 +103,20 @@ class PaymentListCreateView(ListCreateAPIView):
             customer.recalculate_balance()
 
     def post(self, request, *args, **kwargs):
-        customer = Customer.objects.get(id=request.data["customer_id"])
-        self.transfer_between_choices(
-            customer=customer,
-            from_choice=request.data["from_choice"],
-            to_choice=request.data["to_choice"],
-            amount=Decimal(request.data["amount"]),
-            created_by=request.admin
-        )
-        return Response({"detail": "O'tkazma amalga oshirildi"})
+        # Agar transfer bo'lsa
+        if "from_choice" in request.data and "to_choice" in request.data:
+            customer = Customer.objects.get(id=request.data["customer_id"])
+            self.transfer_between_choices(
+                customer=customer,
+                from_choice=request.data["from_choice"],
+                to_choice=request.data["to_choice"],
+                amount=Decimal(request.data["amount"]),
+                created_by=request.admin
+            )
+            return Response({"detail": "O'tkazma amalga oshirildi"})
+
+        # Oddiy payment bo'lsa DRF oqimini ishlatish
+        return super().post(request, *args, **kwargs)
 
 
 class DebtSplitsListAPIView(ListAPIView):
