@@ -3,7 +3,6 @@ from django.db import models
 
 from data.common.models import BaseModel
 
-
 if TYPE_CHECKING:
     from data.user.models import User
     from data.payment.models import Payment
@@ -33,13 +32,6 @@ class Balance(BaseModel):
         "customer.Customer",
         on_delete=models.CASCADE,
         related_name="balances",
-    )
-
-    payment_choice = models.CharField(
-        max_length=20,
-        choices=Payment.PAYMENT_CHOICES,
-        null=True,
-        blank=True
     )
 
     amount = models.DecimalField(
@@ -72,4 +64,11 @@ class Balance(BaseModel):
         related_name="_balance",
         null=True,
         blank=True,
+    )
+
+    payment_choice = models.CharField(
+        max_length=20,
+        choices=Payment.PAYMENT_CHOICES,
+        null=True,
+        blank=True
     )
