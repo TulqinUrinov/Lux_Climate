@@ -25,12 +25,17 @@ class PaymentListView(ListCreateAPIView):
 
             queryset = Payment.objects.all().order_by("-created_at")
 
+            payment_choice = self.request.query_params.get("payment_choice")
             customer_id = self.request.query_params.get("customer_id")
             start_date = self.request.query_params.get("start_date")
             end_date = self.request.query_params.get("end_date")
 
             if customer_id:
                 queryset = queryset.filter(customer_id=customer_id).all()
+
+            # to'lov turi bo'yicha filter qilib beradi
+            if payment_choice:
+                queryset = queryset.filter(payment_choice=payment_choice).all()
 
             if start_date:
                 queryset = queryset.filter(created_at__gte=parse_date(start_date))
