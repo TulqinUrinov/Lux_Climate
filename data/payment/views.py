@@ -74,6 +74,10 @@ class PaymentListCreateView(ListCreateAPIView):
         from_balance = customer.balances.filter(payment_choice=from_choice) \
                            .aggregate(total=Sum("change"))["total"] or Decimal("0")
 
+        print(f"Balance:   {from_balance}")
+        print(f"Amount:    {amount}")
+
+
         if from_balance < amount:
             raise ValidationError(f"{from_choice} balansida yetarli mablag' yo'q!")
 
