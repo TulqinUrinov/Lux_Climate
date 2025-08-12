@@ -58,6 +58,7 @@ class Payment(BaseModel):
         ("CLICK", "Click"),
         ("PAYME", "Payme"),
         ("CASH", "Naqd Pul"),
+        ("INTERNAL_TRANSFER", "Internal Transfer"),
     )
 
     PAYMENT_CHOICES = (

@@ -1,6 +1,12 @@
 from datetime import date
+from decimal import Decimal
+
+from django.db import transaction
+from django.db.models import Sum
 from django.utils.dateparse import parse_date
+from rest_framework.exceptions import ValidationError
 from rest_framework.generics import ListAPIView, ListCreateAPIView
+from rest_framework.response import Response
 
 from data.bot.permission import IsBotAuthenticated
 from data.common.pagination import CustomPagination
@@ -13,7 +19,7 @@ from data.payment.serializers import (
 )
 
 
-class PaymentListView(ListCreateAPIView):
+class PaymentListCreateView(ListCreateAPIView):
     permission_classes = [IsBotAuthenticated]
     pagination_class = CustomPagination
 
@@ -62,6 +68,50 @@ class PaymentListView(ListCreateAPIView):
     def perform_create(self, serializer: PaymentSerializer):
         payment = serializer.save(created_by=self.request.admin)
         send_payment_to_customer(payment)
+
+    @staticmethod
+    def transfer_between_choices(customer, from_choice, to_choice, amount, created_by):
+        from_balance = customer.balances.filter(payment_choice=from_choice) \
+                           .aggregate(total=Sum("change"))["total"] or Decimal("0")
+
+        if from_balance < amount:
+            raise ValidationError(f"{from_choice} balansida yetarli mablag' yo'q!")
+
+        with transaction.atomic():
+            # OUTCOME yozuvi
+            Payment.objects.create(
+                customer=customer,
+                payment_type="COMPANY_TO_CUSTOMER",
+                payment_choice=from_choice,
+                payment_method="INTERNAL_TRANSFER",
+                amount=amount,
+                comment=f"{from_choice} → {to_choice} o'tkazma",
+                created_by=created_by
+            )
+
+            # INCOME yozuvi
+            Payment.objects.create(
+                customer=customer,
+                payment_type="CUSTOMER_TO_COMPANY",
+                payment_choice=to_choice,
+                payment_method="INTERNAL_TRANSFER",
+                amount=amount,
+                comment=f"{from_choice} → {to_choice} o'tkazma",
+                created_by=created_by
+            )
+
+            customer.recalculate_balance()
+
+    def post(self, request, *args, **kwargs):
+        customer = Customer.objects.get(id=request.data["customer_id"])
+        self.transfer_between_choices(
+            customer=customer,
+            from_choice=request.data["from_choice"],
+            to_choice=request.data["to_choice"],
+            amount=Decimal(request.data["amount"]),
+            created_by=request.admin
+        )
+        return Response({"detail": "O'tkazma amalga oshirildi"})
 
 
 class DebtSplitsListAPIView(ListAPIView):
