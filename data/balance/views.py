@@ -11,23 +11,23 @@ from ..order.models import Order
 from ..payment.models import InstallmentPayment
 
 
-class BalanceCreateAPIView(CreateAPIView):
-    serializer_class = BalanceSerializer
-    queryset = Balance.objects.all()
-    permission_classes = [IsBotAuthenticated]
-
-    def perform_create(self, serializer):
-        data = self.request.data
-        if data.get("type") == "OUTCOME":
-            change = -abs(float(data["amount"]))
-        elif data.get("type") == "INCOME":
-            change = abs(float(data["amount"]))
-        else:
-            raise serializers.ValidationError(
-                {"type": ["Noto‘g‘ri turdagi transaction."]}
-            )
-
-        serializer.save(change=change)
+# class BalanceCreateAPIView(CreateAPIView):
+#     serializer_class = BalanceSerializer
+#     queryset = Balance.objects.all()
+#     permission_classes = [IsBotAuthenticated]
+#
+#     def perform_create(self, serializer):
+#         data = self.request.data
+#         if data.get("type") == "OUTCOME":
+#             change = -abs(float(data["amount"]))
+#         elif data.get("type") == "INCOME":
+#             change = abs(float(data["amount"]))
+#         else:
+#             raise serializers.ValidationError(
+#                 {"type": ["Noto‘g‘ri turdagi transaction."]}
+#             )
+#
+#         serializer.save(change=change)
 
 
 class MutualSettlementView(APIView):

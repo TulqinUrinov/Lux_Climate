@@ -61,16 +61,36 @@ class Customer(BaseModel):
             balance_entries = []
 
             # 2. Create balances from orders
-            for order in self.orders.all():
-                direction = (
-                    order.order_type
-                )  # "CUSTOMER_TO_COMPANY" or "COMPANY_TO_CUSTOMER"
+            # for order in self.orders.all():
+            #     direction = (
+            #         order.order_type
+            #     )  # "CUSTOMER_TO_COMPANY" or "COMPANY_TO_CUSTOMER"
+            #     amount = order.price
+            #     sign = (
+            #         Decimal("-1")
+            #         if direction == "CUSTOMER_TO_COMPANY"
+            #         else Decimal("1")
+            #     )
+            #     transaction_type = "INCOME" if sign > 0 else "OUTCOME"
+            #
+            #     balance_entries.append(
+            #         Balance(
+            #             customer=self,
+            #             user=order.created_by,
+            #             reason="ORDER",
+            #             change=amount * sign,
+            #             amount=amount,
+            #             type=transaction_type,
+            #             created_at=order.created_at,
+            #             comment=f"Order #{order.id}",
+            #         )
+            #     )
+
+            # PRODUCT orders
+            for order in self.orders.filter(product="PRODUCT"):
+                direction = order.order_type  # "CUSTOMER_TO_COMPANY" yoki "COMPANY_TO_CUSTOMER"
                 amount = order.price
-                sign = (
-                    Decimal("-1")
-                    if direction == "CUSTOMER_TO_COMPANY"
-                    else Decimal("1")
-                )
+                sign = Decimal("-1") if direction == "CUSTOMER_TO_COMPANY" else Decimal("1")
                 transaction_type = "INCOME" if sign > 0 else "OUTCOME"
 
                 balance_entries.append(
@@ -78,6 +98,28 @@ class Customer(BaseModel):
                         customer=self,
                         user=order.created_by,
                         reason="ORDER",
+                        payment_choice="PRODUCT",
+                        change=amount * sign,
+                        amount=amount,
+                        type=transaction_type,
+                        created_at=order.created_at,
+                        comment=f"Order #{order.id}",
+                    )
+                )
+
+            # SERVICE orders
+            for order in self.orders.filter(product="SERVICE"):
+                direction = order.order_type
+                amount = order.price
+                sign = Decimal("-1") if direction == "CUSTOMER_TO_COMPANY" else Decimal("1")
+                transaction_type = "INCOME" if sign > 0 else "OUTCOME"
+
+                balance_entries.append(
+                    Balance(
+                        customer=self,
+                        user=order.created_by,
+                        reason="ORDER",
+                        payment_choice="SERVICE",
                         change=amount * sign,
                         amount=amount,
                         type=transaction_type,
