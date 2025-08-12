@@ -86,8 +86,32 @@ class Customer(BaseModel):
                     )
                 )
 
-            # 3. Create balances from payments
-            for payment in self.payments.filter(is_deleted=False):
+            # # 3. Create balances from payments
+            # for payment in self.payments.filter(is_deleted=False):
+            #     p_type = (
+            #         payment.payment_type
+            #     )  # "CUSTOMER_TO_COMPANY" or "COMPANY_TO_CUSTOMER"
+            #     sign = (
+            #         Decimal("1") if p_type == "CUSTOMER_TO_COMPANY" else Decimal("-1")
+            #     )
+            #     transaction_type = "INCOME" if sign > 0 else "OUTCOME"
+            #
+            #     balance_entries.append(
+            #         Balance(
+            #             customer=self,
+            #             user=payment.created_by,
+            #             payment=payment,
+            #             reason="PAYMENT_INCOME" if sign > 0 else "PAYMENT_OUTCOME",
+            #             change=payment.amount * sign,
+            #             amount=payment.amount,
+            #             type=transaction_type,
+            #             created_at=payment.created_at,
+            #             comment=payment.comment or f"Payment #{payment.id}",
+            #         )
+            #     )
+
+            # PRODUCT payments
+            for payment in self.payments.filter(is_deleted=False, payment_choice="PRODUCT"):
                 p_type = (
                     payment.payment_type
                 )  # "CUSTOMER_TO_COMPANY" or "COMPANY_TO_CUSTOMER"
@@ -102,6 +126,32 @@ class Customer(BaseModel):
                         user=payment.created_by,
                         payment=payment,
                         reason="PAYMENT_INCOME" if sign > 0 else "PAYMENT_OUTCOME",
+                        payment_choice=payment.payment_choice,
+                        change=payment.amount * sign,
+                        amount=payment.amount,
+                        type=transaction_type,
+                        created_at=payment.created_at,
+                        comment=payment.comment or f"Payment #{payment.id}",
+                    )
+                )
+
+            # SERVICE payments
+            for payment in self.payments.filter(is_deleted=False, payment_choice="SERVICE"):
+                p_type = (
+                    payment.payment_type
+                )  # "CUSTOMER_TO_COMPANY" or "COMPANY_TO_CUSTOMER"
+                sign = (
+                    Decimal("1") if p_type == "CUSTOMER_TO_COMPANY" else Decimal("-1")
+                )
+                transaction_type = "INCOME" if sign > 0 else "OUTCOME"
+
+                balance_entries.append(
+                    Balance(
+                        customer=self,
+                        user=payment.created_by,
+                        payment=payment,
+                        reason="PAYMENT_INCOME" if sign > 0 else "PAYMENT_OUTCOME",
+                        payment_choice=payment.payment_choice,
                         change=payment.amount * sign,
                         amount=payment.amount,
                         type=transaction_type,
