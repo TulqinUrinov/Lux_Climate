@@ -109,7 +109,11 @@ class BalanceReportExportView(APIView):
         workbook = xlsxwriter.Workbook(output, {"in_memory": True})
 
         type_display = {"INCOME": "Kirim", "OUTCOME": "Chiqim"}
-        reason_display = {"PAYMENT": "To‘lov", "ORDER": "Buyurtma"}
+        reason_display = {
+            "PAYMENT_INCOME": "To‘lov (Kirim)",
+            "PAYMENT_OUTCOME": "To‘lov (Chiqim)",
+            "ORDER": "Buyurtma"
+        }
 
         def write_section(sheet_name, queryset):
             worksheet = workbook.add_worksheet(sheet_name)
