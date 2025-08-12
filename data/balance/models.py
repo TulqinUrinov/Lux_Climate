@@ -21,6 +21,11 @@ class Balance(BaseModel):
         ("OUTCOME", "Outcome"),
     )
 
+    PAYMENT_CHOICES = (
+        ("PRODUCT", "Product"),
+        ("SERVICE", "Service"),
+    )
+
     user: "User" = models.ForeignKey(
         "user.User",
         on_delete=models.SET_NULL,
@@ -68,7 +73,7 @@ class Balance(BaseModel):
 
     payment_choice = models.CharField(
         max_length=20,
-        choices=payment.PAYMENT_CHOICES,
+        choices=PAYMENT_CHOICES,
         null=True,
         blank=True
     )
