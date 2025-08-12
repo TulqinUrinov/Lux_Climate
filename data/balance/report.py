@@ -97,15 +97,6 @@ class BalanceReportExportView(APIView):
         #     worksheet.write(row_num, 5, bal_data.get("final_balance", "-"))
         #     worksheet.write(row_num, 6, balance.comment or "")
 
-        balances = (
-            Balance.objects.filter(
-                created_at__range=(start, end), customer_id=customer_id
-            )
-            .select_related("user", "customer")
-            .order_by("-created_at", "-id")
-        )
-
-        # Balanslar xaritasi
         balances_map = {}
         records = mutual_settlements(self, customer_id=customer_id)
         for record in records:
@@ -116,74 +107,61 @@ class BalanceReportExportView(APIView):
 
         output = io.BytesIO()
         workbook = xlsxwriter.Workbook(output, {"in_memory": True})
-        worksheet = workbook.add_worksheet("Hisobot")
-
-        # Header
-        headers = [
-            "Sana",
-            "Turi",
-            "Sabab",
-            "Boshlang'ich summa",
-            "O‘zgarish",
-            "Oxirgi summa",
-            "Izoh",
-        ]
-        for col_num, header in enumerate(headers):
-            worksheet.write(0, col_num, header)
 
         type_display = {"income": "Kirim", "outcome": "Chiqim"}
         reason_display = {"payment": "To‘lov", "order": "Buyurtma"}
 
-        # Ma’lumotlar
-        for row_num, balance in enumerate(balances, start=1):
-            bal_data = balances_map.get(balance.id, {})
-            worksheet.write(row_num, 0, balance.created_at.strftime("%d-%m-%Y"))
-            worksheet.write(row_num, 1, type_display.get(balance.type, balance.type))
-            worksheet.write(
-                row_num, 2, reason_display.get(balance.reason, balance.reason)
+        def write_section(sheet_name, queryset):
+            worksheet = workbook.add_worksheet(sheet_name)
+
+            # Header
+            headers = [
+                "Sana",
+                "Turi",
+                "Sabab",
+                "Boshlang'ich summa",
+                "O‘zgarish",
+                "Oxirgi summa",
+                "Izoh",
+            ]
+            for col_num, header in enumerate(headers):
+                worksheet.write(0, col_num, header)
+
+            # Ma’lumotlar
+            for row_num, balance in enumerate(queryset, start=1):
+                bal_data = balances_map.get(balance.id, {})
+                worksheet.write(row_num, 0, balance.created_at.strftime("%d-%m-%Y"))
+                worksheet.write(row_num, 1, type_display.get(balance.type, balance.type))
+                worksheet.write(row_num, 2, reason_display.get(balance.reason, balance.reason))
+                worksheet.write(row_num, 3, bal_data.get("start_balance", "-"))
+                worksheet.write(row_num, 4, balance.change)
+                worksheet.write(row_num, 5, bal_data.get("final_balance", "-"))
+                worksheet.write(row_num, 6, balance.comment or "")
+
+        # Balanslar
+        balances_product = (
+            Balance.objects.filter(
+                created_at__range=(start, end),
+                customer_id=customer_id,
+                payment_choice="PRODUCT"
             )
-            worksheet.write(row_num, 3, bal_data.get("start_balance", "-"))
-            worksheet.write(row_num, 4, balance.change)
-            worksheet.write(row_num, 5, bal_data.get("final_balance", "-"))
-            worksheet.write(row_num, 6, balance.comment or "")
-
-        # ======== Statistika qo‘shish ========
-        stats_all = balances.aggregate(
-            total_income=Sum("change", filter=Q(type="INCOME")),
-            total_outcome=Sum("change", filter=Q(type="OUTCOME")),
+            .select_related("user", "customer")
+            .order_by("-created_at", "-id")
         )
 
-        stats_product = balances.filter(payment_choice="PRODUCT").aggregate(
-            total_income=Sum("change", filter=Q(type="INCOME")),
-            total_outcome=Sum("change", filter=Q(type="OUTCOME")),
+        balances_service = (
+            Balance.objects.filter(
+                created_at__range=(start, end),
+                customer_id=customer_id,
+                payment_choice="SERVICE"
+            )
+            .select_related("user", "customer")
+            .order_by("-created_at", "-id")
         )
 
-        stats_service = balances.filter(payment_choice="SERVICE").aggregate(
-            total_income=Sum("change", filter=Q(type="INCOME")),
-            total_outcome=Sum("change", filter=Q(type="OUTCOME")),
-        )
-
-        row_offset = len(balances) + 2
-        worksheet.write(row_offset, 0, "Statistika")
-        worksheet.write(row_offset + 1, 0, "Turi")
-        worksheet.write(row_offset + 1, 1, "Kirim")
-        worksheet.write(row_offset + 1, 2, "Chiqim")
-        worksheet.write(row_offset + 1, 3, "Yakuniy balans")
-
-        worksheet.write(row_offset + 2, 0, "Umumiy")
-        worksheet.write(row_offset + 2, 1, stats_all["total_income"] or 0)
-        worksheet.write(row_offset + 2, 2, stats_all["total_outcome"] or 0)
-        worksheet.write(row_offset + 2, 3, (stats_all["total_income"] or 0) - (stats_all["total_outcome"] or 0))
-
-        worksheet.write(row_offset + 3, 0, "PRODUCT")
-        worksheet.write(row_offset + 3, 1, stats_product["total_income"] or 0)
-        worksheet.write(row_offset + 3, 2, stats_product["total_outcome"] or 0)
-        worksheet.write(row_offset + 3, 3, (stats_product["total_income"] or 0) - (stats_product["total_outcome"] or 0))
-
-        worksheet.write(row_offset + 4, 0, "SERVICE")
-        worksheet.write(row_offset + 4, 1, stats_service["total_income"] or 0)
-        worksheet.write(row_offset + 4, 2, stats_service["total_outcome"] or 0)
-        worksheet.write(row_offset + 4, 3, (stats_service["total_income"] or 0) - (stats_service["total_outcome"] or 0))
+        # Har bir bo‘lim uchun alohida jadval
+        write_section("PRODUCT", balances_product)
+        write_section("SERVICE", balances_service)
 
         workbook.close()
         output.seek(0)
