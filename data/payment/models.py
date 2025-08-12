@@ -60,6 +60,11 @@ class Payment(BaseModel):
         ("CASH", "Naqd Pul"),
     )
 
+    PAYMENT_CHOICES = (
+        ("PRODUCT", "Product"),
+        ("SERVICE", "Service"),
+    )
+
     customer: "Customer | None" = models.ForeignKey(
         "customer.Customer",
         on_delete=models.SET_NULL,
@@ -69,6 +74,8 @@ class Payment(BaseModel):
     )
 
     payment_type = models.CharField(max_length=255, choices=PAYMENT_TYPE_CHOICES)
+
+    payment_choice = models.CharField(max_length=20, choices=PAYMENT_CHOICES)
 
     payment_method = models.CharField(max_length=50, choices=PAYMENT_METHOD_CHOICES)
 

@@ -35,6 +35,7 @@ class PaymentSerializer(serializers.ModelSerializer):
             "id",
             "customer",
             "payment_type",
+            "payment_choice",
             "payment_method",
             "amount",
             "created_by",
