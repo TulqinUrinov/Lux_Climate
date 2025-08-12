@@ -68,7 +68,7 @@ class Balance(BaseModel):
 
     payment_choice = models.CharField(
         max_length=20,
-        choices=Payment.PAYMENT_CHOICES,
+        choices=payment.PAYMENT_CHOICES,
         null=True,
         blank=True
     )
