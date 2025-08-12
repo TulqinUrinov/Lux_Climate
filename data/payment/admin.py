@@ -15,6 +15,6 @@ class InstallmentAdmin(admin.ModelAdmin):
 @admin.register(Payment)
 class PaymentAdmin(admin.ModelAdmin):
 
-    list_display = ["customer", "payment_type", "amount"]
+    list_display = ["customer", "payment_type","payment_choice", "amount"]
 
     list_filter = ["payment_type", "customer"]
