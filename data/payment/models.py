@@ -80,7 +80,12 @@ class Payment(BaseModel):
 
     payment_method = models.CharField(max_length=50, choices=PAYMENT_METHOD_CHOICES)
 
+    # so'm
     amount = models.DecimalField(max_digits=20, decimal_places=2)
+    # dollar so'mdagi kursi
+    usd_course = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    # dollar miqdori
+    usd_amount = models.DecimalField(max_digits=20, decimal_places=2, null=True, blank=True)
 
     comment = models.TextField(null=True, blank=True)
 

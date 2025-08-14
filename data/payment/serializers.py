@@ -38,6 +38,8 @@ class PaymentSerializer(serializers.ModelSerializer):
             "payment_choice",
             "payment_method",
             "amount",
+            "usd_course",
+            "usd_amount",
             "created_by",
             "created_at",
         ]
