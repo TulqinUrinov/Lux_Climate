@@ -10,7 +10,6 @@ if TYPE_CHECKING:
 
 
 class Order(BaseModel):
-
     PRODUCT_CHOICES = (
         ("PRODUCT", "Product"),
         ("SERVICE", "Service"),
@@ -41,10 +40,16 @@ class Order(BaseModel):
 
     comment = models.TextField(blank=True, null=True)
 
+    # so'mdagi narxi
     price = models.DecimalField(
         max_digits=20,
         decimal_places=2,
     )
+
+    # dollar kursi
+    usd_course = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    # dollar miqdori
+    usd_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
 
     is_installment = models.BooleanField(default=False)
 

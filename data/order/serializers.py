@@ -32,6 +32,8 @@ class OrderCreateUpdateSerializer(serializers.ModelSerializer):
             "comment",
             "files",
             "price",
+            "usd_course",
+            "usd_amount",
             "is_installment",
             "installment_count",
             "order_splits",
@@ -114,7 +116,7 @@ class OrderListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Order
-        fields = ("id", "customer", "product", "order_type", "price", "created_at")
+        fields = ("id", "customer", "product", "order_type", "price", "usd_course", "usd_amount", "created_at")
 
     def get_customer(self, obj):
         return obj.customer.full_name
@@ -134,6 +136,8 @@ class OrderSerializer(serializers.ModelSerializer):
             "product",
             "order_type",
             "price",
+            "usd_course",
+            "usd_amount",
             "created_at",
             "is_installment",
             "installment_count",
