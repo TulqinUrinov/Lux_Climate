@@ -143,6 +143,7 @@ class OrderSerializer(serializers.ModelSerializer):
             "installment_count",
             "files",
             "order_splits",
+            "comment",
         )
 
     def get_customer(self, obj):
