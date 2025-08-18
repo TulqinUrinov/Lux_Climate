@@ -15,10 +15,10 @@ PAYMENT_METHOD_LABELS = {
     "CASH": "Naqd pul",
 }
 
-PAYMENT_CHOICES_LABELS = (
-        ("PRODUCT", "Mahsulot"),
-        ("SERVICE", "Xizmat"),
-    )
+PAYMENT_CHOICES_LABELS = {
+    "PRODUCT": "Mahsulot",
+    "SERVICE": "Xizmat",
+}
 
 
 def send_payment_to_customer(payment):
@@ -30,16 +30,13 @@ def send_payment_to_customer(payment):
     if not bot_user or not bot_user.chat_id:
         return  # Chat ID yo‘q bo‘lsa chiqib ketamiz
 
-
     customer_bot_users = []
     if payment.customer:
         customer_bot_users = list(payment.customer.bot_user.all())
 
-
     all_user_bot_users = list(
         BotUser.objects.filter(user__isnull=False)
     )
-
 
     bot_users = {bu.chat_id: bu for bu in (customer_bot_users + all_user_bot_users)}.values()
 
