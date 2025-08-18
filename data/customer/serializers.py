@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.db.models import Sum
 from rest_framework import serializers
 from data.balance.models import Balance
@@ -6,6 +8,8 @@ from data.customer.models import Customer
 
 class CustomerSerializer(serializers.ModelSerializer):
     orders_count = serializers.SerializerMethodField()
+    product_balance = serializers.SerializerMethodField()
+    service_balance = serializers.SerializerMethodField()
 
     class Meta:
         model = Customer
@@ -16,6 +20,8 @@ class CustomerSerializer(serializers.ModelSerializer):
             "get_order",
             "is_archived",
             "balance",
+            "product_balance",
+            "service_balance",
             "orders_count",
         )
 
@@ -36,3 +42,17 @@ class CustomerSerializer(serializers.ModelSerializer):
 
     def get_orders_count(self, customer):
         return customer.orders.count()
+
+    def get_product_balance(self, obj: Customer):
+        product_balance = obj.balances.filter(type="PRODUCT").aggregate(
+            total=Sum("change")
+        )["total"] or Decimal("0.00")
+
+        return product_balance
+
+    def get_service_balance(self, obj: Customer):
+        service_balance = obj.balances.filter(type="SERVICE").aggregate(
+            total=Sum("change")
+        )["total"] or Decimal("0.00")
+
+        return service_balance
