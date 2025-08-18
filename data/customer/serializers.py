@@ -44,15 +44,13 @@ class CustomerSerializer(serializers.ModelSerializer):
         return customer.orders.count()
 
     def get_product_balance(self, obj: Customer):
-        product_balance = obj.balances.filter(type="PRODUCT").aggregate(
+        return obj.balances.filter(payment_choice="PRODUCT").aggregate(
             total=Sum("change")
-        )["total"] or Decimal("0.00")
-
-        return product_balance
+        )["total"] or Decimal("0")
 
     def get_service_balance(self, obj: Customer):
-        service_balance = obj.balances.filter(type="SERVICE").aggregate(
+        return obj.balances.filter(payment_choice="SERVICE").aggregate(
             total=Sum("change")
-        )["total"] or Decimal("0.00")
+        )["total"] or Decimal("0")
 
-        return service_balance
+
