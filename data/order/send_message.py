@@ -55,8 +55,7 @@ def send_order_to_customer(order):
         f"🆕 Yangi buyurtma\n"
         f"👤 Buyurtma beruvchi: {sender}\n"
         f"👤 Buyurtma qabul qiluvchi: {receiver}\n"
-        f"📌 Mahsulot turi: {product_label}\n"
-        f"📦 Buyurtma turi: {order_type_label}\n"
+        f"📦 Buyurtma turi: {product_label}\n"
         f"💰 Narx: {price_str}\n"
         f"📄 Izoh: {order.comment or '-'}\n"
     )
