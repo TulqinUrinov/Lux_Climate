@@ -41,11 +41,20 @@ def send_order_to_customer(order):
         "COMPANY_TO_CUSTOMER": "Buyurtma berish",
     }
 
+    if order.order_type == "CUSTOMER_TO_COMPANY":
+        sender = order.customer.full_name
+        receiver = order.created_by.full_name if order.created_by else "-"
+    else:  # COMPANY_TO_CUSTOMER
+        sender = order.created_by.full_name if order.created_by else "-"
+        receiver = order.customer.full_name
+
     product_label = PRODUCT_LABELS.get(order.product, order.product)
     order_type_label = ORDER_TYPE_LABELS.get(order.order_type, order.order_type)
     price_str = f"{order.price:,.2f}".replace(",", " ")
     text = (
         f"🆕 Yangi buyurtma\n"
+        f"👤 Buyurtma beruvchi: {sender}\n"
+        f"👤 Buyurtma qabul qiluvchi: {receiver}\n"
         f"📌 Mahsulot turi: {product_label}\n"
         f"📦 Buyurtma turi: {order_type_label}\n"
         f"💰 Narx: {price_str}\n"

@@ -1,5 +1,6 @@
 import os
 import requests
+from django.dispatch import receiver
 
 from data.bot.models import BotUser
 
@@ -43,6 +44,13 @@ def send_payment_to_customer(payment):
     # chat_id = bot_user.chat_id
     BOT_TOKEN = os.environ.get("BOT_TOKEN")
 
+    if payment.payment_type == "CUSTOMER_TO_COMPANY":
+        sender = payment.customer.full_name
+        receiver = payment.created_by.full_name if payment.created_by else "-"
+    else:  # COMPANY_TO_CUSTOMER
+        sender = payment.created_by.full_name if payment.created_by else "-"
+        receiver = payment.customer.full_name
+
     # Turlarni tarjima qilish
     payment_type_label = PAYMENT_TYPE_LABELS.get(payment.payment_type, payment.payment_type)
     payment_method_label = PAYMENT_METHOD_LABELS.get(payment.payment_method, payment.payment_method)
@@ -50,10 +58,10 @@ def send_payment_to_customer(payment):
     # Xabar matnini tayyorlash
     text = (
         f"💳 Yangi to‘lov\n"
-        f"📌 To‘lov turi: {payment_type_label}\n"
+        f"👤 To‘lov qiluvchi: {sender}\n"
+        f"👤 To'lov qabul qiluvchi: {receiver}\n"
         f"💵 To‘lov usuli: {payment_method_label}\n"
         f"💰 Miqdor: {amount_str}\n"
-        f"👤 Qabul qilgan: {payment.created_by.full_name if payment.created_by else '-'}\n"
         f"🧾 Izoh: {payment.comment or '-'}\n"
 
     )
