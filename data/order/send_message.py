@@ -3,14 +3,33 @@ import os
 
 import requests
 
+from data.bot.models import BotUser
+
 
 def send_order_to_customer(order):
-    # Customer bilan bog‘langan BotUser topamiz
-    bot_user = order.customer.bot_user.first()
-    if not bot_user or not bot_user.chat_id:
-        return  # Chat ID yo‘q bo‘lsa, hech narsa qilmaymiz
+    # # Customer bilan bog‘langan BotUser topamiz
+    # bot_user = order.customer.bot_user.first()
+    # if not bot_user or not bot_user.chat_id:
+    #     return  # Chat ID yo‘q bo‘lsa, hech narsa qilmaymiz
+    #
+    # chat_id = bot_user.chat_id
 
-    chat_id = bot_user.chat_id
+    if not order.customer:
+        return
+
+    customer_bot_users = []
+    if order.customer:
+        customer_bot_users = list(order.customer.bot_user.all())
+
+    all_user_bot_users = list(
+        BotUser.objects.filter(user__isnull=False)  # admin yoki user bog‘langanlar
+    )
+
+    # Unikal chat_id larni olish
+    bot_users = {bu.chat_id: bu for bu in (customer_bot_users + all_user_bot_users)}.values()
+
+    if not bot_users:
+        return
 
     PRODUCT_LABELS = {
         "PRODUCT": "Mahsulot",
@@ -35,33 +54,60 @@ def send_order_to_customer(order):
 
     BOT_TOKEN = os.environ.get("BOT_TOKEN")
 
-    # Agar PRODUCT bo'lsa va fayllar bo'lsa — sendMediaGroup ishlatamiz
-    if order.product == "PRODUCT" and order.files.exists():
-        files = {}
-        media = []
+    for bot_user in bot_users:
+        if order.product == "PRODUCT" and order.files.exists():
+            files = {}
+            media = []
+            for idx, file in enumerate(order.files.all()):
+                if file.file:
+                    file_key = f"file{idx}"
+                    files[file_key] = open(file.file.path, "rb")
+                    media_item = {
+                        "type": "document",
+                        "media": f"attach://{file_key}"
+                    }
+                    if idx == 0:
+                        media_item["caption"] = text
+                    media.append(media_item)
 
-        for idx, file in enumerate(order.files.all()):
-            if file.file:
-                file_key = f"file{idx}"
-                files[file_key] = open(file.file.path, "rb")
-                media_item = {
-                    "type": "document",
-                    "media": f"attach://{file_key}"
-                }
-                # Faqat birinchi faylga caption qo'yamiz
-                if idx == 0:
-                    media_item["caption"] = text
-                media.append(media_item)
+            requests.post(
+                f"https://api.telegram.org/bot{BOT_TOKEN}/sendMediaGroup",
+                data={"chat_id": bot_user.chat_id, "media": json.dumps(media)},
+                files=files
+            )
+        else:
+            requests.post(
+                f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
+                data={"chat_id": bot_user.chat_id, "text": text}
+            )
 
-        requests.post(
-            f"https://api.telegram.org/bot{BOT_TOKEN}/sendMediaGroup",
-            data={"chat_id": chat_id, "media": json.dumps(media)},
-            files=files
-        )
-
-    else:
-        # Fayl bo'lmasa — faqat matn yuboramiz
-        requests.post(
-            f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
-            data={"chat_id": chat_id, "text": text}
-        )
+    # # Agar PRODUCT bo'lsa va fayllar bo'lsa — sendMediaGroup ishlatamiz
+    # if order.product == "PRODUCT" and order.files.exists():
+    #     files = {}
+    #     media = []
+    #
+    #     for idx, file in enumerate(order.files.all()):
+    #         if file.file:
+    #             file_key = f"file{idx}"
+    #             files[file_key] = open(file.file.path, "rb")
+    #             media_item = {
+    #                 "type": "document",
+    #                 "media": f"attach://{file_key}"
+    #             }
+    #             # Faqat birinchi faylga caption qo'yamiz
+    #             if idx == 0:
+    #                 media_item["caption"] = text
+    #             media.append(media_item)
+    #
+    #     requests.post(
+    #         f"https://api.telegram.org/bot{BOT_TOKEN}/sendMediaGroup",
+    #         data={"chat_id": chat_id, "media": json.dumps(media)},
+    #         files=files
+    #     )
+    #
+    # else:
+    #     # Fayl bo'lmasa — faqat matn yuboramiz
+    #     requests.post(
+    #         f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
+    #         data={"chat_id": chat_id, "text": text}
+    #     )
