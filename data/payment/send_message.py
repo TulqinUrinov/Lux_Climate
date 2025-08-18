@@ -15,6 +15,11 @@ PAYMENT_METHOD_LABELS = {
     "CASH": "Naqd pul",
 }
 
+PAYMENT_CHOICES_LABELS = (
+        ("PRODUCT", "Mahsulot"),
+        ("SERVICE", "Xizmat"),
+    )
+
 
 def send_payment_to_customer(payment):
     # Customer bilan bog‘langan BotUser topamiz
@@ -53,6 +58,7 @@ def send_payment_to_customer(payment):
 
     # Turlarni tarjima qilish
     payment_type_label = PAYMENT_TYPE_LABELS.get(payment.payment_type, payment.payment_type)
+    payment_choice_label = PAYMENT_CHOICES_LABELS.get(payment.payment_choice, payment.payment_choice)
     payment_method_label = PAYMENT_METHOD_LABELS.get(payment.payment_method, payment.payment_method)
     amount_str = f"{payment.amount:,.2f}".replace(",", " ")
     # Xabar matnini tayyorlash
@@ -60,6 +66,7 @@ def send_payment_to_customer(payment):
         f"💳 Yangi to‘lov\n"
         f"👤 To‘lov qiluvchi: {sender}\n"
         f"👤 To'lov qabul qiluvchi: {receiver}\n"
+        f"💶 To'lov turi: {payment_choice_label} "
         f"💵 To‘lov usuli: {payment_method_label}\n"
         f"💰 Miqdor: {amount_str}\n"
         f"🧾 Izoh: {payment.comment or '-'}\n"
