@@ -246,3 +246,8 @@ CSRF_TRUSTED_ORIGINS = [
     "https://1a892d4ac10a.ngrok-free.app",
     "https://luxe-climate.vercel.app",
 ]
+
+
+
+DATA_UPLOAD_MAX_MEMORY_SIZE = 52428800  # 50 MB
+FILE_UPLOAD_MAX_MEMORY_SIZE = 52428800  # 50 MB
