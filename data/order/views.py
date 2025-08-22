@@ -29,11 +29,19 @@ class OrderViewSet(viewsets.ModelViewSet):
         queryset = Order.objects.all().order_by('-created_at')
 
         customer_id = self.request.query_params.get('customer_id')
+        product_type = self.request.query_params.get('product_type')
+        order_type = self.request.query_params.get('order_type')
         start_date = self.request.query_params.get('start_date')
         end_date = self.request.query_params.get('end_date')
 
         if customer_id:
             queryset = queryset.filter(customer_id=customer_id)
+
+        if product_type:
+            queryset = queryset.filter(product = product_type)
+
+        if order_type:
+            queryset = queryset.filter(order_type=order_type)
 
         if start_date:
             queryset = queryset.filter(created_at__gte=parse_date(start_date))
