@@ -66,7 +66,7 @@ class Bot:
                 reply_buttons.append(
                     [
                         InlineKeyboardButton(
-                            text="Dasturga kirish",
+                            text="Boshqaruv panelini ochish",
                             web_app=WebAppInfo(url=url),
                         )
                     ]
@@ -86,7 +86,7 @@ class Bot:
                 reply_buttons.append(
                     [
                         InlineKeyboardButton(
-                            text="Dasturga kirish",
+                            text="Boshqaruv panelini ochish",
                             web_app=WebAppInfo(url=url),
                         )
                     ]
@@ -96,7 +96,7 @@ class Bot:
                 reply_buttons.append(
                     [
                         InlineKeyboardButton(
-                            text="Dasturga kirish",
+                            text="Boshqaruv panelini ochish",
                             web_app=WebAppInfo(url=url),
                         )
                     ]
@@ -153,4 +153,4 @@ class Bot:
         else:
             await context.bot.delete_message(chat_id=update.effective_chat.id, message_id=msg.message_id)
 
-            await update.message.reply_text(text="Telefon raqami topilmadi!!!")
+            await update.message.reply_text(text="🚫 Sizga hozircha dasturdan foydalanish huquqi berilmagan.")
