@@ -162,7 +162,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
 # Celery sozlamalari
 CELERY_BROKER_URL = 'redis://redis:6379/0'
 CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
@@ -246,8 +245,6 @@ CSRF_TRUSTED_ORIGINS = [
     "https://1a892d4ac10a.ngrok-free.app",
     "https://luxe-climate.vercel.app",
 ]
-
-
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = 52428800  # 50 MB
 FILE_UPLOAD_MAX_MEMORY_SIZE = 52428800  # 50 MB

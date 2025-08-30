@@ -25,9 +25,21 @@ async def button_handler(update, context):
         await query.message.reply_text("Post yaratish boshlandi. Qo‘shmoqchi bo‘lgan qismni tanlang:",
                                        reply_markup=InlineKeyboardMarkup(buttons))
 
+    # elif query.data in ['add_video', 'add_photo', 'add_text']:
+    #     context.user_data['post']['step'] = query.data.replace('add_', '')
+    #     await query.message.reply_text("Tanlangan faylni yuboring.")
+
     elif query.data in ['add_video', 'add_photo', 'add_text']:
         context.user_data['post']['step'] = query.data.replace('add_', '')
-        await query.message.reply_text("Tanlangan faylni yuboring.")
+
+        if query.data == 'add_video':
+            msg = "🎥 Iltimos, video yuboring."
+        elif query.data == 'add_photo':
+            msg = "🖼️ Iltimos, rasm yuboring."
+        elif query.data == 'add_text':
+            msg = "✏️ Iltimos, matn yuboring."
+
+        await query.message.reply_text(msg)
 
     elif query.data == 'cancel_post':
         context.user_data['post'] = None
