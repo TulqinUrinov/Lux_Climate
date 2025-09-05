@@ -38,7 +38,7 @@ class OrderViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(customer_id=customer_id)
 
         if product_type:
-            queryset = queryset.filter(product = product_type)
+            queryset = queryset.filter(product=product_type)
 
         if order_type:
             queryset = queryset.filter(order_type=order_type)
@@ -57,8 +57,8 @@ class OrderViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         order = serializer.save(created_by=self.request.admin)
-        send_order_to_customer(order)  # 🟢 Yangi buyurtma haqida xabar yuborish
+        send_order_to_customer(order, created=True)
 
     def perform_update(self, serializer):
         order = serializer.save()
-        send_order_to_customer(order)
+        send_order_to_customer(order, created=False)
