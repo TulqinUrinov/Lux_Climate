@@ -1,6 +1,5 @@
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 
-
 async def preview_post(update, context):
     post = context.user_data.get('post')
 
@@ -10,8 +9,12 @@ async def preview_post(update, context):
         buttons.append([InlineKeyboardButton("🎥 Video qo‘shish", callback_data='add_video')])
     if not post['photo']:
         buttons.append([InlineKeyboardButton("🖼️ Rasm qo‘shish", callback_data='add_photo')])
+
+    # Matn qo‘shish yoki tahrirlash
     if not post['text']:
         buttons.append([InlineKeyboardButton("✏️ Matn qo‘shish", callback_data='add_text')])
+    else:
+        buttons.append([InlineKeyboardButton("✏️ Matnni tahrirlash", callback_data='edit_text')])
 
     buttons += [
         [InlineKeyboardButton("✅ Tasdiqlash", callback_data='confirm_post')],
@@ -27,8 +30,39 @@ async def preview_post(update, context):
     elif post['text']:
         await update.message.reply_text(post['text'], reply_markup=markup)
     else:
-        await update.message.reply_text("Postga hech narsa qo‘shilmadi. Iltimos, media yoki matn yuboring.",
-                                        reply_markup=markup)
+        await update.message.reply_text(
+            "Postga hech narsa qo‘shilmadi. Iltimos, media yoki matn yuboring.",
+            reply_markup=markup
+        )
+
+# async def preview_post(update, context):
+#     post = context.user_data.get('post')
+#
+#     buttons = []
+#
+#     if not post['video']:
+#         buttons.append([InlineKeyboardButton("🎥 Video qo‘shish", callback_data='add_video')])
+#     if not post['photo']:
+#         buttons.append([InlineKeyboardButton("🖼️ Rasm qo‘shish", callback_data='add_photo')])
+#     if not post['text']:
+#         buttons.append([InlineKeyboardButton("✏️ Matn qo‘shish", callback_data='add_text')])
+#
+#     buttons += [
+#         [InlineKeyboardButton("✅ Tasdiqlash", callback_data='confirm_post')],
+#         [InlineKeyboardButton("❌ Bekor qilish", callback_data='cancel_post')],
+#     ]
+#
+#     markup = InlineKeyboardMarkup(buttons)
+#
+#     if post['video']:
+#         await update.message.reply_video(video=post['video'], caption=post.get('text', ''), reply_markup=markup)
+#     elif post['photo']:
+#         await update.message.reply_photo(photo=post['photo'], caption=post.get('text', ''), reply_markup=markup)
+#     elif post['text']:
+#         await update.message.reply_text(post['text'], reply_markup=markup)
+#     else:
+#         await update.message.reply_text("Postga hech narsa qo‘shilmadi. Iltimos, media yoki matn yuboring.",
+#                                         reply_markup=markup)
 
 
 async def message_handler(update, context):
