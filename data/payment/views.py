@@ -5,7 +5,7 @@ from django.db import transaction
 from django.db.models import Sum
 from django.utils.dateparse import parse_date
 from rest_framework.exceptions import ValidationError
-from rest_framework.generics import ListAPIView, ListCreateAPIView
+from rest_framework.generics import ListAPIView, ListCreateAPIView, RetrieveUpdateAPIView
 from rest_framework.response import Response
 
 from data.bot.permission import IsBotAuthenticated
@@ -81,7 +81,6 @@ class PaymentListCreateView(ListCreateAPIView):
         print(f"Balance:{from_balance}")
         print(f"Amount:{amount}")
 
-
         if from_balance < amount:
             raise ValidationError(f"{from_choice} balansida yetarli mablag' yo'q!")
 
@@ -125,6 +124,16 @@ class PaymentListCreateView(ListCreateAPIView):
 
         # Oddiy payment bo'lsa DRF oqimini ishlatish
         return super().post(request, *args, **kwargs)
+
+
+# Paymentni update qilish.
+class PaymentUpdateView(RetrieveUpdateAPIView):
+    queryset = Payment.objects.all()
+    serializer_class = PaymentSerializer
+    permission_classes = [IsBotAuthenticated]
+
+    def perform_update(self, serializer):
+        payment = serializer.save()
 
 
 class DebtSplitsListAPIView(ListAPIView):
