@@ -37,14 +37,13 @@ async def button_handler(update, context):
 
         await query.message.reply_text(msg)
 
-    # Matn qo‘shish yoki tahrirlash
-    elif query.data in ['add_text', 'edit_text']:
+    elif query.data == 'add_text':
         context.user_data['post']['step'] = 'text'
-        if query.data == 'add_text':
-            msg = "✏️ Iltimos, matn yuboring."
-        else:
-            msg = "✏️ Iltimos, yangi matn yuboring (eski matn o‘rniga yoziladi)."
-        await query.message.reply_text(msg)
+        await query.message.reply_text("✏️ Matn yuboring.")
+
+    elif query.data == 'edit_text':
+        context.user_data['post']['step'] = 'text'
+        await query.message.reply_text("✏️ Yangi matn yuboring.")
 
     elif query.data == 'cancel_post':
         context.user_data['post'] = None
@@ -53,7 +52,6 @@ async def button_handler(update, context):
     elif query.data == 'confirm_post':
         from tg_bot.message_handler import confirm_post_handler
         await confirm_post_handler(update, context)
-
 
 
 # async def button_handler(update, context):
