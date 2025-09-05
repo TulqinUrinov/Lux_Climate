@@ -24,14 +24,14 @@ async def button_handler(update, context):
             [InlineKeyboardButton("❌ Bekor qilish", callback_data='cancel_post')],
         ]
 
-        await query.message.reply_text(
+        await query.edit_message_text(
             "📌 Post yaratish boshlandi. Qo‘shmoqchi bo‘lgan qismni tanlang:",
             reply_markup=InlineKeyboardMarkup(buttons)
         )
         return
 
     if 'post' not in context.user_data or context.user_data['post'] is None:
-        await query.message.reply_text("⚠️ Avval 'Post yaratish'ni boshlang.")
+        await query.edit_message_text("⚠️ Avval 'Post yaratish'ni boshlang.")
         return
 
     if query.data in ['add_video', 'add_photo']:
@@ -42,19 +42,19 @@ async def button_handler(update, context):
         else:
             msg = "🖼️ Iltimos, rasm yuboring."
 
-        await query.message.reply_text(msg)
+        await query.edit_message_text(msg)
 
     elif query.data in ['add_text', 'edit_text']:
         context.user_data['post']['step'] = 'text'
 
         if query.data == 'add_text':
-            await query.message.reply_text("✏️ Iltimos, matn yuboring.")
+            await query.edit_message_text("✏️ Iltimos, matn yuboring.")
         else:
-            await query.message.reply_text("✏️ Yangi matn yuboring (eski matn o‘rniga yoziladi).")
+            await query.edit_message_text("✏️ Yangi matn yuboring (eski matn o‘rniga yoziladi).")
 
     elif query.data == 'cancel_post':
         context.user_data['post'] = None
-        await query.message.reply_text("❌ Post yuborish bekor qilindi.")
+        await query.edit_message_text("❌ Post yuborish bekor qilindi.")
 
     elif query.data == 'confirm_post':
         from tg_bot.message_handler import confirm_post_handler
