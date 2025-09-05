@@ -7,7 +7,7 @@ async def button_handler(update, context):
     query = update.callback_query
     await query.answer()
 
-    print(query.data)
+    print("callback:", query.data)
 
     if query.data == 'start_post':
         context.user_data['post'] = {
@@ -25,28 +25,32 @@ async def button_handler(update, context):
         ]
 
         await query.message.reply_text(
-            "Post yaratish boshlandi. Qo‘shmoqchi bo‘lgan qismni tanlang:",
+            "📌 Post yaratish boshlandi. Qo‘shmoqchi bo‘lgan qismni tanlang:",
             reply_markup=InlineKeyboardMarkup(buttons)
         )
+        return
 
-    elif query.data in ['add_video', 'add_photo']:
+    if 'post' not in context.user_data or context.user_data['post'] is None:
+        await query.message.reply_text("⚠️ Avval 'Post yaratish'ni boshlang.")
+        return
+
+    if query.data in ['add_video', 'add_photo']:
         context.user_data['post']['step'] = query.data.replace('add_', '')
 
         if query.data == 'add_video':
             msg = "🎥 Iltimos, video yuboring."
-        elif query.data == 'add_photo':
+        else:
             msg = "🖼️ Iltimos, rasm yuboring."
 
         await query.message.reply_text(msg)
 
-    elif query.data == 'add_text':
+    elif query.data in ['add_text', 'edit_text']:
         context.user_data['post']['step'] = 'text'
-        await query.message.reply_text("✏️ Matn yuboring.")
 
-    elif query.data == 'edit_text':
-        print(query.data)
-        context.user_data['post']['step'] = 'text'
-        await query.message.reply_text("✏️ Yangi matn yuboring.")
+        if query.data == 'add_text':
+            await query.message.reply_text("✏️ Iltimos, matn yuboring.")
+        else:
+            await query.message.reply_text("✏️ Yangi matn yuboring (eski matn o‘rniga yoziladi).")
 
     elif query.data == 'cancel_post':
         context.user_data['post'] = None
