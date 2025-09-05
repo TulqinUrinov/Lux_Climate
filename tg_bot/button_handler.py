@@ -7,6 +7,8 @@ async def button_handler(update, context):
     query = update.callback_query
     await query.answer()
 
+    print(query.data)
+
     if query.data == 'start_post':
         context.user_data['post'] = {
             'photo': None,
@@ -42,6 +44,7 @@ async def button_handler(update, context):
         await query.message.reply_text("✏️ Matn yuboring.")
 
     elif query.data == 'edit_text':
+        print(query.data)
         context.user_data['post']['step'] = 'text'
         await query.message.reply_text("✏️ Yangi matn yuboring.")
 
@@ -52,7 +55,6 @@ async def button_handler(update, context):
     elif query.data == 'confirm_post':
         from tg_bot.message_handler import confirm_post_handler
         await confirm_post_handler(update, context)
-
 
 # async def button_handler(update, context):
 #     query = update.callback_query
