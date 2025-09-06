@@ -156,8 +156,8 @@ class Bot:
 
                 # birinchi marta kirsa, chat_id biriktirib qo‘yamiz
             if not customer_obj.tg_chat_id:
-                user_obj.tg_chat_id = tg_user.id
-                user_obj.save()
+                customer_obj.tg_chat_id = tg_user.id
+                customer_obj.save()
 
             bot_user, _ = BotUser.objects.get_or_create(
                 chat_id=tg_user.id,
