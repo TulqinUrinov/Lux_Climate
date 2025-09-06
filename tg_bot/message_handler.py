@@ -1,8 +1,8 @@
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 
+
 async def preview_post(update, context):
     post = context.user_data.get('post')
-
     buttons = []
 
     if not post['video']:
@@ -10,7 +10,6 @@ async def preview_post(update, context):
     if not post['photo']:
         buttons.append([InlineKeyboardButton("🖼️ Rasm qo‘shish", callback_data='add_photo')])
 
-    # Matn qo‘shish yoki tahrirlash
     if not post['text']:
         buttons.append([InlineKeyboardButton("✏️ Matn qo‘shish", callback_data='add_text')])
     else:
@@ -23,17 +22,32 @@ async def preview_post(update, context):
 
     markup = InlineKeyboardMarkup(buttons)
 
+    # tugma bosilganda update.callback_query.message bo‘ladi,
+    # oddiy xabar yuborilganda esa update.message bo‘ladi
+    message = update.message or update.callback_query.message
+
     if post['video']:
-        await update.message.reply_video(video=post['video'], caption=post.get('text', ''), reply_markup=markup)
+        # Agar video bo‘lsa faqat captionni yangilash mumkin
+        await message.edit_caption(
+            caption=post.get('text', ''),
+            reply_markup=markup
+        )
     elif post['photo']:
-        await update.message.reply_photo(photo=post['photo'], caption=post.get('text', ''), reply_markup=markup)
+        await message.edit_caption(
+            caption=post.get('text', ''),
+            reply_markup=markup
+        )
     elif post['text']:
-        await update.message.reply_text(post['text'], reply_markup=markup)
+        await message.edit_text(
+            text=post['text'],
+            reply_markup=markup
+        )
     else:
-        await update.message.reply_text(
+        await message.edit_text(
             "Postga hech narsa qo‘shilmadi. Iltimos, media yoki matn yuboring.",
             reply_markup=markup
         )
+
 
 # async def preview_post(update, context):
 #     post = context.user_data.get('post')
@@ -113,4 +127,3 @@ async def confirm_post_handler(update, context):
 
     context.user_data['post'] = None
     await query.message.reply_text(f"✅ Post {count} ta mijozga yuborildi.")
-
