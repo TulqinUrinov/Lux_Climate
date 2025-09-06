@@ -1,8 +1,4 @@
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
-
-from tg_bot.message_handler import confirm_post_handler
-
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 from tg_bot.message_handler import confirm_post_handler, preview_post
 
 
