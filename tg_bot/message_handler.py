@@ -13,7 +13,7 @@ async def preview_post(update, context):
     # Matn qo‘shish yoki tahrirlash
     if not post['text']:
         buttons.append([InlineKeyboardButton("✏️ Matn qo‘shish", callback_data='add_text')])
-    else:
+    if not post['text']:
         buttons.append([InlineKeyboardButton("✏️ Matnni tahrirlash", callback_data='edit_text')])
 
     buttons += [

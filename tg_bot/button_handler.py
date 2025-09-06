@@ -44,7 +44,7 @@ async def button_handler(update, context):
 
         await query.edit_message_text(msg)
 
-    elif query.data in ['add_text', 'edit_text']:
+    elif query.data in ['edit_text', 'add_text']:
         context.user_data['post']['step'] = 'text'
 
         if query.data == 'add_text':
