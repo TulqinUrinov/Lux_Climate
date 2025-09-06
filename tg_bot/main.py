@@ -149,6 +149,16 @@ class Bot:
 
             await context.bot.delete_message(chat_id=update.effective_chat.id, message_id=msg.message_id)
 
+            if customer_obj.tg_chat_id and customer_obj.tg_chat_id != tg_user.id:
+                # boshqa odam raqamdan kirishga urinmoqda
+                await update.message.reply_text("🚫 Bu raqam boshqa foydalanuvchiga tegishli.")
+                return
+
+                # birinchi marta kirsa, chat_id biriktirib qo‘yamiz
+            if not customer_obj.tg_chat_id:
+                user_obj.tg_chat_id = tg_user.id
+                user_obj.save()
+
             bot_user, _ = BotUser.objects.get_or_create(
                 chat_id=tg_user.id,
                 defaults={

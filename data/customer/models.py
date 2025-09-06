@@ -22,6 +22,8 @@ if TYPE_CHECKING:
 class Customer(BaseModel):
     full_name = models.CharField(max_length=100)
     phone_number = models.CharField(max_length=20, unique=True)
+    tg_chat_id = models.BigIntegerField(null=True, blank=True, unique=True)
+
     get_order = models.BooleanField(default=False)
 
     is_archived = models.BooleanField(default=False)
