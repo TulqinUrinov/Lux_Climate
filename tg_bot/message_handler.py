@@ -3,14 +3,16 @@ from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 
 async def preview_post(update, context):
     post = context.user_data.get('post')
-    buttons = []
+    if not post:
+        return
 
-    if not post['video']:
+    buttons = []
+    if not post.get('video'):
         buttons.append([InlineKeyboardButton("🎥 Video qo‘shish", callback_data='add_video')])
-    if not post['photo']:
+    if not post.get('photo'):
         buttons.append([InlineKeyboardButton("🖼️ Rasm qo‘shish", callback_data='add_photo')])
 
-    if not post['text']:
+    if not post.get('text'):
         buttons.append([InlineKeyboardButton("✏️ Matn qo‘shish", callback_data='add_text')])
     else:
         buttons.append([InlineKeyboardButton("✏️ Matnni tahrirlash", callback_data='edit_text')])
@@ -19,33 +21,30 @@ async def preview_post(update, context):
         [InlineKeyboardButton("✅ Tasdiqlash", callback_data='confirm_post')],
         [InlineKeyboardButton("❌ Bekor qilish", callback_data='cancel_post')],
     ]
-
     markup = InlineKeyboardMarkup(buttons)
 
-    # faqat bot yuborgan preview message ustida ishlash
+    # oldingi preview message saqlangan bo'lsa uni tahrir qilamiz
     preview_msg = context.user_data.get("preview_msg")
 
-    if preview_msg:
-        try:
-            if post['video']:
+    try:
+        if preview_msg:
+            if post.get('video') or post.get('photo'):
                 await preview_msg.edit_caption(caption=post.get('text', ''), reply_markup=markup)
-            elif post['photo']:
-                await preview_msg.edit_caption(caption=post.get('text', ''), reply_markup=markup)
-            elif post['text']:
-                await preview_msg.edit_text(text=post['text'], reply_markup=markup)
+            elif post.get('text'):
+                await preview_msg.edit_text(text=post.get('text'), reply_markup=markup)
             else:
                 await preview_msg.edit_text("Postga hech narsa qo‘shilmadi. Iltimos, media yoki matn yuboring.",
                                             reply_markup=markup)
             return
-        except Exception as e:
-            print("Edit qilishda xato:", e)
+    except Exception as e:
+        print("Preview update xatolik:", e)
 
-    # agar preview xabar yo‘q bo‘lsa – yangi xabar yuboramiz va saqlaymiz
-    if post['video']:
+    # agar preview message yo‘q bo‘lsa, yangi yuboramiz va saqlaymiz
+    if post.get('video'):
         preview_msg = await update.message.reply_video(video=post['video'], caption=post.get('text', ''), reply_markup=markup)
-    elif post['photo']:
+    elif post.get('photo'):
         preview_msg = await update.message.reply_photo(photo=post['photo'], caption=post.get('text', ''), reply_markup=markup)
-    elif post['text']:
+    elif post.get('text'):
         preview_msg = await update.message.reply_text(post['text'], reply_markup=markup)
     else:
         preview_msg = await update.message.reply_text("Postga hech narsa qo‘shilmadi. Iltimos, media yoki matn yuboring.",
