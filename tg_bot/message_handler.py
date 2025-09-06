@@ -22,31 +22,36 @@ async def preview_post(update, context):
 
     markup = InlineKeyboardMarkup(buttons)
 
-    # tugma bosilganda update.callback_query.message bo‘ladi,
-    # oddiy xabar yuborilganda esa update.message bo‘ladi
-    message = update.message or update.callback_query.message
+    # faqat bot yuborgan preview message ustida ishlash
+    preview_msg = context.user_data.get("preview_msg")
 
+    if preview_msg:
+        try:
+            if post['video']:
+                await preview_msg.edit_caption(caption=post.get('text', ''), reply_markup=markup)
+            elif post['photo']:
+                await preview_msg.edit_caption(caption=post.get('text', ''), reply_markup=markup)
+            elif post['text']:
+                await preview_msg.edit_text(text=post['text'], reply_markup=markup)
+            else:
+                await preview_msg.edit_text("Postga hech narsa qo‘shilmadi. Iltimos, media yoki matn yuboring.",
+                                            reply_markup=markup)
+            return
+        except Exception as e:
+            print("Edit qilishda xato:", e)
+
+    # agar preview xabar yo‘q bo‘lsa – yangi xabar yuboramiz va saqlaymiz
     if post['video']:
-        # Agar video bo‘lsa faqat captionni yangilash mumkin
-        await message.edit_caption(
-            caption=post.get('text', ''),
-            reply_markup=markup
-        )
+        preview_msg = await update.message.reply_video(video=post['video'], caption=post.get('text', ''), reply_markup=markup)
     elif post['photo']:
-        await message.edit_caption(
-            caption=post.get('text', ''),
-            reply_markup=markup
-        )
+        preview_msg = await update.message.reply_photo(photo=post['photo'], caption=post.get('text', ''), reply_markup=markup)
     elif post['text']:
-        await message.edit_text(
-            text=post['text'],
-            reply_markup=markup
-        )
+        preview_msg = await update.message.reply_text(post['text'], reply_markup=markup)
     else:
-        await message.edit_text(
-            "Postga hech narsa qo‘shilmadi. Iltimos, media yoki matn yuboring.",
-            reply_markup=markup
-        )
+        preview_msg = await update.message.reply_text("Postga hech narsa qo‘shilmadi. Iltimos, media yoki matn yuboring.",
+                                                      reply_markup=markup)
+
+    context.user_data["preview_msg"] = preview_msg
 
 
 # async def preview_post(update, context):
