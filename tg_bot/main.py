@@ -127,6 +127,7 @@ class Bot:
             if user_obj.tg_chat_id and user_obj.tg_chat_id != tg_user.id:
                 # boshqa odam raqamdan kirishga urinmoqda
                 await update.message.reply_text("🚫 Bu raqam boshqa foydalanuvchiga tegishli.")
+                return
 
                 # birinchi marta kirsa, chat_id biriktirib qo‘yamiz
             if not user_obj.tg_chat_id:
