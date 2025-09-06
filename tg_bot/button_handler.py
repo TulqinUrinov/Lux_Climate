@@ -47,10 +47,10 @@ async def button_handler(update, context):
     elif query.data in ['edit_text', 'add_text']:
         context.user_data['post']['step'] = 'text'
 
-        if query.data == 'add_text':
-            await query.edit_message_text("✏️ Iltimos, matn yuboring.")
+        if query.data == 'edit_text':
+            await query.edit_message_text("✏️ matn yuboring.")
         else:
-            await query.edit_message_text("✏️ Yangi matn yuboring (eski matn o‘rniga yoziladi).")
+            await query.edit_message_text("✏️ matn yuboring.")
 
     elif query.data == 'cancel_post':
         context.user_data['post'] = None
