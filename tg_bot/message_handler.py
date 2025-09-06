@@ -26,18 +26,17 @@ async def preview_post(update, context):
     # oldingi preview message saqlangan bo'lsa uni tahrir qilamiz
     preview_msg = context.user_data.get("preview_msg")
 
-    try:
-        if preview_msg:
-            if post.get('video') or post.get('photo'):
-                await preview_msg.edit_caption(caption=post.get('text', ''), reply_markup=markup)
-            elif post.get('text'):
-                await preview_msg.edit_text(text=post.get('text'), reply_markup=markup)
-            else:
-                await preview_msg.edit_text("Postga hech narsa qo‘shilmadi. Iltimos, media yoki matn yuboring.",
-                                            reply_markup=markup)
-            return
-    except Exception as e:
-        print("Preview update xatolik:", e)
+
+    if preview_msg:
+        if post.get('video') or post.get('photo'):
+            await preview_msg.edit_caption(caption=post.get('text', ''), reply_markup=markup)
+        elif post.get('text'):
+            await preview_msg.edit_text(text=post.get('text'), reply_markup=markup)
+        else:
+            await preview_msg.edit_text("Postga hech narsa qo‘shilmadi. Iltimos, media yoki matn yuboring.",
+                                        reply_markup=markup)
+        return
+
 
     # agar preview message yo‘q bo‘lsa, yangi yuboramiz va saqlaymiz
     if post.get('video'):
