@@ -126,8 +126,7 @@ class Bot:
 
             if user_obj.tg_chat_id and user_obj.tg_chat_id != tg_user.id:
                 # boshqa odam raqamdan kirishga urinmoqda
-                await context.bot.delete_message(chat_id=update.effective_chat.id, message_id=msg.message_id)
-                return await update.message.reply_text("🚫 Bu raqam boshqa foydalanuvchiga tegishli.")
+                await update.message.reply_text("🚫 Bu raqam boshqa foydalanuvchiga tegishli.")
 
                 # birinchi marta kirsa, chat_id biriktirib qo‘yamiz
             if not user_obj.tg_chat_id:
