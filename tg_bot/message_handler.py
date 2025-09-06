@@ -26,28 +26,52 @@ async def preview_post(update, context):
     # oldingi preview message saqlangan bo'lsa uni tahrir qilamiz
     preview_msg = context.user_data.get("preview_msg")
 
-
     if preview_msg:
-        if post.get('video') or post.get('photo'):
-            await preview_msg.edit_caption(caption=post.get('text', ''), reply_markup=markup)
+        try:
+            if post.get('video') or post.get('photo'):
+                # Agar media bor va caption ham bor bo'lsa
+                if post.get('text'):
+                    await preview_msg.edit_caption(caption=post.get('text', ''), reply_markup=markup)
+                else:
+                    # Agar media bor lekin caption yo'q bo'lsa, yangi media bilan almashtirish kerak
+                    await preview_msg.delete()
+                    if post.get('video'):
+                        preview_msg = await update.message.reply_video(video=post['video'],
+                                                                       caption=post.get('text', ''),
+                                                                       reply_markup=markup)
+                    elif post.get('photo'):
+                        preview_msg = await update.message.reply_photo(photo=post['photo'],
+                                                                       caption=post.get('text', ''),
+                                                                       reply_markup=markup)
+            elif post.get('text'):
+                # Faqat matn bo'lsa
+                await preview_msg.edit_text(text=post.get('text'), reply_markup=markup)
+            else:
+                # Hech narsa bo'lmasa
+                await preview_msg.edit_text("Postga hech narsa qo‘shilmadi. Iltimos, media yoki matn yuboring.",
+                                            reply_markup=markup)
+        except Exception as e:
+            print(f"Xatolik previewni yangilashda: {e}")
+            # Agar xatolik bo'lsa, eski xabarni o'chirib yangisini yuboramiz
+            try:
+                await preview_msg.delete()
+            except:
+                pass
+            preview_msg = None
+
+    # Agar preview message yo'q bo'lsa yoki xatolik bo'lib o'chirilgan bo'lsa
+    if not preview_msg:
+        if post.get('video'):
+            preview_msg = await update.message.reply_video(video=post['video'], caption=post.get('text', ''),
+                                                           reply_markup=markup)
+        elif post.get('photo'):
+            preview_msg = await update.message.reply_photo(photo=post['photo'], caption=post.get('text', ''),
+                                                           reply_markup=markup)
         elif post.get('text'):
-            await preview_msg.edit_text(text=post.get('text'), reply_markup=markup)
+            preview_msg = await update.message.reply_text(post['text'], reply_markup=markup)
         else:
-            await preview_msg.edit_text("Postga hech narsa qo‘shilmadi. Iltimos, media yoki matn yuboring.",
-                                        reply_markup=markup)
-        return
-
-
-    # agar preview message yo‘q bo‘lsa, yangi yuboramiz va saqlaymiz
-    if post.get('video'):
-        preview_msg = await update.message.reply_video(video=post['video'], caption=post.get('text', ''), reply_markup=markup)
-    elif post.get('photo'):
-        preview_msg = await update.message.reply_photo(photo=post['photo'], caption=post.get('text', ''), reply_markup=markup)
-    elif post.get('text'):
-        preview_msg = await update.message.reply_text(post['text'], reply_markup=markup)
-    else:
-        preview_msg = await update.message.reply_text("Postga hech narsa qo‘shilmadi. Iltimos, media yoki matn yuboring.",
-                                                      reply_markup=markup)
+            preview_msg = await update.message.reply_text(
+                "Postga hech narsa qo‘shilmadi. Iltimos, media yoki matn yuboring.", reply_markup=markup)
 
     context.user_data["preview_msg"] = preview_msg
 
