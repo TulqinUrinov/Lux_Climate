@@ -25,7 +25,7 @@ class Bot:
         BOT_TOKEN = os.environ.get("BOT_TOKEN")
         self.app = ApplicationBuilder().token(BOT_TOKEN).build()
         self.app.add_handler(CallbackQueryHandler(button_handler,
-                                                  pattern='^(start_post|add_video|add_photo|add_text|confirm_post|cancel_post)$'))
+                                                  pattern='^(start_post|add_video|add_photo|add_text|edit_text|confirm_post|cancel_post)$'))
 
         self.app.add_handler(MessageHandler(filters.ALL, self.route_handler))
 
