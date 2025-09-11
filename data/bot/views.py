@@ -38,12 +38,22 @@ class JWTtokenGenerator(APIView):
             )
 
         payload = {}
-        if bot_user.user:
-            refresh = RefreshToken.for_user(bot_user.user)
-            payload["user_id"] = bot_user.user.id
-        elif bot_user.customer:
+
+        if bot_user.customer:
             refresh = RefreshToken.for_user(bot_user.customer)
             payload["customer_id"] = bot_user.customer.id
+            payload["chat_id"] = bot_user.chat_id
+        elif bot_user.user:
+            refresh = RefreshToken.for_user(bot_user.user)
+            payload["user_id"] = bot_user.user.id
+            payload["chat_id"] = bot_user.chat_id
+
+        # if bot_user.user:
+        #     refresh = RefreshToken.for_user(bot_user.user)
+        #     payload["user_id"] = bot_user.user.id
+        # elif bot_user.customer:
+        #     refresh = RefreshToken.for_user(bot_user.customer)
+        #     payload["customer_id"] = bot_user.customer.id
 
         # Har ikki holatda ham bot_user mavjud
         payload["bot_user_id"] = bot_user.id

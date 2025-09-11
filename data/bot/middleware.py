@@ -12,12 +12,12 @@ class BotUserJWTMiddleware:
 
     def __call__(self, request):
         auth_header = request.headers.get("Authorization")
+        token = None
 
         if auth_header and auth_header.startswith("Bearer "):
             token = auth_header.split(" ")[1]
-        else:
-            token = None
 
+        # Default qiymatlar
         request.bot_user = None
         request.admin = None
         request.customer = None
@@ -28,19 +28,24 @@ class BotUserJWTMiddleware:
                 payload = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
 
                 bot_user_id = payload.get("bot_user_id")
+                chat_id = payload.get("chat_id")
                 user_id = payload.get("user_id")
                 customer_id = payload.get("customer_id")
 
                 if bot_user_id:
                     request.bot_user = BotUser.objects.filter(id=bot_user_id).first()
 
-                if user_id is not None:
-                    request.admin = User.objects.filter(id=user_id).first()
-                    request.role = "ADMIN"
+                if chat_id:
+                    request.admin = User.objects.filter(tg_chat_id=chat_id).first()
+                    request.customer = Customer.objects.filter(tg_chat_id=chat_id).first()
 
-                elif customer_id is not None:
-                    request.customer = Customer.objects.filter(id=customer_id).first()
+                # Rolni to‘g‘ri aniqlash
+                if request.admin:
+                    request.role = "ADMIN"
+                elif request.customer:
                     request.role = "CUSTOMER"
+                else:
+                    request.role = None
 
             except jwt.ExpiredSignatureError:
                 return JsonResponse({"error": "Token expired"}, status=401)
