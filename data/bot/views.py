@@ -107,7 +107,7 @@ class Me(APIView):
                 "chat_id": bot_user.chat_id,
                 "role": role,
             }
-        if customer:
+        elif customer:
             user_data = {
                 "id": customer.id,
                 "name": customer.full_name or "",

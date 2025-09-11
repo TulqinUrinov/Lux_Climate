@@ -20,7 +20,7 @@ class BotUserJWTMiddleware:
 
         request.bot_user = None
         request.customer = None
-        request.user = None
+        request.admin = None
 
         if token:
             try:
