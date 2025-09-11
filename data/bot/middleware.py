@@ -21,6 +21,7 @@ class BotUserJWTMiddleware:
         request.bot_user = None
         request.customer = None
         request.admin = None
+        request.role = None
 
         if token:
             try:
@@ -35,15 +36,19 @@ class BotUserJWTMiddleware:
 
                 if user_id:
                     request.admin = User.objects.filter(id=user_id).first()
+                    request.role = "ADMIN"
 
-                if customer_id:
+                elif customer_id:
                     request.customer = Customer.objects.filter(id=customer_id).first()
+                    request.role = "CUSTOMER"
+                else:
+                    request.role = None
 
-                request.role = (
-                    "ADMIN"
-                    if request.admin is not None
-                    else ("CUSTOMER" if request.customer is not None else None)
-                )
+                # request.role = (
+                #     "ADMIN"
+                #     if request.admin is not None
+                #     else ("CUSTOMER" if request.customer is not None else None)
+                # )
 
             except jwt.ExpiredSignatureError:
                 return JsonResponse({"error": "Token expired"}, status=401)
