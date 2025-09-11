@@ -83,23 +83,17 @@ class JWTtokenRefresh(APIView):
 
 
 class Me(APIView):
-    """
-    Get user or customer information.
-    """
     permission_classes = [IsBotAuthenticated]
 
     def get(self, request):
         bot_user = request.bot_user
-        user = request.admin
-        customer = request.customer
         role = request.role
 
         if not bot_user:
-            return Response(
-                {"error": " BotUser not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "BotUser not found"}, status=status.HTTP_404_NOT_FOUND)
 
-        if user:
+        if role == "ADMIN" and request.admin:
+            user = request.admin
             user_data = {
                 "id": user.id,
                 "name": user.full_name or "",
@@ -107,7 +101,8 @@ class Me(APIView):
                 "chat_id": bot_user.chat_id,
                 "role": role,
             }
-        elif customer:
+        elif role == "CUSTOMER" and request.customer:
+            customer = request.customer
             user_data = {
                 "id": customer.id,
                 "name": customer.full_name or "",
@@ -116,8 +111,46 @@ class Me(APIView):
                 "role": role,
             }
         else:
-            return Response(
-                {"error": "User not found aaa"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 
         return Response(user_data, status=status.HTTP_200_OK)
+
+# class Me(APIView):
+#     """
+#     Get user or customer information.
+#     """
+#     permission_classes = [IsBotAuthenticated]
+#
+#     def get(self, request):
+#         bot_user = request.bot_user
+#         user = request.admin
+#         customer = request.customer
+#         role = request.role
+#
+#         if not bot_user:
+#             return Response(
+#                 {"error": " BotUser not found"}, status=status.HTTP_404_NOT_FOUND
+#             )
+#
+#         if user:
+#             user_data = {
+#                 "id": user.id,
+#                 "name": user.full_name or "",
+#                 "number": user.phone_number or "",
+#                 "chat_id": bot_user.chat_id,
+#                 "role": role,
+#             }
+#         elif customer:
+#             user_data = {
+#                 "id": customer.id,
+#                 "name": customer.full_name or "",
+#                 "number": customer.phone_number or "",
+#                 "chat_id": bot_user.chat_id,
+#                 "role": role,
+#             }
+#         else:
+#             return Response(
+#                 {"error": "User not found aaa"}, status=status.HTTP_404_NOT_FOUND
+#             )
+#
+#         return Response(user_data, status=status.HTTP_200_OK)
