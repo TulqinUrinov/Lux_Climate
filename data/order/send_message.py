@@ -42,7 +42,7 @@ def send_order_to_customer(order, created=True):
     text = (
         f"{action_label}\n"
         f"👤 Buyurtma beruvchi: {sender}\n"
-        f"👤 Buyurtma qabul qiluvchi: {receiver}\n"
+        f"👤 Buyurtma yaratuvchi {receiver}\n"
         f"📦 Buyurtma turi: {product_label}\n"
         f"💰 Narx: {price_str}\n"
         f"📄 Izoh: {order.comment or '-'}\n"

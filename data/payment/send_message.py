@@ -62,7 +62,7 @@ def send_payment_to_customer(payment):
     text = (
         f"💳 Yangi to‘lov\n"
         f"👤 To‘lov qiluvchi: {sender}\n"
-        f"👤 To'lov qabul qiluvchi: {receiver}\n"
+        f"👤 To'lov yaratuvchi: {receiver}\n"
         f"💶 To'lov turi: {payment_choice_label}\n"
         f"💵 To‘lov usuli: {payment_method_label}\n"
         f"💰 Miqdor: {amount_str}\n"
