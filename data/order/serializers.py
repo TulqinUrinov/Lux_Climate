@@ -37,6 +37,7 @@ class OrderCreateUpdateSerializer(serializers.ModelSerializer):
             "is_installment",
             "installment_count",
             "order_splits",
+
         )
 
     def create(self, validated_data):
@@ -113,13 +114,27 @@ class OrderCreateUpdateSerializer(serializers.ModelSerializer):
 # Barcha buyurtmalar ro'yxati
 class OrderListSerializer(serializers.ModelSerializer):
     customer = serializers.SerializerMethodField()
+    created_by = serializers.SerializerMethodField()
 
     class Meta:
         model = Order
-        fields = ("id", "customer", "product", "order_type", "price", "usd_course", "usd_amount", "created_at")
+        fields = (
+            "id",
+            "customer",
+            "product",
+            "order_type",
+            "price",
+            "usd_course",
+            "usd_amount",
+            "created_at",
+            "created_by",
+        )
 
     def get_customer(self, obj):
         return obj.customer.full_name
+
+    def get_created_by(self, obj):
+        return obj.created_by.full_name
 
 
 # Faqat 1 ta buyurtma uchun
