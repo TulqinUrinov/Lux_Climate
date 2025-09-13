@@ -27,9 +27,13 @@ def send_order_to_customer(order, created=True):
     }
 
     if order.order_type == "CUSTOMER_TO_COMPANY":
+        sender_label = "👤 Buyurtma beruvchi (Mijoz)"
+        receiver_label = "🏢 Buyurtma oluvchi (Admin)"
         sender = order.customer.full_name
         receiver = order.created_by.full_name if order.created_by else "-"
     else:
+        sender_label = "🏢 Buyurtma beruvchi (Admin)"
+        receiver_label = "👤 Buyurtma oluvchi (Mijoz)"
         sender = order.created_by.full_name if order.created_by else "-"
         receiver = order.customer.full_name
 
@@ -41,12 +45,35 @@ def send_order_to_customer(order, created=True):
 
     text = (
         f"{action_label}\n"
-        f"👤 Buyurtma beruvchi: {sender}\n"
-        f"👤 Buyurtma yaratuvchi {receiver}\n"
+        f"{sender_label}: {sender}\n"
+        f"{receiver_label}: {receiver}\n"
         f"📦 Buyurtma turi: {product_label}\n"
         f"💰 Narx: {price_str}\n"
         f"📄 Izoh: {order.comment or '-'}\n"
     )
+
+
+    # if order.order_type == "CUSTOMER_TO_COMPANY":
+    #     sender = order.customer.full_name
+    #     receiver = order.created_by.full_name if order.created_by else "-"
+    # else:
+    #     sender = order.created_by.full_name if order.created_by else "-"
+    #     receiver = order.customer.full_name
+    #
+    # product_label = PRODUCT_LABELS.get(order.product, order.product)
+    # order_type_label = ORDER_TYPE_LABELS.get(order.order_type, order.order_type)
+    # price_str = f"{order.price:,.2f}".replace(",", " ")
+    #
+    # action_label = "🆕 Yangi buyurtma" if created else "✏️ Buyurtma tahrirlandi"
+    #
+    # text = (
+    #     f"{action_label}\n"
+    #     f"👤 Buyurtma beruvchi: {sender}\n"
+    #     f"👤 Buyurtma yaratuvchi {receiver}\n"
+    #     f"📦 Buyurtma turi: {product_label}\n"
+    #     f"💰 Narx: {price_str}\n"
+    #     f"📄 Izoh: {order.comment or '-'}\n"
+    # )
 
     BOT_TOKEN = os.environ.get("BOT_TOKEN")
 
