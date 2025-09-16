@@ -131,10 +131,10 @@ class OrderListSerializer(serializers.ModelSerializer):
         )
 
     def get_customer(self, obj):
-        return obj.customer.full_name
+        return obj.customer.full_name if obj.customer else None
 
     def get_created_by(self, obj):
-        return obj.created_by.full_name
+        return obj.created_by.full_name if obj.created_by else None
 
 
 # Faqat 1 ta buyurtma uchun
