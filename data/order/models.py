@@ -1,12 +1,13 @@
 from django.db import models
 from typing import TYPE_CHECKING
 from data.common.models import BaseModel
-from data.user.models import User
+
 
 if TYPE_CHECKING:
     from data.customer.models import Customer
     from data.file.models import File
     from data.payment.models import InstallmentPayment
+    from data.user.models import User
 
 
 class Order(BaseModel):
@@ -55,7 +56,7 @@ class Order(BaseModel):
 
     installment_count = models.PositiveIntegerField(default=0)
 
-    created_by: "User | None" = models.ForeignKey(
+    created_by: "User" = models.ForeignKey(
         "user.User",
         on_delete=models.SET_NULL,
         null=True,
