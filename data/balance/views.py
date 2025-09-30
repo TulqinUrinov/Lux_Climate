@@ -248,9 +248,13 @@ class BalanceStatusView(APIView):
         return Response(
             {
                 # Mijoz qarzi
-                "customer_debt": customer_debt if customer_debt < 0 else 0,
-                "customer_product_debt": customer_product_debt if customer_product_debt < 0 else 0,
-                "customer_service_debt": customer_service_debt if customer_service_debt < 0 else 0,
+                # "customer_debt": customer_debt if customer_debt < 0 else 0,
+                # "customer_product_debt": customer_product_debt if customer_product_debt < 0 else 0,
+                # "customer_service_debt": customer_service_debt if customer_service_debt < 0 else 0,
+
+                "customer_debt": customer_debt,
+                "customer_product_debt": customer_product_debt,
+                "customer_service_debt": customer_service_debt,
 
                 # Admin qarzi
                 "user_debt": user_debt if user_debt < 0 else 0,
