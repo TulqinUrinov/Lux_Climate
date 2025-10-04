@@ -316,9 +316,9 @@ class BalanceStatusView(APIView):
                 "service_income": service_filtered_income,
 
                 # Kutilayotgan to'lovlar
-                "due_payment": due_payment if due_payment > 0 else 0,
-                "product_due_payment": product_due_payment if product_due_payment > 0 else 0,
-                "service_due_payment": service_due_payment if service_due_payment > 0 else 0,
+                "due_payment": customer_debt,
+                "product_due_payment": customer_product_debt,
+                "service_due_payment": customer_service_debt,
             },
             status=status.HTTP_200_OK,
         )
