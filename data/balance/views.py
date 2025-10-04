@@ -237,13 +237,21 @@ class BalanceStatusView(APIView):
             # SERVICE bo'yicha umumiy to'lov
             service_filtered_income = total_service_income
 
-        customer_debt = total_income - total_outcome  # Customer umumiy qarzi
-        customer_product_debt = total_product_income - total_product_outcome  # customer mahsulot bo'yicha qarzi
-        customer_service_debt = total_service_income - total_service_outcome  # customer xizmat bo'yicha qarzi
+        # customer_debt = total_income - total_outcome  # Customer umumiy qarzi
+        # customer_product_debt = total_product_income - total_product_outcome  # customer mahsulot bo'yicha qarzi
+        # customer_service_debt = total_service_income - total_service_outcome  # customer xizmat bo'yicha qarzi
 
-        user_debt = total_outcome - total_income
-        user_product_debt = total_product_outcome - total_product_income
-        user_service_debt = total_service_outcome - total_service_income
+        customer_debt = total_outcome  # Customer umumiy qarzi
+        customer_product_debt = total_product_outcome  # customer mahsulot bo'yicha qarzi
+        customer_service_debt = total_service_outcome  # customer xizmat bo'yicha qarzi
+
+        # user_debt = total_outcome - total_income
+        # user_product_debt = total_product_outcome - total_product_income
+        # user_service_debt = total_service_outcome - total_service_income
+
+        user_debt = total_income
+        user_product_debt = total_product_income
+        user_service_debt = total_service_income
 
         return Response(
             {
