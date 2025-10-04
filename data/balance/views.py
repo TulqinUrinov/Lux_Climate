@@ -26,6 +26,7 @@ class MutualSettlementView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+# Umumiy Statistika
 class BalanceStatusView(APIView):
     permission_classes = [IsBotAuthenticated]
 
@@ -33,69 +34,54 @@ class BalanceStatusView(APIView):
         start_date = request.query_params.get("start_date")
         end_date = request.query_params.get("end_date")
 
-        # Sana filterini qo'llash
-        if start_date and end_date:
-            try:
+        # Umumiy (filternatsiya qilinmagan) income va outcome
+        total_income = (
+                Balance.objects.filter(type="INCOME").aggregate(
+                    total=Sum("amount"))["total"] or 0
+        )
+
+        total_product_income = (
+                Balance.objects.filter(type="INCOME", payment_choice="PRODUCT").aggregate(
+                    total=Sum("amount"))["total"] or 0
+        )
+
+        total_service_income = (
+                Balance.objects.filter(type="INCOME", payment_choice="SERVICE").aggregate(
+                    total=Sum("amount"))["total"] or 0
+        )
+
+        total_outcome = (
+                Balance.objects.filter(type="OUTCOME").aggregate(
+                    total=Sum("amount"))["total"] or 0
+        )
+
+        total_product_outcome = (
+                Balance.objects.filter(type="OUTCOME", payment_choice="PRODUCT").aggregate(
+                    total=Sum("amount"))["total"] or 0
+        )
+
+        total_service_outcome = (
+                Balance.objects.filter(type="OUTCOME", payment_choice="SERVICE").aggregate(
+                    total=Sum("amount"))["total"] or 0
+        )
+
+        start_datetime = None
+        end_datetime = None
+
+        try:
+            if start_date:
                 start_datetime = datetime.combine(
                     datetime.strptime(start_date, "%Y-%m-%d"), time.min
                 )
+            if end_date:
                 end_datetime = datetime.combine(
                     datetime.strptime(end_date, "%Y-%m-%d"), time.max
                 )
-                balance_filter = {"created_at__range": [start_datetime, end_datetime]}
-                order_filter = {"created_at__range": [start_datetime, end_datetime]}
-            except ValueError:
-                return Response(
-                    {"error": "Invalid date format. Use YYYY-MM-DD"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-        else:
-            balance_filter = {}
-            order_filter = {}
-
-        # Balance ma'lumotlarini olish (change fieldi asosida)
-        balances = Balance.objects.filter(**balance_filter)
-
-        # Umumiy balans (change fieldi yig'indisi)
-        total_balance = balances.aggregate(total=Sum("change"))["total"] or 0
-
-        # Mahsulot bo'yicha balans
-        product_balance = balances.filter(payment_choice="PRODUCT").aggregate(
-            total=Sum("change"))["total"] or 0
-
-        # Xizmat bo'yicha balans
-        service_balance = balances.filter(payment_choice="SERVICE").aggregate(
-            total=Sum("change"))["total"] or 0
-
-        # Qarzlarni hisoblash (change fieldi asosida)
-        # Agar balance > 0: bu bizning mijozga qarzimiz (user_debt)
-        # Agar balance < 0: bu mijozning bizga qarzi (customer_debt)
-
-        # Umumiy qarzlar
-        user_debt = total_balance if total_balance > 0 else 0
-        customer_debt = abs(total_balance) if total_balance < 0 else 0
-
-        # Mahsulot bo'yicha qarzlar
-        user_product_debt = product_balance if product_balance > 0 else 0
-        customer_product_debt = abs(product_balance) if product_balance < 0 else 0
-
-        # Xizmat bo'yicha qarzlar
-        user_service_debt = service_balance if service_balance > 0 else 0
-        customer_service_debt = abs(service_balance) if service_balance < 0 else 0
-
-        # Income va Outcome larni alohida hisoblaymiz (statistika uchun)
-        total_income = balances.filter(type="INCOME").aggregate(total=Sum("amount"))["total"] or 0
-        total_outcome = balances.filter(type="OUTCOME").aggregate(total=Sum("amount"))["total"] or 0
-
-        total_product_income = balances.filter(type="INCOME", payment_choice="PRODUCT").aggregate(total=Sum("amount"))[
-                                   "total"] or 0
-        total_product_outcome = \
-            balances.filter(type="OUTCOME", payment_choice="PRODUCT").aggregate(total=Sum("amount"))["total"] or 0
-
-        total_service_income = balances.filter(type="INCOME", payment_choice="SERVICE").aggregate(total=Sum("amount"))[
-                                   "total"] or 0
-        total_service_outcome = \
-            balances.filter(type="OUTCOME", payment_choice="SERVICE").aggregate(total=Sum("amount"))["total"] or 0
+        except ValueError:
+            return Response(
+                {"error": "Invalid date format. Use YYYY-MM-DD"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         if start_datetime and end_datetime:
             # Buyurtmalarning umumiy soni
@@ -177,14 +163,34 @@ class BalanceStatusView(APIView):
                     or 0
             )
 
+            # PRODUCT, Sana bo'yicha filter qilingan umumiy chiqim
+            product_filtered_outcome = (
+                    Balance.objects.filter(
+                        payment_choice="PRODUCT",
+                        type="OUTCOME",
+                        created_at__range=[start_datetime, end_datetime]
+                    ).aggregate(total=Sum("amount"))["total"]
+                    or 0
+            )
+
+            # SERVICE, Sana bo'yicha filter qilingan umumiy chiqim
+            service_filtered_outcome = (
+                    Balance.objects.filter(
+                        payment_choice="SERVICE",
+                        type="OUTCOME",
+                        created_at__range=[start_datetime, end_datetime]
+                    ).aggregate(total=Sum("amount"))["total"]
+                    or 0
+            )
+
             # Umumiy to'lanishi kerak bo'lgan to'lov
             due_payment = filtered_outcome - filtered_income
 
             # PRODUCT bo'yicha umumiy to'lanishi kerak bo'lgan to'lov
-            product_due_payment = total_product_outcome - total_product_income
+            product_due_payment = product_filtered_outcome - product_filtered_income
 
             # SERVICE bo'yicha umumiy to'lanishi kerak bo'lgan to'lov
-            service_due_payment = total_service_outcome - total_service_income
+            service_due_payment = service_filtered_outcome - service_filtered_income
 
         else:
             # Buyurtmalar umumiy soni
@@ -231,14 +237,40 @@ class BalanceStatusView(APIView):
             # SERVICE bo'yicha umumiy to'lov
             service_filtered_income = total_service_income
 
+        # customer_debt = total_income - total_outcome  # Customer umumiy qarzi
+        # customer_product_debt = total_product_income - total_product_outcome  # customer mahsulot bo'yicha qarzi
+        # customer_service_debt = total_service_income - total_service_outcome  # customer xizmat bo'yicha qarzi
+
+        # user_debt = total_outcome - total_income
+        # user_product_debt = total_product_outcome - total_product_income
+        # user_service_debt = total_service_outcome - total_service_income
+
+        # Mijoz qarzi (admin uchun chiqim > kirim)
+        customer_debt = total_outcome - total_income
+        customer_product_debt = total_product_outcome
+        customer_service_debt = total_service_outcome
+
+        # Admin qarzi (mijoz to‘lagan, lekin hali xizmat/mahsulot berilmagan)
+        user_debt = total_income - total_outcome
+        user_product_debt = total_product_income - total_product_outcome
+        user_service_debt = total_service_income - total_service_outcome
+
         return Response(
             {
-                # Mijoz qarzi (balance manfiy bo'lsa)
+                # Mijoz qarzi
+                # "customer_debt": customer_debt if customer_debt < 0 else 0,
+                # "customer_product_debt": customer_product_debt if customer_product_debt < 0 else 0,
+                # "customer_service_debt": customer_service_debt if customer_service_debt < 0 else 0,
+
                 "customer_debt": customer_debt,
                 "customer_product_debt": customer_product_debt,
                 "customer_service_debt": customer_service_debt,
 
-                # Admin qarzi (balance musbat bo'lsa)
+                # Admin qarzi
+                # "user_debt": user_debt if user_debt < 0 else 0,
+                # "user_product_debt": user_product_debt if user_product_debt < 0 else 0,
+                # "user_service_debt": user_service_debt if user_service_debt < 0 else 0,
+
                 "user_debt": user_debt,
                 "user_product_debt": user_product_debt,
                 "user_service_debt": user_service_debt,
@@ -265,276 +297,3 @@ class BalanceStatusView(APIView):
             },
             status=status.HTTP_200_OK,
         )
-
-#
-# # Umumiy Statistika
-# class BalanceStatusView(APIView):
-#     permission_classes = [IsBotAuthenticated]
-#
-#     def get(self, request):
-#         start_date = request.query_params.get("start_date")
-#         end_date = request.query_params.get("end_date")
-#
-#         # Umumiy (filternatsiya qilinmagan) income va outcome
-#         total_income = (
-#                 Balance.objects.filter(type="INCOME").aggregate(
-#                     total=Sum("amount"))["total"] or 0
-#         )
-#
-#         total_product_income = (
-#                 Balance.objects.filter(type="INCOME", payment_choice="PRODUCT").aggregate(
-#                     total=Sum("amount"))["total"] or 0
-#         )
-#
-#         total_service_income = (
-#                 Balance.objects.filter(type="INCOME", payment_choice="SERVICE").aggregate(
-#                     total=Sum("amount"))["total"] or 0
-#         )
-#
-#         total_outcome = (
-#                 Balance.objects.filter(type="OUTCOME").aggregate(
-#                     total=Sum("amount"))["total"] or 0
-#         )
-#
-#         total_product_outcome = (
-#                 Balance.objects.filter(type="OUTCOME", payment_choice="PRODUCT").aggregate(
-#                     total=Sum("amount"))["total"] or 0
-#         )
-#
-#         total_service_outcome = (
-#                 Balance.objects.filter(type="OUTCOME", payment_choice="SERVICE").aggregate(
-#                     total=Sum("amount"))["total"] or 0
-#         )
-#
-#         start_datetime = None
-#         end_datetime = None
-#
-#         try:
-#             if start_date:
-#                 start_datetime = datetime.combine(
-#                     datetime.strptime(start_date, "%Y-%m-%d"), time.min
-#                 )
-#             if end_date:
-#                 end_datetime = datetime.combine(
-#                     datetime.strptime(end_date, "%Y-%m-%d"), time.max
-#                 )
-#         except ValueError:
-#             return Response(
-#                 {"error": "Invalid date format. Use YYYY-MM-DD"},
-#                 status=status.HTTP_400_BAD_REQUEST,
-#             )
-#
-#         if start_datetime and end_datetime:
-#             # Buyurtmalarning umumiy soni
-#             orders = Order.objects.filter(
-#                 created_at__range=[start_datetime, end_datetime]
-#             ).count()
-#
-#             # Buyurtmalarning product bo'yicha soni
-#             product_orders = Order.objects.filter(
-#                 product="PRODUCT",
-#                 created_at__range=[start_datetime, end_datetime]
-#             ).count()
-#
-#             # Buyurtmalarning service bo'yicha soni
-#             service_orders = Order.objects.filter(
-#                 product="SERVICE",
-#                 created_at__range=[start_datetime, end_datetime]
-#             ).count()
-#
-#             # Barcha buyurtmalarning umumiy narxi
-#             orders_sum_price = (
-#                     Order.objects.filter(
-#                         created_at__range=[start_datetime, end_datetime]
-#                     ).aggregate(total=Sum("price"))["total"]
-#                     or 0
-#             )
-#
-#             # PRODUCT bo'yicha buyurtmalarning umumiy narxi
-#             product_orders_sum_price = (
-#                     Order.objects.filter(
-#                         product="PRODUCT",
-#                         created_at__range=[start_datetime, end_datetime]
-#                     ).aggregate(total=Sum("price"))["total"]
-#                     or 0
-#             )
-#
-#             # SERVICE bo'yicha buyurtmalarning umumiy narxi
-#             service_orders_sum_price = (
-#                     Order.objects.filter(
-#                         product="SERVICE",
-#                         created_at__range=[start_datetime, end_datetime]
-#                     ).aggregate(total=Sum("price"))["total"]
-#                     or 0
-#             )
-#
-#             # Sana bo'yicha filter qilingan umumiy kirim
-#             filtered_income = (
-#                     Balance.objects.filter(
-#                         type="INCOME", created_at__range=[start_datetime, end_datetime]
-#                     ).aggregate(total=Sum("amount"))["total"]
-#                     or 0
-#             )
-#
-#             # PRODUCT, Sana bo'yicha filter qilingan umumiy kirim
-#             product_filtered_income = (
-#                     Balance.objects.filter(
-#                         payment_choice="PRODUCT",
-#                         type="INCOME",
-#                         created_at__range=[start_datetime, end_datetime]
-#                     ).aggregate(total=Sum("amount"))["total"]
-#                     or 0
-#             )
-#
-#             # SERVICE, Sana bo'yicha filter qilingan umumiy kirim
-#             service_filtered_income = (
-#                     Balance.objects.filter(
-#                         payment_choice="SERVICE",
-#                         type="INCOME",
-#                         created_at__range=[start_datetime, end_datetime]
-#                     ).aggregate(total=Sum("amount"))["total"]
-#                     or 0
-#             )
-#
-#             # Sana bo'yicha filter qilingan umumiy chiqim
-#             filtered_outcome = (
-#                     Balance.objects.filter(
-#                         type="OUTCOME", created_at__range=[start_datetime, end_datetime]
-#                     ).aggregate(total=Sum("amount"))["total"]
-#                     or 0
-#             )
-#
-#             # PRODUCT, Sana bo'yicha filter qilingan umumiy chiqim
-#             product_filtered_outcome = (
-#                     Balance.objects.filter(
-#                         payment_choice="PRODUCT",
-#                         type="OUTCOME",
-#                         created_at__range=[start_datetime, end_datetime]
-#                     ).aggregate(total=Sum("amount"))["total"]
-#                     or 0
-#             )
-#
-#             # SERVICE, Sana bo'yicha filter qilingan umumiy chiqim
-#             service_filtered_outcome = (
-#                     Balance.objects.filter(
-#                         payment_choice="SERVICE",
-#                         type="OUTCOME",
-#                         created_at__range=[start_datetime, end_datetime]
-#                     ).aggregate(total=Sum("amount"))["total"]
-#                     or 0
-#             )
-#
-#             # Umumiy to'lanishi kerak bo'lgan to'lov
-#             due_payment = filtered_outcome - filtered_income
-#
-#             # PRODUCT bo'yicha umumiy to'lanishi kerak bo'lgan to'lov
-#             product_due_payment = product_filtered_outcome - product_filtered_income
-#
-#             # SERVICE bo'yicha umumiy to'lanishi kerak bo'lgan to'lov
-#             service_due_payment = service_filtered_outcome - service_filtered_income
-#
-#         else:
-#             # Buyurtmalar umumiy soni
-#             orders = Order.objects.count()
-#
-#             # Buyurtmalarning product bo'yicha soni
-#             product_orders = Order.objects.filter(
-#                 product="PRODUCT"
-#             ).count()
-#
-#             # Buyurtmalarning service bo'yicha soni
-#             service_orders = Order.objects.filter(
-#                 product="SERVICE"
-#             ).count()
-#
-#             # Barcha buyurtmalarning umumiy narxi
-#             orders_sum_price = Order.objects.aggregate(total=Sum("price"))["total"] or 0
-#
-#             # PRODUCT bo'yicha buyurtmalarning umumiy narxi
-#             product_orders_sum_price = Order.objects.filter(
-#                 product="PRODUCT"
-#             ).aggregate(total=Sum("price"))["total"] or 0
-#
-#             # SERVICE bo'yicha buyurtmalarning umumiy narxi
-#             service_orders_sum_price = Order.objects.filter(
-#                 product="SERVICE"
-#             ).aggregate(total=Sum("price"))["total"] or 0
-#
-#             # Umumiy to'lanishi kerak bo'lgan to'lov
-#             due_payment = total_outcome - total_income
-#
-#             # PRODUCT bo'yicha umumiy to'lanishi kerak bo'lgan to'lov
-#             product_due_payment = total_product_outcome - total_product_income
-#
-#             # SERVICE bo'yicha umumiy to'lanishi kerak bo'lgan to'lov
-#             service_due_payment = total_service_outcome - total_service_income
-#
-#             # Umumiy to'lov
-#             filtered_income = total_income
-#
-#             # PRODUCT bo'yicha umumiy to'lov
-#             product_filtered_income = total_product_income
-#
-#             # SERVICE bo'yicha umumiy to'lov
-#             service_filtered_income = total_service_income
-#
-#         # customer_debt = total_income - total_outcome  # Customer umumiy qarzi
-#         # customer_product_debt = total_product_income - total_product_outcome  # customer mahsulot bo'yicha qarzi
-#         # customer_service_debt = total_service_income - total_service_outcome  # customer xizmat bo'yicha qarzi
-#
-#         # user_debt = total_outcome - total_income
-#         # user_product_debt = total_product_outcome - total_product_income
-#         # user_service_debt = total_service_outcome - total_service_income
-#
-#         # Mijoz qarzi (admin uchun chiqim > kirim)
-#         customer_debt = total_outcome - total_income
-#         customer_product_debt = total_product_outcome
-#         customer_service_debt = total_service_outcome
-#
-#         # Admin qarzi (mijoz to‘lagan, lekin hali xizmat/mahsulot berilmagan)
-#         user_debt = total_income - total_outcome
-#         user_product_debt = total_product_income - total_product_outcome
-#         user_service_debt = total_service_income - total_service_outcome
-#
-#         return Response(
-#             {
-#                 # Mijoz qarzi
-#                 # "customer_debt": customer_debt if customer_debt < 0 else 0,
-#                 # "customer_product_debt": customer_product_debt if customer_product_debt < 0 else 0,
-#                 # "customer_service_debt": customer_service_debt if customer_service_debt < 0 else 0,
-#
-#                 "customer_debt": customer_debt,
-#                 "customer_product_debt": customer_product_debt,
-#                 "customer_service_debt": customer_service_debt,
-#
-#                 # Admin qarzi
-#                 # "user_debt": user_debt if user_debt < 0 else 0,
-#                 # "user_product_debt": user_product_debt if user_product_debt < 0 else 0,
-#                 # "user_service_debt": user_service_debt if user_service_debt < 0 else 0,
-#
-#                 "user_debt": user_debt,
-#                 "user_product_debt": user_product_debt,
-#                 "user_service_debt": user_service_debt,
-#
-#                 # Buyurtmalar soni
-#                 "orders_count": orders,
-#                 "product_orders_count": product_orders,
-#                 "service_orders_count": service_orders,
-#
-#                 # Umumiy buyurtmalar narxi
-#                 "orders_sum_price": orders_sum_price,
-#                 "product_orders_sum_price": product_orders_sum_price,
-#                 "service_orders_sum_price": service_orders_sum_price,
-#
-#                 # To'lovlar
-#                 "income": filtered_income,
-#                 "product_income": product_filtered_income,
-#                 "service_income": service_filtered_income,
-#
-#                 # Kutilayotgan to'lovlar
-#                 "due_payment": due_payment if due_payment > 0 else 0,
-#                 "product_due_payment": product_due_payment if product_due_payment > 0 else 0,
-#                 "service_due_payment": service_due_payment if service_due_payment > 0 else 0,
-#             },
-#             status=status.HTTP_200_OK,
-#         )
