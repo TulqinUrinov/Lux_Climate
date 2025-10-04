@@ -247,8 +247,8 @@ class BalanceStatusView(APIView):
 
         # Mijoz qarzi (admin uchun chiqim > kirim)
         customer_debt = total_outcome - total_income
-        customer_product_debt = total_product_outcome - total_product_income
-        customer_service_debt = total_service_outcome - total_service_income
+        customer_product_debt = total_product_outcome
+        customer_service_debt = total_service_outcome
 
         # Admin qarzi (mijoz to‘lagan, lekin hali xizmat/mahsulot berilmagan)
         user_debt = total_income - total_outcome
