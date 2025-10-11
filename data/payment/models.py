@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING
 
 from django.db import models
-from data.common.models import BaseModel
+from data.common.models import BaseModel, ActiveCustomerManager
 
 if TYPE_CHECKING:
     from data.user.models import User
@@ -46,6 +46,8 @@ class InstallmentPayment(BaseModel):
             self.order_type = self.order.order_type
 
         return super().save(*args, **kwargs)
+
+    objects = ActiveCustomerManager()
 
 
 class Payment(BaseModel):
@@ -106,3 +108,5 @@ class Payment(BaseModel):
         blank=True,
         related_name="created_payments",
     )
+
+    objects = ActiveCustomerManager()

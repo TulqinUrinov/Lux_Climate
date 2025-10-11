@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING
 from django.db import models
 
-from data.common.models import BaseModel
+from data.common.models import BaseModel, ActiveCustomerManager
 
 if TYPE_CHECKING:
     from data.user.models import User
@@ -77,3 +77,5 @@ class Balance(BaseModel):
         null=True,
         blank=True
     )
+
+    objects = ActiveCustomerManager()

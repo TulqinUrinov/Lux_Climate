@@ -1,7 +1,6 @@
 from django.db import models
 from typing import TYPE_CHECKING
-from data.common.models import BaseModel
-
+from data.common.models import BaseModel, ActiveCustomerManager
 
 if TYPE_CHECKING:
     from data.customer.models import Customer
@@ -67,3 +66,5 @@ class Order(BaseModel):
     files: "File" = models.ManyToManyField("file.File", blank=True)
 
     order_splits: "models.QuerySet[InstallmentPayment]"
+
+    objects = ActiveCustomerManager()
