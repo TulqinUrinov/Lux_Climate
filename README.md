@@ -59,12 +59,4 @@ Create superuser
 
 docker compose exec django python manage.py createsuperuser
 
-📁 Project Structure
-Lux_Climate/
-├── config/          # Django settings and configuration
-├── data/            # Data management and models
-├── files/           # File uploads and storage
-├── tg_bot/          # Telegram bot integration
-├── manage.py        # Django management script
-├── r.txt            # Requirements file
-└── docker-compose.yml
+
