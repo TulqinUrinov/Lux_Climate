@@ -1,62 +1,91 @@
-Lux Climate - B2B Payment Management System
+# Lux Climate - B2B Payment Management System
+
 A Telegram Mini App designed to streamline payment tracking and management between sellers and buyers.
-📋 Overview
+
+## 📋 Overview
+
 Lux Climate is a comprehensive payment management solution that helps businesses track transactions, manage installment plans, and monitor customer debts efficiently through a Telegram interface.
-✨ Features
 
-Transaction Management: Track all seller-buyer transactions in real-time
-Installment Tracking: Manage flexible payment schedules for customers
-Debt Monitoring: Monitor outstanding balances and payment history
-Automated Reminders: Send payment notifications to customers automatically
-Reporting Dashboard: Generate detailed financial reports and analytics
-User Authentication: Secure JWT-based authentication system
+## ✨ Features
 
-🛠️ Tech Stack
+- **Transaction Management**: Track all seller-buyer transactions in real-time
+- **Installment Tracking**: Manage flexible payment schedules for customers
+- **Debt Monitoring**: Monitor outstanding balances and payment history
+- **Automated Reminders**: Send payment notifications to customers automatically
+- **Reporting Dashboard**: Generate detailed financial reports and analytics
+- **User Authentication**: Secure JWT-based authentication system
 
-Backend: Python 3.x, Django, Django REST Framework
-Database: PostgreSQL
-Authentication: JWT (JSON Web Tokens)
-Containerization: Docker, Docker Compose
-Bot Framework: python-telegram-bot
+## 🛠️ Tech Stack
 
-📦 Installation
-Prerequisites
+- **Backend**: Python 3.x, Django, Django REST Framework
+- **Database**: PostgreSQL
+- **Authentication**: JWT (JSON Web Tokens)
+- **Containerization**: Docker, Docker Compose
+- **Bot Framework**: python-telegram-bot
 
-Docker and Docker Compose
-Python 3.13
-PostgreSQL
+## 📦 Installation
 
-Setup
+### Prerequisites
 
-Clone the repository
+- Docker and Docker Compose
+- Python 3.13
+- PostgreSQL
 
+### Setup
+
+1. Clone the repository
+```bash
 git clone https://github.com/TulqinUrinov/Lux_Climate.git
 cd Lux_Climate
+```
 
-Create environment file
-
+2. Create environment file
+```bash
 cp "env file example" .env
+```
 
-Configure your environment variables in .env:
-
+3. Configure your environment variables in `.env`:
+```
 BOT_TOKEN=
 POSTGRES_DB=
 POSTGRES_USER=
 POSTGRES_PASSWORD=
 POSTGRES_HOST=
 POSTGRES_PORT=
+```
 
-Build and run with Docker
-
+4. Build and run with Docker
+```bash
 docker-compose up --build
+```
 
-Run migrations
+5. Run migrations
+```bash
+docker-compose exec web python manage.py migrate
+```
 
-docker compose exec django python manage.py makemigrations
-docker compose exec django python manage.py migrate
+6. Create superuser
+```bash
+docker-compose exec web python manage.py createsuperuser
+```
 
-Create superuser
+## 🚀 Usage
 
-docker compose exec django python manage.py createsuperuser
+Access the application:
+- **API**: http://localhost:8000/api/
+- **Admin Panel**: http://localhost:8000/admin/
+- **Telegram Bot**: Start your bot on Telegram
 
+## 📁 Project Structure
+
+```
+Lux_Climate/
+├── config/          # Django settings and configuration
+├── data/            # Data management and models
+├── files/           # File uploads and storage
+├── tg_bot/          # Telegram bot integration
+├── manage.py        # Django management script
+├── r.txt            # Requirements file
+└── docker-compose.yml
+```
 
