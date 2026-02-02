@@ -30,12 +30,12 @@ Setup
 
 Clone the repository
 
-bashgit clone https://github.com/TulqinUrinov/Lux_Climate.git
+git clone https://github.com/TulqinUrinov/Lux_Climate.git
 cd Lux_Climate
 
 Create environment file
 
-bashcp "env file example" .env
+cp "env file example" .env
 
 Configure your environment variables in .env:
 
@@ -48,15 +48,16 @@ POSTGRES_PORT=
 
 Build and run with Docker
 
-bashdocker-compose up --build
+docker-compose up --build
 
 Run migrations
 
-bashdocker-compose exec web python manage.py migrate
+docker compose exec django python manage.py makemigrations
+docker compose exec django python manage.py migrate
 
 Create superuser
 
-bashdocker-compose exec web python manage.py createsuperuser
+docker compose exec django python manage.py createsuperuser
 
 📁 Project Structure
 Lux_Climate/
